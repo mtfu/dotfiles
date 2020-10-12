@@ -1,0 +1,1 @@
+& '.\setup.ps1'; & '.\setupPrograms.ps1'; & '.\debloatWindows.ps1';

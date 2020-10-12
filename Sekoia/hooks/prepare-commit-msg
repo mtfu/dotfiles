@@ -1,0 +1,10 @@
+#!/bin/bash
+branchPath=$(git symbolic-ref -q HEAD)
+branchName=${branchPath##*/} 
+
+BRANCH=`git rev-parse --abbrev-ref HEAD`
+
+echo $BRANCH
+if [[ "$BRANCH" == "feature"* ]]; then
+	sed -i "1s/^/$branchName: / " $1
+fi

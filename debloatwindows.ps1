@@ -1,0 +1,1 @@
+git clone https://github.com/Sycnex/Windows10Debloater $env:USERPROFILE\Windows10Debloater && Invoke-Expression $env:USERPROFILE\Windows10Debloater\Windows10DebloaterGUI.ps1

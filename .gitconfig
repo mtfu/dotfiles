@@ -1,0 +1,20 @@
+[core]
+	editor = vim
+[alias]
+	tree = log --graph --all --pretty=format:'%C(yellow)%h -%C(auto)%d %C(bold white)%s %C(bold cyan)(%cr)%Creset %C(dim white)<%an>'
+	treeStat = log --graph --all --pretty=format:'%C(yellow)%h -%C(auto)%d %C(bold cyan)%s %C(bold white)(%cr)%Creset %C(dim white)<%an>' --stat
+	logChangesPerFile = log --pretty=format:'%C(yellow)%h%Cred%d %Creset%C(bold white)%s %C(dim white)<%an>' --decorate --numstat
+	chaseFile = log --follow -p --
+	publish = "!git push -u origin \"$(git rev-parse --abbrev-ref HEAD)\""
+	prunebranches = remote prune origin
+	pruneLocal = "!git branch --merged | grep  -v '\\*\\|master\\|develop' | xargs -n 1 git branch -d"
+	removeLocalBranches = "!git fetch -p && for branch in `git branch -vv | grep ': gone]' | awk '{print $1}'`; do git branch -D $branch; done"
+	s = status
+	c = commit -m
+	f = fetch
+	d = branch -d
+	mdev = !git fetch && git merge origin/develop
+	tagHistory = for-each-ref --format="%(refname:short) %(taggerdate) %(subject) %(body)" refs/tags
+
+[color "diff"]
+	whitespace = red reverse
