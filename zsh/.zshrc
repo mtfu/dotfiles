@@ -81,7 +81,7 @@ function mkd() {
 
 # For Loading the SSH key
 /usr/bin/keychain --nogui $HOME/.ssh/id_rsa
-source $HOME/.keychain/$HOSTNAME-sh
+source $HOME/.keychain/${HOSTNAME}-sh
 
 # Add $HOME/bin to path
 export PATH=$HOME/bin:$PATH
