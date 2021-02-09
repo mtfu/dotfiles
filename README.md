@@ -11,6 +11,17 @@ $ sudo apt-get install micro
 https://brew.sh/
 https://formulae.brew.sh/formula/dstask
 
+brew install thefuck
+
+# Dstask
+brew install dstask
+cd ~
+ln -s dotfiles/zsh/.dstask-zsh-completions.sh
+
+# Git
+cd ~
+ls -s dotfiles/.gitconfig 
+
 # Important
 // https://askubuntu.com/questions/1290500/unable-to-locate-package-for-exa-on-wsl-2-ubuntu
 wget http://archive.ubuntu.com/ubuntu/pool/universe/r/rust-exa/exa_0.9.0-4_amd64.deb
