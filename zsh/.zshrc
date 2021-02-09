@@ -46,11 +46,6 @@ alias zshreload="exec $SHELL -l"
 alias ohmyzsh="nano ~/.oh-my-zsh"
 alias dc="docker-compose"
 
-# Change start directory
-cd ~/dev
-
-
-
 # Shorthand for `docker exec -it [container] /bin/bash`
 # into `db [container]`
 function db() {
@@ -83,6 +78,10 @@ function di() {
 function mkd() {
   mkdir -p -- "$1" && cd -P -- "$1"
 }
+
+# For Loading the SSH key
+/usr/bin/keychain --nogui $HOME/.ssh/id_rsa
+source $HOME/.keychain/$HOSTNAME-sh
 
 # Add $HOME/bin to path
 export PATH=$HOME/bin:$PATH
