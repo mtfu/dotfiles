@@ -19,6 +19,6 @@ function sr {
     Set-Location 'C:\repos'
 }
 
-function nano($path) {
-    wsl.exe nano $path
+function t($command) {
+    wsl.exe dstask $command
 }
