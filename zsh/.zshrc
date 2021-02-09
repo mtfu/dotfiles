@@ -45,6 +45,7 @@ alias zshconfig="nano ~/.zshrc"
 alias zshreload="exec $SHELL -l"
 alias ohmyzsh="nano ~/.oh-my-zsh"
 alias dc="docker-compose"
+alias t=dstask
 
 # Shorthand for `docker exec -it [container] /bin/bash`
 # into `db [container]`
@@ -82,9 +83,10 @@ function mkd() {
 # Hide the user and computer name in our prompt
 DEFAULT_USER=$USER
 
-# Alias to open explorer in the current directory, returning true to override explorer's failure
-alias ii ="explorer.exe . || true"
-
-
 # Add $HOME/bin to path
 export PATH=$HOME/bin:$PATH
+
+export PATH=/opt/homebrew/bin:$PATH
+
+#dstask auto completion
+source .dstask-zsh-completions.sh

@@ -5,7 +5,11 @@ Installing
 $ sudo apt-get install stow
 $ sudo apt-get install zsh
 $ sudo apt-get install micro
-$ sudo apt-get install dstask
+
+
+# Homebew
+https://brew.sh/
+https://formulae.brew.sh/formula/dstask
 
 # Important
 // https://askubuntu.com/questions/1290500/unable-to-locate-package-for-exa-on-wsl-2-ubuntu
