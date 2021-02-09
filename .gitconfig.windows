@@ -1,6 +1,7 @@
 [core]
 	sshCommand = 'C:\\Windows\\System32\\OpenSSH\\ssh.exe'
 	hooksPath = C:\\Users\\mtfu\\hooks
+	editor = micro
 [alias]
 	tree = log --graph --all --pretty=format:'%C(yellow)%h -%C(auto)%d %C(bold white)%s %C(bold cyan)(%cr)%Creset %C(dim white)<%an>'
 	treeStat = log --graph --all --pretty=format:'%C(yellow)%h -%C(auto)%d %C(bold cyan)%s %C(bold white)(%cr)%Creset %C(dim white)<%an>' --stat

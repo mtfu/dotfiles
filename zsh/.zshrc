@@ -79,9 +79,12 @@ function mkd() {
   mkdir -p -- "$1" && cd -P -- "$1"
 }
 
-# For Loading the SSH key
-/usr/bin/keychain --nogui $HOME/.ssh/id_rsa
-source $HOME/.keychain/${HOSTNAME}-sh
+# Hide the user and computer name in our prompt
+DEFAULT_USER=$USER
+
+# Alias to open explorer in the current directory, returning true to override explorer's failure
+alias ii ="explorer.exe . || true"
+
 
 # Add $HOME/bin to path
 export PATH=$HOME/bin:$PATH
