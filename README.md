@@ -6,9 +6,18 @@ $ sudo apt-get install stow
 $ sudo apt-get install zsh
 $ sudo apt-get install micro
 $ sudo apt-get install dstask
+
+# Important
+// https://askubuntu.com/questions/1290500/unable-to-locate-package-for-exa-on-wsl-2-ubuntu
+wget http://archive.ubuntu.com/ubuntu/pool/universe/r/rust-exa/exa_0.9.0-4_amd64.deb
+sudo apt-get install ./exa_0.9.0-4_amd64.deb
+// TODO
+
+setup gitconfig 
 ## git clone --recursive https://github.com/mtfu/dotfiles.git
 $ cd dotfiles
-
+$ stow zsh
+$ stow .gitconfig
 
 ## Stow (Alternative to mklinks)
 Updating Configurations
