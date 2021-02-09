@@ -86,7 +86,5 @@ DEFAULT_USER=$USER
 # Add $HOME/bin to path
 export PATH=$HOME/bin:$PATH
 
-export PATH=/opt/homebrew/bin:$PATH
-
 #dstask auto completion
 source .dstask-zsh-completions.sh
