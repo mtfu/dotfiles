@@ -14,8 +14,9 @@ https://formulae.brew.sh/formula/dstask
 brew install thefuck
 
 # Dstask
-cd ~
-ln -s dotfiles/zsh/.dstask-zsh-completions.sh
+cd /usr/local/bin/
+sudo cp /mnt/c/Users/mtfu/Downloads/dstask-linux-amd64 dstask
+sudo chmod +x dstask
 
 # Git
 cd ~
