@@ -8,6 +8,11 @@ $ sudo apt-get install stow
 $ sudo apt-get install zsh
 $ sudo apt-get install micro
 
+# SSH
+sudo apt update && sudo apt upgrade -y && sudo apt install -y keychain emacs vim git
+Create or add ssh keys.
+Make directory only readable for you:
+chmod -R og-rwx ~/.ssh/
 
 ## Homebew
 https://brew.sh/  

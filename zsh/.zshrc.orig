@@ -87,10 +87,13 @@ DEFAULT_USER=$USER
 # Add $HOME/bin to path
 export PATH=$HOME/bin:$PATH
 
+<<<<<<< HEAD
 export PATH=/opt/homebrew/bin:$PATH
 
 export=EDITOR='micro'
 
+=======
+>>>>>>> 576936d88ba8d8de0c641aef89c68d89a8c92a07
 #dstask auto completion
 source .dstask-zsh-completions.sh
 
