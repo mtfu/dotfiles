@@ -46,6 +46,7 @@ alias zshreload="exec $SHELL -l"
 alias ohmyzsh="nano ~/.oh-my-zsh"
 alias dc="docker-compose"
 alias t=dstask
+alias mc=micro
 
 # Shorthand for `docker exec -it [container] /bin/bash`
 # into `db [container]`
@@ -88,5 +89,10 @@ export PATH=$HOME/bin:$PATH
 
 export PATH=/opt/homebrew/bin:$PATH
 
+export=EDITOR='micro'
+
 #dstask auto completion
 source .dstask-zsh-completions.sh
+
+/usr/bin/keychain --nogui $HOME/.ssh/id_rsa 
+source $HOME/.keychain/$HOST-sh
