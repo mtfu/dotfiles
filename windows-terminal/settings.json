@@ -73,6 +73,10 @@
     {
       "command": "newTab",
       "keys": ["ctrl+t"]
+    },
+    {
+      "command": "find",
+      "keys": ["ctrl+f"]
     }
   ]
 }
