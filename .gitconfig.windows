@@ -1,6 +1,5 @@
 [core]
 	sshCommand = 'C:\\Windows\\System32\\OpenSSH\\ssh.exe'
-	hooksPath = C:\\Users\\mtfu\\hooks
 	editor = micro
 	pager = delta --dark
 [include]
