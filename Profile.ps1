@@ -3,7 +3,7 @@ Import-Module posh-git
 Import-Module oh-my-posh
 Import-Module PSfzf
 
-Set-Theme Powerlevel10k-Lean
+Set-PoshPrompt -Theme  powerlevel10k_lean
 Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
 
 if (! (Get-Process | Where-Object { $_.Name -eq 'ssh-agent' })) {

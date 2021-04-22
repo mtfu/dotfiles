@@ -3,9 +3,6 @@ param ([Parameter()]$gitconfig = '.gitconfig.windows', $path = "dotfiles")
 New-Item -ItemType SymbolicLink -Path $profile -Target $env:USERPROFILE\$path\Profile.ps1;
 New-Item -ItemType SymbolicLink -Path $env:USERPROFILE/.gitconfig -Target $env:USERPROFILE\$path\$gitconfig;
 
-#git config --local include.path "~/$gitconfig"
-#work in progress, make user specific settings customized here. 
-#powershell module
 If (-not(Get-InstalledModule SQLServer -ErrorAction silentlycontinue)) {
     Install-Module Get-ChildItemColor -AllowClobber -Confirm:$False -Force;
 }
