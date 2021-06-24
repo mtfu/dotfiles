@@ -1,0 +1,1 @@
+choco install qbittorrent msiafterburner hwmonitor -y

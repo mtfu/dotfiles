@@ -20,6 +20,3 @@
 	d = branch -d
 	mdev = !git fetch && git merge origin/develop
 	tagHistory = for-each-ref --format="%(refname:short) %(taggerdate) %(subject) %(body)" refs/tags
-
-[color "diff"]
-	whitespace = red reverse

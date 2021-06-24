@@ -1,5 +1,6 @@
 param ([Parameter()]$gitconfig = '.gitconfig.windows', $path = "dotfiles")
 
+New-Item ~/.gitconfig-local
 New-Item -ItemType SymbolicLink -Path $profile -Target $env:USERPROFILE\$path\Profile.ps1;
 New-Item -ItemType SymbolicLink -Path $env:USERPROFILE/.gitconfig -Target $env:USERPROFILE\$path\$gitconfig;
 
