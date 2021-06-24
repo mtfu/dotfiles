@@ -1,1 +1,1 @@
-choco install qbittorrent msiafterburner hwmonitor -y
+choco install qbittorrent msiafterburner hwmonitor tidal cinebench -y
