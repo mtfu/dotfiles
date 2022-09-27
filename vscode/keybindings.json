@@ -1,0 +1,25 @@
+// Place your key bindings in this file to overwrite the defaults
+[
+  {
+    "key": "alt+w",
+    "command": "editor.action.smartSelect.grow",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "alt+shift+w",
+    "command": "editor.action.smartSelect.shrink",
+    "when": "editorTextFocus"
+  },
+  {
+    "key": "shift+f2",
+    "command": "explorer.newFile"
+  },
+  {
+    "key": "shift+alt+l",
+    "command": "workbench.files.action.focusFilesExplorer"
+  },
+  {
+    "key": "alt+\\",
+    "command": "workbench.action.gotoSymbol"
+  }
+]

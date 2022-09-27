@@ -1,0 +1,2 @@
+"vscodevim.vim"
+"eamodio.gitlens"
