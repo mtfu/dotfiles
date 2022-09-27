@@ -1,0 +1,86 @@
+vdiff () {
+    if [ "${#}" -ne 2 ] ; then
+        echo "vdiff requires two arguments"
+        echo "  comparing dirs:  vdiff dir_a dir_b"
+        echo "  comparing files: vdiff file_a file_b"
+        return 1
+    fi
+
+    local left="${1}"
+    local right="${2}"
+
+    if [ -d "${left}" ] && [ -d "${right}" ]; then
+        vim +"DirDiff ${left} ${right}"
+    else
+        vim -d "${left}" "${right}"
+    fi
+}
+
+dtags () {
+    local image="${1}"
+
+    wget -q "https://registry.hub.docker.com/v1/repositories/${image}/tags" -O - \
+        | tr -d '[]" ' | tr '}' '\n' | awk -F: '{print $3}'
+}
+
+pw () {
+    pwgen -sync "${1:-48}" -1 | if command -v pbcopy > /dev/null 2>&1; then pbcopy; else xclip; fi
+}
+
+weather () {
+    curl "https://wttr.in/${1}"
+}
+
+change-terminal-font () {
+    [ -z "${1}" ] || [ -z "${2}" ] && echo "Usage: change-terminal-font FROM_SIZE TO_SIZE"
+
+    local from="${1}"
+    local to="${2}"
+
+    local windows_user=
+
+    # shellcheck disable=SC2016
+    windows_user="$(powershell.exe '$env:UserName' | sed -e 's/\r//g')"
+
+    local terminal_config="/c/Users/${windows_user}/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
+
+    perl -i -pe "s/\"size\": ${from}/\"size\": ${to}/g" "${terminal_config}"
+}
+
+alias v='nvim'
+alias g='git'
+alias vim='nvim'
+
+alias drun='docker run --rm -it -v "${PWD}":/app -w /app'
+
+alias ymp3="youtube-dl --extract-audio --audio-format mp3"
+
+alias octal="stat -c '%a %n'"
+
+alias diff="diff --color -u"
+
+alias 755d="find . -type d -exec chmod 755 {} \;"
+
+alias 644f="find . -type f -exec chmod 644 {} \;"
+
+alias vss='sort -u ${HOME}/.vim/spell/en.utf-8.add -o ${HOME}/.vim/spell/en.utf-8.add'
+
+alias vdt="rm /tmp/%*"
+
+alias gi="git init && git symbolic-ref HEAD refs/heads/main"
+
+alias pf="fzf --preview='less {}' --bind shift-up:preview-page-up,shift-down:preview-page-down"
+
+alias gcl="git diff --name-only --diff-filter=U"
+
+alias k="kubectl"
+alias tf="terraform"
+
+# A way to define and run tasks in a project. It's like make except it's pure
+# Bash so there's no make limitations like not being able to forward arguments.
+alias run=./run
+
+# This is specific to WSL 2. If the WSL 2 VM goes rogue and decides not to free
+# up memory, this command will free your memory after about 20-30 seconds.
+#   Details: https://github.com/microsoft/WSL/issues/4166#issuecomment-628493643
+alias drop_cache="sudo sh -c \"echo 3 >'/proc/sys/vm/drop_caches' && swapoff -a && swapon -a && printf '\n%s\n' 'Ram-cache and Swap Cleared'\""
