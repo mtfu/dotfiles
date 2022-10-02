@@ -25,7 +25,7 @@ Set-PSReadLineOption -Colors @{ InlinePrediction = '#000055'}
 Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r' -EnableAliasFuzzyZLocation
 $env:FZF_DEFAULT_COMMAND='fd --type f --color=never --hidden'
 $env:FZF_DEFAULT_OPTS='--no-height --color=bg+:#343d46,gutter:-1,pointer:#ff3c3c,info:#0dbc79,hl:#0dbc79,hl+:#23d18b'
-$env:FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+$env:FZF_CTRL_T_COMMAND="$env:FZF_DEFAULT_COMMAND"
 $env:FZF_CTRL_T_OPTS="--preview 'bat --color=always --line-range :50 {}'"
 $env:FZF_ALT_C_COMMAND='fd --type d . --color=never --hidden'
 

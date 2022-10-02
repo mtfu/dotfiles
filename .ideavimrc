@@ -4,26 +4,87 @@ source ~/.vimrc
 set clipboard+=unnamed
 set ideajoin
 set idearefactormode=keep
+set selectmode=key,ideas
 
 nnoremap \e :source ~/.ideavimrc<CR>
 nnoremap \r :action IdeaVim.ReloadVimRc.reload<CR>
 
+" plugins
+set surround            " commands: ys, cs, ds, S
+set multiple-cursors    " commands <A-n>, <A-x>, <A-p>, g<A-n>
+set ReplaceWithRegister " commands: gr, grr  ex:griw
+set exchange            " commands: cx, cxx, X, cxc
+set textobj-entire      " additional text objects: ae, ie
+set vim-indent-object   " additional text objects: ai, ii, aI, iI
+set highlightedyank     "
+" Emulation of the `NERDTree` plugin.
+" `r` - recursively refresh the current directory.
+" `R` - recursively refresh the current root.
+" `K` - navigate to the first sibling of current file/directory.
+" `J` - navigate to the last sibling of current file/directory.
+" `o` (<CR>) - open file in a new tab.
+" `O` - recursively open the selected directory.
+" `P` - jump to the root node.
+" `p` - jump to current nodes parent.
+" `A` - zoom (maximize/minimize) the NERDTree window.
+" `v` - split vertically.
+" `h` - split horizontally.
+set NERDTree
+set easymotion
+"
 " Hint use alt + arrows to move in insert mode
 """ Other
-nnoremap ,e :action SearchEverywhere<CR>
-nnoremap ,f :action GotoFile<CR>
-nnoremap ,c :action GotoClass<CR>
 nnoremap <c-z> :action ChangeView<CR>
 nnoremap <c-n> :action JumpToLastWindow<CR>
 nnoremap <c-x> :action HideAllWindows<CR>
+
 nnoremap <leader>rr :action Refactorings.QuickListPopupAction<CR>
 nnoremap <leader>ms :action RiderManageRecentProjects<CR>
 nnoremap <leader>aa :action Annotate<CR>
+
+" To make Back and Forward work more smooth
+nnoremap <C-o> :action Back<CR>
+nnoremap <C-i> :action Forward<CR>
+nnoremap gc :action JumpToLastChange<CR>
+nnoremap gC :action JumpToNextChange<CR>
+nnoremap g; :action JumpToLastChange<CR>
+nnoremap g, :action JumpToNextChange<CR>
 nnoremap [[ :action MethodUp<CR>
 nnoremap ]] :action MethodDown<CR>
 
 imap <C-n> :action HippieCompletion<CR>
 imap <C-p> :action HippieBackwardCompletion<CR>
+
+noremap <leader>fs mm`m:action FileStructurePopup<CR>
+nnoremap <leader>fu :action FindUsages<CR>
+
+" file and GoTo
+nnoremap <C-S-p> :action GotoAction<CR>
+nnoremap <C-p> :action GotoFile<CR>
+noremap <leader>hh :action RecentFiles<CR>
+noremap  <leader>tu  mm`m:action Toolkit.GotoService<CR>
+nnoremap <leader>u :action FindUsages<CR>
+nnoremap <leader>ta mm`m:action GotoAction<CR>
+nnoremap <leader>ts mm`m:action GotoSymbol<CR>
+noremap <leader>tf mm`m:action GotoFile<CR>
+noremap <leader>tt mm`m:action GotoTest<CR>
+noremap <leader>tc mm`m:action GotoClass<CR>
+noremap <leader>tp mm`m:action FindInPath<CR>
+noremap <leader>ne mm`m:action GotoNextError<CR>
+noremap <leader>pe mm`m:action GotoPreviousError<CR>
+noremap <leader>gs mm`m:action GotoSuperMethod<CR>
+noremap <leader>gi mm`m:action GotoImplementation<CR>
+nnoremap <leader>ge :action ReSharperGotoNextErrorInSolution<CR>
+nnoremap <leader>gE :action ReSharperGotoPrevErrorInSolution<CR>
+nnoremap <leader>rl :action RecentLocations<CR>
+noremap <leader>rF :action RecentChangedFiles<CR>
+nnoremap <leader>fr :action RecentFiles<CR>
+nnoremap <leader>fb :action Switcher<CR>
+nnoremap <leader>fl :action RecentLocations<CR>
+nnoremap <leader>fc :action GotoClass<CR>
+nnoremap <leader>fs :action GotoSymbol<CR>
+nnoremap <leader>fa :action GotoAction<CR>
+nnoremap <leader>fd :action GotoDatabaseObject<CR>
 
 nnoremap <c-h> <c-w>h
 nnoremap <c-l> <c-w>l
@@ -75,26 +136,6 @@ noremap <leader>pu :action MembersPullUp<CR>
 noremap <leader>RF :action RenameFile<CR>
 noremap <leader>cs  :action ChangeSignature<CR>
 noremap <leader>ai :action AnonymousToInner<CR>
-""""""""""""""""""""""""""""""""""""""Jump articles""""""""""""""""""""""""""""""""""""""
-noremap  <leader>tu  mm`m:action Toolkit.GotoService<CR>
-nnoremap <leader>u :action FindUsages<CR>
-nnoremap <leader>ta mm`m:action GotoAction<CR>
-nnoremap <leader>ts mm`m:action GotoSymbol<CR>
-noremap <leader>tf mm`m:action GotoFile<CR>
-noremap <leader>tt mm`m:action GotoTest<CR>
-noremap <leader>tc mm`m:action GotoClass<CR>
-noremap <leader>tp mm`m:action FindInPath<CR>
-noremap <leader>ne mm`m:action GotoNextError<CR>
-noremap <leader>pe mm`m:action GotoPreviousError<CR>
-noremap <leader>gs mm`m:action GotoSuperMethod<CR>
-noremap <leader>gi mm`m:action GotoImplementation<CR>
-nnoremap <leader>ge :action ReSharperGotoNextErrorInSolution<CR>
-nnoremap <leader>gE :action ReSharperGotoPrevErrorInSolution<CR>
-noremap <leader>g, mm`m:action JumpToLastChange<CR>
-noremap <leader>g; mm`m:action JumpToNextChange<CR>
-noremap <leader>rf :action RecentFiles<CR>
-nnoremap <leader>rl :action RecentLocations<CR>
-noremap <leader>rF :action RecentChangedFiles<CR>
 noremap <leader>nw :action NextProjectWindow<CR>
 noremap <leader>pw :action PreviousProjectWindow<CR>
 noremap <leader>AM :action ActivateMavenToolWindow<CR>
@@ -110,14 +151,21 @@ nnoremap <leader>mm :action MaximizeToolWindow<CR>
 noremap <leader>si :action SelectInProjectView<CR>
 noremap <leader>eb :action EditBreakpoint<CR>
 
-""""""""""""""""""""""""""""""""""""""Information""""""""""""""""""""""""""""""""""""""
+"""""""""" easymotion
+map s <Plug>(easymotion-s2)
+nmap <leader>dj d<Plug>(easymotion-j)
+nmap <leader>dk d<Plug>(easymotion-k)
+nmap <leader>yj y<Plug>(easymotion-j)
+nmap <leader>yk y<Plug>(easymotion-k)
+nmap <leader>vj V<Plug>(easymotion-j)
+nmap <leader>vk V<Plug>(easymotion-k)
+"
+"""""""""""""""""""""""""""""Information""""""""""""""""""""""""""""""""""""""
 noremap <leader>ed :action ShowErrorDescription<CR>
 noremap <leader>ti :action ExpressionTypeInfo<CR>
 noremap <leader>pi :action ParameterInfo<CR>
-noremap <leader>fs mm`m:action FileStructurePopup<CR>
 noremap <leader>sd  :action ShowUmlDiagram<CR>
 noremap <leader>ch :action CallHierarchy<CR>
-nnoremap <leader>fu :action FindUsages<CR>
 nnoremap <leader>su :action ShowUsages<CR>
 noremap <leader>mh :action MethodHierarchy<CR>
 noremap <leader>ps :action ShowProjectStructureSettings<CR>
@@ -155,37 +203,7 @@ noremap <leader>ga :action Generate<CR>
 noremap <leader>cu :action CloseAllUnmodifiedEditors<CR>
 
 " Shortcut conflict Ideavim (Exported from Vim)
-sethandler <S-Tab> a:vim
-sethandler <C--> a:vim
-sethandler <C-2> a:vim
-sethandler <C-S-2> a:vim
-sethandler <C-6> a:vim
-sethandler <C-S-6> a:vim
-sethandler <C-=> a:vim
-sethandler <C-A> a:vim
-sethandler <C-B> a:vim
-sethandler <C-C> a:ide
-sethandler <C-D> a:vim
-sethandler <C-E> a:vim
-sethandler <C-F> a:vim
-sethandler <C-G> a:vim
-sethandler <C-H> a:vim
-sethandler <C-I> a:vim
-sethandler <C-L> a:vim
-sethandler <C-M> a:vim
-sethandler <C-N> a:vim
-sethandler <C-O> a:vim
-sethandler <C-P> a:vim
-sethandler <C-R> a:vim
-sethandler <C-S> a:vim
-sethandler <C-T> a:vim
-sethandler <C-U> a:vim
-sethandler <C-V> a:ide
-sethandler <C-W> a:vim
-sethandler <C-X> a:vim
-sethandler <C-Y> a:vim
-sethandler <C-[> a:vim
-sethandler <C-\> a:vim
-sethandler <C-]> a:vim
-sethandler <C-J> a:vim
-sethandler <c-K> a:vim
+sethandler a:vim
+sethandler <C-t> a:ide
+sethandler <C-a> a:ide
+

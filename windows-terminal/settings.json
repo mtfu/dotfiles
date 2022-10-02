@@ -3,14 +3,6 @@
     "$schema": "https://aka.ms/terminal-profiles-schema",
     "actions": [
         {
-            "command": "scrollUpPage",
-            "keys": "ctrl+alt+u"
-        },
-        {
-            "command": "scrollDownPage",
-            "keys": "ctrl+alt+d"
-        },
-        {
             "command": {
                 "action": "globalSummon",
 			    "monitor" : "any"
