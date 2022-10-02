@@ -37,6 +37,7 @@ set backupskip=/tmp/*,/private/tmp/*
 set smarttab
 set breakindent
 set backspace=indent,eol,start
+" Is used by bufferline (Neovim plugin)
 set termguicolors
 set cursorline
 set winblend=0
@@ -119,7 +120,7 @@ map <leader><up> <c-w>+
 map <leader><down> <c-w>-
 
 call plug#begin()
-  Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+  Plug 'preservim/nerdtree'
   Plug 'tpope/vim-surround'
   Plug 'tpope/vim-commentary'
   Plug 'tpope/vim-fugitive'
@@ -134,7 +135,8 @@ call plug#begin()
   Plug 'gruvbox-community/gruvbox'		
   Plug 'terryma/vim-multiple-cursors'
   Plug 'michaeljsmith/vim-indent-object' 
-  " Neovim setup only
+  Plug 'machakann/vim-highlightedyank'
+" Neovim setup only
   Plug 'nvim-lualine/lualine.nvim'
   Plug 'onsails/lspkind-nvim'
   Plug 'hrsh7th/cmp-nvim-lsp'
@@ -149,7 +151,6 @@ call plug#begin()
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
   Plug 'kyazdani42/nvim-web-devicons'
   Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
-  Plug 'nvim-telescope/telescope-file-browser.nvim'
   Plug 'nvim-lua/plenary.nvim'
   Plug 'windwp/nvim-autopairs'
   Plug 'windwp/nvim-ts-autotag'
@@ -158,7 +159,6 @@ call plug#begin()
   Plug 'lewis6991/gitsigns.nvim'
   Plug 'dinhhuy258/git.nvim'
   Plug 'folke/zen-mode.nvim'
-  Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': ['markdown', 'vim-plug']}
 call plug#end()
 
 
@@ -181,3 +181,8 @@ nnoremap <silent> <Leader>h/ :History/<CR>
 
 let $FZF_ALT_C_COMMAND='fd --type d . --color=never --hidden'
 let g:fzf_preview_window = []
+
+let NERDTreeShowHidden=1
+nnoremap <S-M-l> :NERDTreeFind<CR>
+let g:NERDTreeMapOpenVSplit='v'
+let g:NERDTreeMapOpenSplit='h'
