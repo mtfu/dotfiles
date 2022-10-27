@@ -56,11 +56,11 @@ set wildignore+=*/node_modules/*
 
 "Set powershell as shell
 if has("win32")
-let &shell = executable('pwsh') ? 'pwsh' : 'powershell'
-let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
-let &shellredir = '-RedirectStandardOutput %s -NoNewWindow -Wait'
-let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
-set shellquote= shellxquote=
+  let &shell = executable('pwsh') ? 'pwsh' : 'powershell'
+  let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
+  let &shellredir = '-RedirectStandardOutput %s -NoNewWindow -Wait'
+  let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+  set shellquote= shellxquote=
 endif
 
 " Use persistent history. (U)
@@ -120,23 +120,17 @@ map <leader><up> <c-w>+
 map <leader><down> <c-w>-
 
 call plug#begin()
+Plug 'easymotion/vim-easymotion'
   Plug 'preservim/nerdtree'
   Plug 'tpope/vim-surround'
-  Plug 'tpope/vim-commentary'
-  Plug 'tpope/vim-fugitive'
-  Plug 'vim-scripts/ReplaceWithRegister'
-  Plug 'vim-scripts/argtextobj.vim'
-  Plug 'kana/vim-textobj-user'
-  Plug 'kana/vim-textobj-entire'
-  Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-  Plug 'junegunn/fzf.vim'
-  Plug 'tommcdo/vim-exchange'
-  Plug 'easymotion/vim-easymotion'
-  Plug 'gruvbox-community/gruvbox'		
   Plug 'terryma/vim-multiple-cursors'
-  Plug 'michaeljsmith/vim-indent-object' 
+  Plug 'tpope/vim-commentary'
+  Plug 'vim-scripts/ReplaceWithRegister'
+  Plug 'tommcdo/vim-exchange'
+  Plug 'gruvbox-community/gruvbox'		
   Plug 'machakann/vim-highlightedyank'
 " Neovim setup only
+  Plug 'tpope/vim-fugitive'
   Plug 'nvim-lualine/lualine.nvim'
   Plug 'onsails/lspkind-nvim'
   Plug 'hrsh7th/cmp-nvim-lsp'
@@ -179,7 +173,6 @@ nnoremap <silent> <Leader>hh :History<CR>
 nnoremap <silent> <Leader>h: :History:<CR>
 nnoremap <silent> <Leader>h/ :History/<CR>
 
-let $FZF_ALT_C_COMMAND='fd --type d . --color=never --hidden'
 let g:fzf_preview_window = []
 
 let NERDTreeShowHidden=1
