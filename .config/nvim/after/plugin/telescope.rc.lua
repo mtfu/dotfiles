@@ -33,6 +33,6 @@ telescope.setup {
 vim.keymap.set('n', '<c-p>', builtin.find_files, {})
 vim.keymap.set('n', '<leader>hh', builtin.oldfiles, {})
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
-vim.keymap.set('n', '<leader>fs', builtin.grep_string, {})
+vim.keymap.set('n', '<leader>ff', builtin.grep_string, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})

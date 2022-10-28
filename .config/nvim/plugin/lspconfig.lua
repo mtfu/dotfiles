@@ -35,22 +35,10 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
 end
 
--- Set up completion using nvim_cmp with LSP source
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
-nvim_lsp.flow.setup {
-  on_attach = on_attach,
-  capabilities = capabilities
-}
-
 nvim_lsp.tsserver.setup {
   on_attach = on_attach,
   filetypes = { "typescript", "typescriptreact", "typescript.tsx" },
   capabilities = capabilities
-}
-
-nvim_lsp.sourcekit.setup {
-  on_attach = on_attach,
 }
 
 nvim_lsp.sumneko_lua.setup {
@@ -70,8 +58,6 @@ nvim_lsp.sumneko_lua.setup {
     },
   },
 }
-
-nvim_lsp.tailwindcss.setup {}
 
 nvim_lsp.omnisharp.setup {}
 
