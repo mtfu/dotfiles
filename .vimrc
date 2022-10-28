@@ -3,7 +3,6 @@
 "Use vim settings instead of vi, do not move this line
 set nocompatible
 let mapleader=" "
-let $LANG='en'
 set clipboard^=unnamed,unnamedplus
 
 set number relativenumber
@@ -37,6 +36,7 @@ set backupskip=/tmp/*,/private/tmp/*
 set smarttab
 set breakindent
 set backspace=indent,eol,start
+
 " Is used by bufferline (Neovim plugin)
 set termguicolors
 set cursorline
@@ -44,7 +44,6 @@ set winblend=0
 set wildoptions=pum
 set pumblend=5
 set background=dark
-
 set inccommand=split
 
 " Autotically insert the current comment leader after hitting <Enter> in Insert Mode.
@@ -53,6 +52,18 @@ set formatoptions-=r
 " Find files, Search down into subfolders with :find <fileName>
 set path+=** 
 set wildignore+=*/node_modules/*
+let g:clipboard = {
+  \   'name': 'win32yank-wsl',
+  \   'copy': {
+  \      '+': 'win32yank.exe -i --crlf',
+  \      '*': 'win32yank.exe -i --crlf',
+  \    },
+  \   'paste': {
+  \      '+': 'win32yank.exe -o --lf',
+  \      '*': 'win32yank.exe -o --lf',
+  \   },
+  \   'cache_enabled': 0,
+  \ }
 
 "Set powershell as shell
 if has("win32")
@@ -87,10 +98,6 @@ vnoremap <s-m-k> :m '<-2<CR>gv=gv
 "Use repgrip search for files with FZF.vim
 set grepprg=rg 
 
-"System clipboard
-vnoremap <C-c> "+y
-map <C-v> "+P
-
 nnoremap <A-a> <C-a>
 nnoremap <A-x> <C-x>
 
@@ -118,6 +125,9 @@ map <leader><left> <c-w><
 map <leader><right> <c-w>>
 map <leader><up> <c-w>+
 map <leader><down> <c-w>-
+
+" Commands
+nmap <silent> <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 call plug#begin()
 " Used both in Rider and in Neovim
@@ -156,12 +166,11 @@ call plug#begin()
   Plug 'folke/zen-mode.nvim'
 call plug#end()
 
-
-"PLUGIN SETTINGS -------------------------------------------------------------------------
+" Plugin Settings 
 colorscheme gruvbox
 
 let NERDTreeShowHidden=1
 nnoremap <S-M-l> :NERDTreeFind<CR>
-nnoremap <S-Esc> :NERDTreeClose<CR>
 let g:NERDTreeMapOpenVSplit='v'
 let g:NERDTreeMapOpenSplit='h'
+
