@@ -141,29 +141,29 @@ call plug#begin()
   Plug 'gruvbox-community/gruvbox'		
   Plug 'machakann/vim-highlightedyank'
 " Neovim setup only
-  Plug 'tpope/vim-fugitive'
-  Plug 'nvim-lualine/lualine.nvim'
-  Plug 'onsails/lspkind-nvim'
-  Plug 'hrsh7th/cmp-nvim-lsp'
-  Plug 'hrsh7th/cmp-buffer'
-  Plug 'hrsh7th/nvim-cmp'
   Plug 'neovim/nvim-lspconfig'
-  Plug 'jose-elias-alvarez/null-ls.nvim'
-  Plug 'MunifTanjim/prettier.nvim'
+  Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
+  Plug 'nvim-lualine/lualine.nvim'
+  Plug 'tpope/vim-fugitive'
   Plug 'williamboman/mason.nvim'
   Plug 'williamboman/mason-lspconfig.nvim'
-  Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-  Plug 'kyazdani42/nvim-web-devicons'
-  Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
+  Plug 'ryanoasis/vim-devicons'
   Plug 'nvim-lua/plenary.nvim'
+  Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
   Plug 'windwp/nvim-autopairs'
   Plug 'windwp/nvim-ts-autotag'
   Plug 'norcalli/nvim-colorizer.lua'
   Plug 'akinsho/nvim-bufferline.lua'
   Plug 'lewis6991/gitsigns.nvim'
-  Plug 'dinhhuy258/git.nvim'
-  Plug 'folke/zen-mode.nvim'
+" nvim-cpm - auto completion
+  Plug 'hrsh7th/cmp-nvim-lsp'
+  Plug 'hrsh7th/cmp-buffer'
+  Plug 'hrsh7th/cmp-path'
+  Plug 'hrsh7th/cmp-cmdline'
+  Plug 'hrsh7th/nvim-cmp'
+  Plug 'hrsh7th/cmp-vsnip'
+  Plug 'hrsh7th/vim-vsnip'
 call plug#end()
 
 " Plugin Settings 
