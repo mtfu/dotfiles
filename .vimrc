@@ -120,7 +120,8 @@ map <leader><up> <c-w>+
 map <leader><down> <c-w>-
 
 call plug#begin()
-Plug 'easymotion/vim-easymotion'
+" Used both in Rider and in Neovim
+  Plug 'easymotion/vim-easymotion'
   Plug 'preservim/nerdtree'
   Plug 'tpope/vim-surround'
   Plug 'terryma/vim-multiple-cursors'
@@ -159,23 +160,8 @@ call plug#end()
 "PLUGIN SETTINGS -------------------------------------------------------------------------
 colorscheme gruvbox
 
-let g:argtextobj_pairs="[:],(:),<:>"
-
-"Fzf
-noremap <silent> <C-p> :Files<CR>
-nnoremap <silent> <Leader>b :Buffers<CR>
-nnoremap <silent> <Leader>f :Rg<CR>
-nnoremap <silent> <Leader>/ :BLines<CR>
-nnoremap <silent> <Leader>' :Marks<CR>
-nnoremap <silent> <Leader>g :Commits<CR>
-nnoremap <silent> <Leader>H :Helptags<CR>
-nnoremap <silent> <Leader>hh :History<CR>
-nnoremap <silent> <Leader>h: :History:<CR>
-nnoremap <silent> <Leader>h/ :History/<CR>
-
-let g:fzf_preview_window = []
-
 let NERDTreeShowHidden=1
 nnoremap <S-M-l> :NERDTreeFind<CR>
+nnoremap <S-Esc> :NERDTreeClose<CR>
 let g:NERDTreeMapOpenVSplit='v'
 let g:NERDTreeMapOpenSplit='h'
