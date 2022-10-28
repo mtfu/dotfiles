@@ -8,6 +8,6 @@ mason.setup({
 })
 
 lspconfig.setup {
-  ensure_installed = { "sumneko_lua", "tailwindcss", "tsserver", "angularls", "omnisharp" },
+  ensure_installed = { "sumneko_lua", "tsserver", "omnisharp" },
   autotic_installation = true
 }
