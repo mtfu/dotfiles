@@ -1,5 +1,5 @@
 [core]
-	editor = nvim
+	editor = nvim -u ~/.vimrc.minimal
 	excludesfiles = .gitignore_global
 	autocrlf = false
 	whitespace = cr-at-eol
