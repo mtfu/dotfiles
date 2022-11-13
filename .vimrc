@@ -14,6 +14,7 @@ set smartcase
 set nohlsearch
 set incsearch                   
 set noerrorbells               
+set visualbell
 set history=100         
 set tabstop=4 
 set softtabstop=4       
