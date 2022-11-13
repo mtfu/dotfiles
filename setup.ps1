@@ -27,10 +27,10 @@ Install("ZLocation");
 Install("posh-sshell");
 Install("Terminal-Icons");
 
-#TODO 2022-09-09 Requirement for using nvim-tree-sitter might be possible to remove this later on (Fix for an error)
-npm install -g tree-sitter-cli 
-
 #SSH Agent
 Get-WindowsCapability -Online | ? Name -like 'OpenSSH*';
 Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0;
 Get-Service -Name ssh-agent | Set-Service -StartupType Automatic;
+
+#TODO 2022-09-09 Requirement for using nvim-tree-sitter might be possible to remove this later on (Fix for an error)
+npm install -g tree-sitter-cli 

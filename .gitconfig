@@ -1,8 +1,9 @@
 [core]
 	editor = nvim -u ~/.vimrc.minimal
 	excludesfiles = .gitignore_global
-	autocrlf = false
+	autocrlf = true
 	whitespace = cr-at-eol
+	sshCommand = C:/Windows/System32/OpenSSH/ssh.exe
 [commit]
 	verbose = true
 [include]
