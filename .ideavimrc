@@ -204,6 +204,8 @@ noremap <leader>cu :action CloseAllUnmodifiedEditors<CR>
 
 " Shortcut conflict Ideavim (Exported from Vim)
 sethandler a:vim
+sethandler <C-v> a:ide
+sethandler <C-c> a:ide
 sethandler <C-t> a:ide
 sethandler <C-a> a:ide
 
