@@ -47,6 +47,11 @@ change-terminal-font () {
     perl -i -pe "s/\"size\": ${from}/\"size\": ${to}/g" "${terminal_config}"
 }
 
+fdiff() {
+  preview="git diff $@ --color=always -- {-1}"
+  git diff $@ --name-only | fzf -m --ansi --preview $preview
+}
+
 alias v='nvim'
 alias g='git'
 alias vim='nvim'
