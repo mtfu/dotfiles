@@ -66,15 +66,6 @@ let g:clipboard = {
   \   'cache_enabled': 0,
   \ }
 
-"Set powershell as shell
-if has("win32")
-  let &shell = executable('pwsh') ? 'pwsh' : 'powershell'
-  let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
-  let &shellredir = '-RedirectStandardOutput %s -NoNewWindow -Wait'
-  let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
-  set shellquote= shellxquote=
-endif
-
 " Use persistent history. (U)
 if !isdirectory("/tmp/.vim-undo-dir")
     call mkdir("/tmp/.vim-undo-dir", "", 0700)
