@@ -15,6 +15,10 @@ vdiff () {
         vim -d "${left}" "${right}"
     fi
 }
+fdiff() {
+  preview="git diff $@ --color=always -- {-1}"
+  git diff $@ --name-only | fzf -m --ansi --preview $preview
+}
 
 dtags () {
     local image="${1}"
