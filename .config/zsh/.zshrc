@@ -12,6 +12,8 @@ setopt HIST_IGNORE_SPACE     # Ignore commands that start with a space.
 setopt HIST_REDUCE_BLANKS    # Remove unnecessary blank lines.
 setopt HIST_FIND_NO_DUPS	 # Do not show duplicates on search.
 
+export PATH="$PATH:$HOME/.dotnet/tools/"
+
 # Load aliases if they exist.
 [ -f "${XDG_CONFIG_HOME}/zsh/.aliases" ] && . "${XDG_CONFIG_HOME}/zsh/.aliases"
 [ -f "${XDG_CONFIG_HOME}/zsh/.aliases.local" ] && . "${XDG_CONFIG_HOME}/zsh/.aliases.local"
