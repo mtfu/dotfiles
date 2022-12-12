@@ -2,7 +2,6 @@
 	editor = nvim -u ~/.vimrc.minimal
 	excludesFile = .gitignore_global
 	autocrlf = input
-	whitespace = cr-at-eol
 [commit]
 	verbose = true
 [include]
@@ -45,7 +44,3 @@
 	smudge = git-lfs smudge -- %f
 [safe]
 	directory = *
-[credential]
-	helper = /mnt/c/Program\\ Files\\ \\(x86\\)/Git\\ Credential\\ Manager/git-credential-manager.exe
-[credential "https://dev.azure.com"]
-	useHttpPath = true
