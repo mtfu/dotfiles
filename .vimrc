@@ -90,13 +90,8 @@ vnoremap <s-m-k> :m '<-2<CR>gv=gv
 "Use repgrip search for files with FZF.vim
 set grepprg=rg 
 
-nnoremap <A-a> <C-a>
-nnoremap <A-x> <C-x>
-
 nnoremap x "_x
 nnoremap dw vb"_d
-
-nnoremap <C-a> gg<S-v>G
 
 "New Tab
 nnoremap <silent> te :tabedit<Return>

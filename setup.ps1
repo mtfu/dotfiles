@@ -23,7 +23,6 @@ function Install($moduleName) {
 
 Install("posh-git")
 Install("PSfzf");
-Install("ZLocation");
 Install("posh-sshell");
 Install("Terminal-Icons");
 
