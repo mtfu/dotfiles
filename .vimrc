@@ -126,31 +126,12 @@ call plug#begin()
   Plug 'vim-scripts/ReplaceWithRegister'
   Plug 'tommcdo/vim-exchange'
   Plug 'gruvbox-community/gruvbox'		
-  Plug 'machakann/vim-highlightedyank'
 " Neovim setup only
-  Plug 'neovim/nvim-lspconfig'
-  Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
-  Plug 'nvim-lualine/lualine.nvim'
-  Plug 'tpope/vim-fugitive'
-  Plug 'williamboman/mason.nvim'
-  Plug 'williamboman/mason-lspconfig.nvim'
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-  Plug 'ryanoasis/vim-devicons'
   Plug 'nvim-lua/plenary.nvim'
+  Plug 'tpope/vim-fugitive'
+  Plug 'nvim-lualine/lualine.nvim'
   Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
   Plug 'windwp/nvim-autopairs'
-  Plug 'windwp/nvim-ts-autotag'
-  Plug 'norcalli/nvim-colorizer.lua'
-  Plug 'akinsho/nvim-bufferline.lua'
-  Plug 'lewis6991/gitsigns.nvim'
-" nvim-cpm - auto completion
-  Plug 'hrsh7th/cmp-nvim-lsp'
-  Plug 'hrsh7th/cmp-buffer'
-  Plug 'hrsh7th/cmp-path'
-  Plug 'hrsh7th/cmp-cmdline'
-  Plug 'hrsh7th/nvim-cmp'
-  Plug 'hrsh7th/cmp-vsnip'
-  Plug 'hrsh7th/vim-vsnip'
 call plug#end()
 
 " Plugin Settings 
