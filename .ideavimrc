@@ -17,6 +17,7 @@ set exchange            " commands: cx, cxx, X, cxc
 set textobj-entire      " additional text objects: ae, ie
 set vim-indent-object   " additional text objects: ai, ii, aI, iI
 set highlightedyank     "
+set commentary
 " Emulation of the `NERDTree` plugin.
 " `r` - recursively refresh the current directory.
 " `R` - recursively refresh the current root.
@@ -164,6 +165,7 @@ nmap <leader>vk V<Plug>(easymotion-k)
 noremap <leader>ed :action ShowErrorDescription<CR>
 noremap <leader>ti :action ExpressionTypeInfo<CR>
 noremap <leader>pi :action ParameterInfo<CR>
+noremap <leader>ee :action ParameterInfo<CR>
 noremap <leader>sd  :action ShowUmlDiagram<CR>
 noremap <leader>ch :action CallHierarchy<CR>
 nnoremap <leader>su :action ShowUsages<CR>
@@ -208,4 +210,5 @@ sethandler <C-v> a:ide
 sethandler <C-c> a:ide
 sethandler <C-t> a:ide
 sethandler <C-a> a:ide
+sethandler <C-]> a:ide
 
