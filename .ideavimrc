@@ -31,7 +31,12 @@ set commentary
 " `v` - split vertically.
 " `h` - split horizontally.
 set NERDTree
-set easymotion
+set matchit
+
+set quickscope
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+set argtextobj
+let g:argtextobj_pairs="(:),{:},<:>"
 
 " Hint use alt + arrows to move in insert mode
 """ Other
