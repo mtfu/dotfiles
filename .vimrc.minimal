@@ -1,3 +1,5 @@
+set backspace=indent,eol,start
+
 call plug#begin()
    Plug 'gruvbox-community/gruvbox'		
  call plug#end()
