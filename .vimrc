@@ -38,7 +38,6 @@ set smarttab
 set breakindent
 set backspace=indent,eol,start
 
-" Is used by bufferline (Neovim plugin)
 set termguicolors
 set cursorline
 set winblend=0
@@ -75,6 +74,7 @@ set undofile
 
 
 "MAPS -------------------------------------------------------------------------
+"
 "Make tab not drop selectin
 vnoremap < <gv
 vnoremap > >gv
@@ -117,7 +117,7 @@ map <leader><down> <c-w>-
 nmap <silent> <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 call plug#begin()
-" Used both in Rider and in Neovim
+  " Used both in Rider and in Neovim
   Plug 'easymotion/vim-easymotion'
   Plug 'preservim/nerdtree'
   Plug 'tpope/vim-surround'
@@ -126,19 +126,43 @@ call plug#begin()
   Plug 'vim-scripts/ReplaceWithRegister'
   Plug 'tommcdo/vim-exchange'
   Plug 'gruvbox-community/gruvbox'		
-" Neovim setup only
+  Plug 'unblevable/quick-scope'
+  
+  " Neovim setup only
   Plug 'nvim-lua/plenary.nvim'
   Plug 'tpope/vim-fugitive'
   Plug 'nvim-lualine/lualine.nvim'
   Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
   Plug 'windwp/nvim-autopairs'
+
+  " LSP Support with help of lsp-zero.nvim
+  Plug 'neovim/nvim-lspconfig'             " Required
+  Plug 'williamboman/mason.nvim'           " Optional
+  Plug 'williamboman/mason-lspconfig.nvim' " Optional
+
+  " Autocompletion Engine
+  Plug 'hrsh7th/nvim-cmp'         " Required
+  Plug 'hrsh7th/cmp-nvim-lsp'     " Required
+  Plug 'hrsh7th/cmp-buffer'       " Optional
+  Plug 'hrsh7th/cmp-path'         " Optional
+  Plug 'saadparwaiz1/cmp_luasnip' " Optional
+  Plug 'hrsh7th/cmp-nvim-lua'     " Optional
+
+  "  Snippets
+  Plug 'L3MON4D3/LuaSnip'             " Required
+  Plug 'rafamadriz/friendly-snippets' " Optional
+
+  Plug 'VonHeikemen/lsp-zero.nvim', {'branch': 'v1.x'} 
 call plug#end()
 
 " Plugin Settings 
 colorscheme gruvbox
 
-let NERDTreeShowHidden=1
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+
 nnoremap <S-M-l> :NERDTreeFind<CR>
+let NERDTreeShowHidden=1
 let g:NERDTreeMapOpenVSplit='v'
 let g:NERDTreeMapOpenSplit='h'
+let NERDTreeCustomOpenArgs = {'file':{'keepopen': 0}}
 
