@@ -125,8 +125,6 @@ call plug#begin()
   Plug 'tpope/vim-commentary'
   Plug 'vim-scripts/ReplaceWithRegister'
   Plug 'tommcdo/vim-exchange'
-  Plug 'gruvbox-community/gruvbox'		
-  Plug 'unblevable/quick-scope'
   
   " Neovim setup only
   Plug 'nvim-lua/plenary.nvim'
@@ -134,6 +132,9 @@ call plug#begin()
   Plug 'nvim-lualine/lualine.nvim'
   Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
   Plug 'windwp/nvim-autopairs'
+  Plug 'kdheepak/lazygit.nvim'
+  Plug 'unblevable/quick-scope'
+  Plug 'gruvbox-community/gruvbox'		
 
   " LSP Support with help of lsp-zero.nvim
   Plug 'neovim/nvim-lspconfig'             " Required
@@ -153,13 +154,19 @@ call plug#begin()
   Plug 'rafamadriz/friendly-snippets' " Optional
 
   Plug 'VonHeikemen/lsp-zero.nvim', {'branch': 'v1.x'} 
+  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 call plug#end()
 
 " Plugin Settings 
 colorscheme gruvbox
 
+" quick scope
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
+" lazy-git
+nnoremap <silent> <leader>gg :LazyGit<CR>
+
+" nerdtree
 nnoremap <S-M-l> :NERDTreeFind<CR>
 let NERDTreeShowHidden=1
 let g:NERDTreeMapOpenVSplit='v'
