@@ -71,7 +71,7 @@ noremap <leader>tf mm`m:action GotoFile<CR>
 noremap <leader>tt mm`m:action GotoTest<CR>
 noremap <leader>tc mm`m:action GotoClass<CR>
 noremap <leader>fg mm`m:action FindInPath<CR>
-noremap <leader>gs mm`m:action GotoSuperMethod<CR>
+noremap <leader>gsm mm`m:action GotoSuperMethod<CR>
 noremap <leader>gi mm`m:action GotoImplementation<CR>
 noremap <leader>ne mm`m:action GotoNextError<CR>
 noremap <leader>pe mm`m:action GotoPreviousError<CR>

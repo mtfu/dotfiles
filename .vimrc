@@ -1,4 +1,4 @@
-" BASE SETTINGS -------------------------------------------------------------------------
+"BASE SETTINGS -------------------------------------------------------------------------
 
 "Use vim settings instead of vi, do not move this line
 set nocompatible
@@ -46,10 +46,10 @@ set pumblend=5
 set background=dark
 set inccommand=split
 
-" Autotically insert the current comment leader after hitting <Enter> in Insert Mode.
+"Autotically insert the current comment leader after hitting <Enter> in Insert Mode.
 set formatoptions-=r
 
-" Find files, Search down into subfolders with :find <fileName>
+"Find files, Search down into subfolders with :find <fileName>
 set path+=** 
 set wildignore+=*/node_modules/*
 let g:clipboard = {
@@ -65,7 +65,7 @@ let g:clipboard = {
   \   'cache_enabled': 0,
   \ }
 
-" Use persistent history. (U)
+"Use persistent history. (U)
 if !isdirectory("/tmp/.vim-undo-dir")
     call mkdir("/tmp/.vim-undo-dir", "", 0700)
 endif
@@ -113,11 +113,11 @@ map <leader><right> <c-w>>
 map <leader><up> <c-w>+
 map <leader><down> <c-w>-
 
-" Commands
+"Commands
 nmap <silent> <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 call plug#begin()
-  " Used both in Rider and in Neovim
+"Used both in Rider and in Neovim
   Plug 'easymotion/vim-easymotion'
   Plug 'preservim/nerdtree'
   Plug 'tpope/vim-surround'
@@ -126,7 +126,7 @@ call plug#begin()
   Plug 'vim-scripts/ReplaceWithRegister'
   Plug 'tommcdo/vim-exchange'
   
-  " Neovim setup only
+"Neovim setup only
   Plug 'nvim-lua/plenary.nvim'
   Plug 'tpope/vim-fugitive'
   Plug 'nvim-lualine/lualine.nvim'
@@ -135,13 +135,21 @@ call plug#begin()
   Plug 'kdheepak/lazygit.nvim'
   Plug 'unblevable/quick-scope'
   Plug 'gruvbox-community/gruvbox'		
+":Z {query}: cd to the highest ranked directory matching your query. If {query} is omitted, cd to the home directory
+":Lz {query}: same as :Z, but local to the current window
+":Tz {query}: same as :Z, but local to the current tab
+":Zi {query}: cd to one of your highest ranking directories using fzf
+":Lzi {query}: same as :Zi, but local to the current window
+":Tzi {query}: same as :Zi, but local to the current tab
+  Plug 'nanotee/zoxide.vim'
+  Plug 'mbbill/undotree'
 
-  " LSP Support with help of lsp-zero.nvim
+"LSP Support with help of lsp-zero.nvim
   Plug 'neovim/nvim-lspconfig'             " Required
   Plug 'williamboman/mason.nvim'           " Optional
   Plug 'williamboman/mason-lspconfig.nvim' " Optional
 
-  " Autocompletion Engine
+"Autocompletion Engine
   Plug 'hrsh7th/nvim-cmp'         " Required
   Plug 'hrsh7th/cmp-nvim-lsp'     " Required
   Plug 'hrsh7th/cmp-buffer'       " Optional
@@ -149,7 +157,7 @@ call plug#begin()
   Plug 'saadparwaiz1/cmp_luasnip' " Optional
   Plug 'hrsh7th/cmp-nvim-lua'     " Optional
 
-  "  Snippets
+"Snippets
   Plug 'L3MON4D3/LuaSnip'             " Required
   Plug 'rafamadriz/friendly-snippets' " Optional
 
@@ -157,16 +165,22 @@ call plug#begin()
   Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 call plug#end()
 
-" Plugin Settings 
+"Plugin Settings 
 colorscheme gruvbox
 
-" quick scope
+"Quick scope
 let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 
-" lazy-git
+"Lazy-git
 nnoremap <silent> <leader>gg :LazyGit<CR>
 
-" nerdtree
+"vim-fugitive
+nnoremap <silent> <leader>gs :Git<CR>
+
+"UndoTree
+nnoremap <F5> :UndotreeToggle<CR>
+
+"Nerdtree
 nnoremap <S-M-l> :NERDTreeFind<CR>
 let NERDTreeShowHidden=1
 let g:NERDTreeMapOpenVSplit='v'
