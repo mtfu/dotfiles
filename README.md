@@ -11,4 +11,10 @@ Insert into gitconfig.local
     name = 
 
 # NEOVIM
-To install extensions for neovim run :PlugInstall
+To install extensions for neovim run :PlugInstall, and :PlugUpdate to update plugins
+
+# Treesitter
+1. Enable Developer Mode In Windows to make sure that the parsers can do symbolic links
+2. Install zig and also mingw (Was needed on my laptop to install the svelte parser)
+
+https://github.com/nvim-treesitter/nvim-treesitter/wiki/Windows-support
