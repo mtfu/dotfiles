@@ -76,6 +76,12 @@ function sr {
   Set-Location 'C:\repos'
 }
 
+function nGuid {
+  $guid = [guid]::NewGuid().ToString()
+  Write-Host $guid
+  $guid | clip
+}
+
 # Alias
 Set-Alias vim nvim
 Set-Alias ll ls
