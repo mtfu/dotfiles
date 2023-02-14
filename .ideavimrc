@@ -55,14 +55,16 @@ nnoremap g; :action JumpToLastChange<CR>
 nnoremap g, :action JumpToNextChange<CR>
 nnoremap [[ :action MethodUp<CR>
 nnoremap ]] :action MethodDown<CR>
+map zc <Action>(CollapseRegion)
+map zo <Action>(ExpandRegion)
 
-" imap <C-n> :action HippieCompletion<CR>
-" imap <C-p> :action HippieBackwardCompletion<CR>
+imap <C-n> :action HippieCompletion<CR>
+imap <C-p> :action HippieBackwardCompletion<CR>
 
 noremap <leader>fs mm`m:action FileStructurePopup<CR>
 nnoremap <leader>fu :action FindUsages<CR>
 
-" file and GoTo
+" File and GoTo
 nnoremap <C-S-p> :action GotoAction<CR>
 nnoremap <C-p> :action GotoFile<CR>
 noremap <leader>hh :action RecentFiles<CR>
@@ -93,15 +95,13 @@ nnoremap <c-w>q :action Unsplit<CR>
 nnoremap <c-w>p :action PrevSplitter<CR> 
 
 nnoremap <leader>en :action EditSourceInNewWindow<CR>
-nnoremap <leader>zc :action CollapseAllRegions<CR>
-nnoremap <leader>zo :action ExpandAllRegions<CR>
 
-""" Running and Debugging
+" Running and Debugging
 nnoremap ,tb :action ToggleLineBreakpoint<CR>
 nnoremap ,bb :action BuildSolutionAction<CR>
 nnoremap ,be :action EditBreakpoint<CR>
 nnoremap ,bs :action RebuildSolutionAction<CR>
-nnoremap ,dd :action Debug<CR>
+nnoremap ,d :action Debug<CR>
 nnoremap ,ru :action Rerun<CR>
 nnoremap ,rr :action Run<CR>
 nnoremap ,rn :action RunCoverage<CR>
@@ -136,15 +136,14 @@ noremap <leader>ab :action ViewBreakpoints<CR>
 noremap <leader>ed :action ShowErrorDescription<CR>
 noremap <leader>ee :action ParameterInfo<CR>
 noremap <leader>ti :action ExpressionTypeInfo<CR>
-"
+
 """"""""""""""""""""""""""""""""""""""Project""""""""""""""""""""""""""""""""""""""
-noremap <leader>cP :action CloseProject<CR>
-noremap <leader>CP :action CloseProject<CR>
-noremap <leader>nP :action NewProject<CR>
+noremap <leader>cp :action CloseProject<CR>
+noremap <leader>np :action NewProject<CR>
 noremap <leader>np :action NewProject<CR>
 noremap <leader>nf :action NewFile<CR>
 noremap <leader>nc :action NewClass<CR>
-"
+
 """"""""""""""""""""""""""""""""""""""Utilities""""""""""""""""""""""""""""""""
 noremap <leader>sw :action SurroundWith<CR>
 noremap <leader>= :action ReformatCode<CR>
@@ -163,5 +162,4 @@ sethandler a:vim
 sethandler <C-v> a:ide
 sethandler <C-c> a:ide
 sethandler <C-t> a:ide
-sethandler <C-a> a:ide
 
