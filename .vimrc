@@ -46,6 +46,12 @@ set pumblend=5
 set background=dark
 set inccommand=split
 
+let &shell = executable('pwsh') ? 'pwsh' : 'powershell'
+let &shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
+let &shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+let &shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
+set shellquote= shellxquote=
+"
 "Autotically insert the current comment leader after hitting <Enter> in Insert Mode.
 set formatoptions-=r
 
@@ -74,7 +80,6 @@ set undofile
 
 
 "MAPS -------------------------------------------------------------------------
-"
 "Make tab not drop selectin
 vnoremap < <gv
 vnoremap > >gv
@@ -132,9 +137,11 @@ call plug#begin()
   Plug 'nvim-lualine/lualine.nvim'
   Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
   Plug 'windwp/nvim-autopairs'
+  Plug 'windwp/nvim-ts-autotag'
   Plug 'kdheepak/lazygit.nvim'
   Plug 'unblevable/quick-scope'
   Plug 'gruvbox-community/gruvbox'		
+  
 ":Z {query}: cd to the highest ranked directory matching your query. If {query} is omitted, cd to the home directory
 ":Lz {query}: same as :Z, but local to the current window
 ":Tz {query}: same as :Z, but local to the current tab
