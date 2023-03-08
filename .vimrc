@@ -55,6 +55,9 @@ set shellquote= shellxquote=
 "Autotically insert the current comment leader after hitting <Enter> in Insert Mode.
 set formatoptions-=r
 
+"Do not move signs (icons in the left)
+set signcolumn=yes
+
 "Find files, Search down into subfolders with :find <fileName>
 set path+=** 
 set wildignore+=*/node_modules/*
@@ -122,7 +125,6 @@ map <leader><down> <c-w>-
 nmap <silent> <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 call plug#begin()
-"Used both in Rider and in Neovim
   Plug 'easymotion/vim-easymotion'
   Plug 'preservim/nerdtree'
   Plug 'tpope/vim-surround'
@@ -130,7 +132,8 @@ call plug#begin()
   Plug 'tpope/vim-commentary'
   Plug 'vim-scripts/ReplaceWithRegister'
   Plug 'tommcdo/vim-exchange'
-  
+  Plug 'ryanoasis/vim-devicons'
+ 
 "Neovim setup only
   Plug 'nvim-lua/plenary.nvim'
   Plug 'tpope/vim-fugitive'
@@ -141,7 +144,7 @@ call plug#begin()
   Plug 'kdheepak/lazygit.nvim'
   Plug 'unblevable/quick-scope'
   Plug 'gruvbox-community/gruvbox'		
-  
+ 
 ":Z {query}: cd to the highest ranked directory matching your query. If {query} is omitted, cd to the home directory
 ":Lz {query}: same as :Z, but local to the current window
 ":Tz {query}: same as :Z, but local to the current tab
