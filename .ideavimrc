@@ -44,7 +44,7 @@ nnoremap <c-z> :action ChangeView<CR>
 nnoremap <c-n> :action JumpToLastWindow<CR>
 nnoremap <c-x> :action HideAllWindows<CR>
 
-nnoremap <leader>rr :action Refactorings.QuickListPopupAction<CR>
+nnoremap <leader>ca :action Refactorings.QuickListPopupAction<CR>
 nnoremap <leader>ms :action RiderManageRecentProjects<CR>
 nnoremap <leader>aa :action Annotate<CR>
 
@@ -62,7 +62,7 @@ imap <C-n> :action HippieCompletion<CR>
 imap <C-p> :action HippieBackwardCompletion<CR>
 
 noremap <leader>fs mm`m:action FileStructurePopup<CR>
-nnoremap <leader>fu :action FindUsages<CR>
+nnoremap gr :action FindUsages<CR>
 
 " File and GoTo
 nnoremap <C-S-p> :action GotoAction<CR>
@@ -97,20 +97,19 @@ nnoremap <c-w>p :action PrevSplitter<CR>
 nnoremap <leader>en :action EditSourceInNewWindow<CR>
 
 " Running and Debugging
-nnoremap ,tb :action ToggleLineBreakpoint<CR>
-nnoremap ,bb :action BuildSolutionAction<CR>
-nnoremap ,be :action EditBreakpoint<CR>
-nnoremap ,bs :action RebuildSolutionAction<CR>
-nnoremap ,d :action Debug<CR>
-nnoremap ,ru :action Rerun<CR>
-nnoremap ,rr :action Run<CR>
-nnoremap ,rn :action RunCoverage<CR>
-nnoremap ,rc :action ChooseRunConfiguration <CR>
-nnoremap ,ut :action RiderUnitTestDebugContextAction<CR>
-nnoremap ,uf :action RiderUnitTestSessionRerunFailedTestsAction<CR>
-nnoremap ,us :action RiderUnitTestRunSolutionAction<CR>
-nnoremap ,n :action ActivateDebugToolWindow<CR>
-nnoremap ,s :action Stop<CR>
+nnoremap <leader>tb :action ToggleLineBreakpoint<CR>
+nnoremap <leader>bb :action BuildSolutionAction<CR>
+nnoremap <leader>be :action EditBreakpoint<CR>
+nnoremap <leader>bs :action RebuildSolutionAction<CR>
+nnoremap <leader>dd :action Debug<CR>
+nnoremap <leader>ru :action Rerun<CR>
+nnoremap <leader>br :action Run<CR>
+nnoremap <leader>rn :action RunCoverage<CR>
+nnoremap <leader>rc :action ChooseRunConfiguration <CR>
+nnoremap <leader>ut :action RiderUnitTestDebugContextAction<CR>
+nnoremap <leader>us :action RiderUnitTestRunSolutionAction<CR>
+nnoremap <leader>uf :action RiderUnitTestSessionRerunFailedTestsAction<CR>
+nnoremap <leader>ss :action Stop<CR>
 
 """"""""""""""""""""""""""""""""""""""Refactoring""""""""""""""""""""""""""""""""""""""
 noremap <leader>re :action RenameElement<CR>
@@ -148,8 +147,6 @@ noremap <leader>nc :action NewClass<CR>
 noremap <leader>sw :action SurroundWith<CR>
 noremap <leader>= :action ReformatCode<CR>
 noremap <leader>sm :action ShowPopupMenu<CR>
-noremap <leader>cap   :action CopyAbsolutePath<CR>
-noremap <leader>ccp   :action CopyContentRootPath<CR>
 noremap <leader>de :action SafeDelete<CR>
 noremap <leader>oi :action OptimizeImports<CR>
 noremap <leader>on :action RiderBackendAction-Refactorings.AdjustNamespaces<CR>
