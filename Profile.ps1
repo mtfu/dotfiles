@@ -93,7 +93,8 @@ Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
 Set-Alias lg lazygit
 Set-Alias v vim
 
-New-Alias tail Get-ContentTail
+# Env
+$env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
 
 # Git helpers
 Function stand { git standup $args }
