@@ -1,7 +1,5 @@
-if !empty($USERPROFILE) 
-	let $HOME = $USERPROFILE
-end
-source ~/.vimrc
-lua require('base')
+lua require('mtfu.base')
+lua require('mtfu.highlights')
+lua require('mtfu.plugins')
 
-au TextYankPost * silent! lua vim.highlight.on_yank()
+source ~/.vimrc
