@@ -1,5 +1,3 @@
-"BASE SETTINGS -------------------------------------------------------------------------
-
 "Use vim settings instead of vi, do not move this line
 set nocompatible
 let mapleader=" "
@@ -61,18 +59,6 @@ set signcolumn=yes
 "Find files, Search down into subfolders with :find <fileName>
 set path+=** 
 set wildignore+=*/node_modules/*
-let g:clipboard = {
-  \   'name': 'win32yank-wsl',
-  \   'copy': {
-  \      '+': 'win32yank.exe -i --crlf',
-  \      '*': 'win32yank.exe -i --crlf',
-  \    },
-  \   'paste': {
-  \      '+': 'win32yank.exe -o --lf',
-  \      '*': 'win32yank.exe -o --lf',
-  \   },
-  \   'cache_enabled': 0,
-  \ }
 
 "Use persistent history. (U)
 if !isdirectory("/tmp/.vim-undo-dir")
@@ -123,57 +109,6 @@ map <leader><down> <c-w>-
 
 "Commands
 nmap <silent> <leader>cd :cd %:p:h<cr>:pwd<cr>
-
-call plug#begin()
-  Plug 'easymotion/vim-easymotion'
-  Plug 'preservim/nerdtree'
-  Plug 'tpope/vim-surround'
-  Plug 'terryma/vim-multiple-cursors'
-  Plug 'tpope/vim-commentary'
-  Plug 'vim-scripts/ReplaceWithRegister'
-  Plug 'tommcdo/vim-exchange'
-  Plug 'ryanoasis/vim-devicons'
- 
-"Neovim setup only
-  Plug 'nvim-lua/plenary.nvim'
-  Plug 'tpope/vim-fugitive'
-  Plug 'nvim-lualine/lualine.nvim'
-  Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
-  Plug 'windwp/nvim-autopairs'
-  Plug 'windwp/nvim-ts-autotag'
-  Plug 'kdheepak/lazygit.nvim'
-  Plug 'unblevable/quick-scope'
-  Plug 'gruvbox-community/gruvbox'		
- 
-":Z {query}: cd to the highest ranked directory matching your query. If {query} is omitted, cd to the home directory
-":Lz {query}: same as :Z, but local to the current window
-":Tz {query}: same as :Z, but local to the current tab
-":Zi {query}: cd to one of your highest ranking directories using fzf
-":Lzi {query}: same as :Zi, but local to the current window
-":Tzi {query}: same as :Zi, but local to the current tab
-  Plug 'nanotee/zoxide.vim'
-  Plug 'mbbill/undotree'
-
-"LSP Support with help of lsp-zero.nvim
-  Plug 'neovim/nvim-lspconfig'             " Required
-  Plug 'williamboman/mason.nvim'           " Optional
-  Plug 'williamboman/mason-lspconfig.nvim' " Optional
-
-"Autocompletion Engine
-  Plug 'hrsh7th/nvim-cmp'         " Required
-  Plug 'hrsh7th/cmp-nvim-lsp'     " Required
-  Plug 'hrsh7th/cmp-buffer'       " Optional
-  Plug 'hrsh7th/cmp-path'         " Optional
-  Plug 'saadparwaiz1/cmp_luasnip' " Optional
-  Plug 'hrsh7th/cmp-nvim-lua'     " Optional
-
-"Snippets
-  Plug 'L3MON4D3/LuaSnip'             " Required
-  Plug 'rafamadriz/friendly-snippets' " Optional
-
-  Plug 'VonHeikemen/lsp-zero.nvim', {'branch': 'v1.x'} 
-  Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-call plug#end()
 
 "Plugin Settings 
 colorscheme gruvbox

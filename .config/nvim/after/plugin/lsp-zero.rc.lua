@@ -5,13 +5,6 @@ if (not status) then return end
 
 lsp.preset('recommended')
 
-lsp.ensure_installed({
-  'tsserver',
-  'eslint',
-  'sumneko_lua',
-  'angularls'
-})
-
 lsp.configure('tsserver', {
   on_attach = function(_, _)
   end,
@@ -32,7 +25,7 @@ lsp.on_attach(function(_, bufnr)
 
   bind("n", "<leader>re", function() vim.lsp.buf.rename() end, opts)
   bind("n", "<leader>ca", function() vim.lsp.buf.code_action() end, opts)
-  bind("n", "<leader>u", require('telescope.builtin').lsp_references, {})
+  bind("n", "<leader>gr", require('telescope.builtin').lsp_references, {})
   bind("n", "<leader>gi", function() vim.lsp.buf.implementation() end, opts)
 
 end)
