@@ -2,17 +2,15 @@ local status, treesitter = pcall(require, "nvim-treesitter.configs")
 if (not status) then return end
 
 local treesitter_install = require 'nvim-treesitter.install'
-
 treesitter_install.prefer_git = false
 treesitter_install.compilers = { "gcc", "zig" }
 
 local filetypes = {
-    'html', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'svelte', 'vue', 'tsx', 'jsx', 'rescript',
-    'xml', 'php', 'markdown', 'glimmer','handlebars','hbs',
+    'html', 'javascript', 'typescript', 'tsx', 'jsx', 'markdown', 'astro'
 }
 
 treesitter.setup {
-  ensure_installed = "all",
+  ensure_installed = 'all',
   sync_install = false,
   auto_install = true,
   highlight = {

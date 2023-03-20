@@ -62,16 +62,13 @@ imap <C-n> :action HippieCompletion<CR>
 imap <C-p> :action HippieBackwardCompletion<CR>
 
 noremap <leader>fs mm`m:action FileStructurePopup<CR>
-nnoremap <leader>gr :action ShowUsages<CR>
-nnoremap <leader>gR :action FindUsages<CR>
+nnoremap <leader>U :action ShowUsages<CR>
+nnoremap <leader>u :action FindUsages<CR>
 
 " File and GoTo
 nnoremap <C-S-p> :action GotoAction<CR>
 nnoremap <C-p> :action GotoFile<CR>
 noremap <leader>hh :action RecentFiles<CR>
-noremap <leader>tf mm`m:action GotoFile<CR>
-noremap <leader>tt mm`m:action GotoTest<CR>
-noremap <leader>tc mm`m:action GotoClass<CR>
 noremap <leader>fg mm`m:action FindInPath<CR>
 noremap <leader>gsm mm`m:action GotoSuperMethod<CR>
 noremap <leader>gi mm`m:action GotoImplementation<CR>
@@ -103,12 +100,11 @@ nnoremap <leader>be :action EditBreakpoint<CR>
 nnoremap <leader>bs :action RebuildSolutionAction<CR>
 nnoremap <leader>dd :action Debug<CR>
 nnoremap <leader>ru :action Rerun<CR>
-nnoremap <leader>br :action Run<CR>
-nnoremap <leader>rn :action RunCoverage<CR>
+nnoremap <leader>rr :action Run<CR>
 nnoremap <leader>rc :action ChooseRunConfiguration <CR>
-nnoremap <leader>ut :action RiderUnitTestDebugContextAction<CR>
-nnoremap <leader>us :action RiderUnitTestRunSolutionAction<CR>
-nnoremap <leader>uf :action RiderUnitTestSessionRerunFailedTestsAction<CR>
+nnoremap <leader>tt :action RiderUnitTestDebugContextAction<CR>
+nnoremap <leader>ts :action RiderUnitTestRunSolutionAction<CR>
+nnoremap <leader>tf :action RiderUnitTestSessionRerunFailedTestsAction<CR>
 nnoremap <leader>ss :action Stop<CR>
 
 """"""""""""""""""""""""""""""""""""""Refactoring""""""""""""""""""""""""""""""""""""""
@@ -145,7 +141,7 @@ noremap <leader>nc :action NewClass<CR>
 
 """"""""""""""""""""""""""""""""""""""Utilities""""""""""""""""""""""""""""""""
 noremap <leader>sw :action SurroundWith<CR>
-noremap <leader>= :action ReformatCode<CR>
+noremap <leader><leader> :action ReformatCode<CR>
 noremap <leader>sm :action ShowPopupMenu<CR>
 noremap <leader>de :action SafeDelete<CR>
 noremap <leader>oi :action OptimizeImports<CR>
