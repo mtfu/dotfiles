@@ -118,5 +118,3 @@ function Invoke-Starship-PreCommand {
 }
 
 Invoke-Expression (&starship init powershell)
-
-Set-Alias lvim 'C:\Users\Epico_mtfu\.local\bin\lvim.ps1'

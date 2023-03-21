@@ -1,2 +1,7 @@
-require("gruvbox").setup({})
-vim.cmd("colorscheme gruvbox")
+require 'lualine'.setup {
+    options = {
+        theme = 'gruvbox-material'
+    }
+}
+
+vim.cmd("colorscheme gruvbox-material")

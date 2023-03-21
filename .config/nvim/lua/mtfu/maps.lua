@@ -44,6 +44,8 @@ vim.keymap.set('n', '<C-w><right>', '<C-w>>')
 vim.keymap.set('n', '<C-w><up>', '<C-w>+')
 vim.keymap.set('n', '<C-w><down>', '<C-w>-')
 
-
 -- Lazygit
 vim.keymap.set('n', '<leader>lg', '<cmd>LazyGit<CR>')
+
+-- Change path
+vim.keymap.set('n', '<leader>cd', ':cd %:p:h<CR>:pwd<CR>')
