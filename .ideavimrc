@@ -41,8 +41,12 @@ let g:argtextobj_pairs="(:),{:},<:>"
 " Hint use alt + arrows to move in insert mode
 """ Other
 nnoremap <c-z> :action ChangeView<CR>
+" Try to use same command as in nvim
+nnoremap <c-w>p :action JumpToLastWindow<CR>
 nnoremap <c-n> :action JumpToLastWindow<CR>
 nnoremap <c-x> :action HideAllWindows<CR>
+
+nnoremap <c-w>o :action HideAllWindows<CR>
 
 nnoremap <leader>ca :action Refactorings.QuickListPopupAction<CR>
 nnoremap <leader>ms :action RiderManageRecentProjects<CR>
@@ -84,12 +88,11 @@ nnoremap <leader>fc :action GotoClass<CR>
 nnoremap <leader>fs :action GotoSymbol<CR>
 nnoremap <leader>fa :action GotoAction<CR>
 
-nnoremap <c-h> <c-w>h
-nnoremap <c-l> <c-w>l
-nnoremap <c-j> <c-w>j
-nnoremap <c-k> <c-w>k
+nnoremap sh <c-w>h
+nnoremap sl <c-w>l
+nnoremap sj <c-w>j
+nnoremap sk <c-w>k
 nnoremap <c-w>q :action Unsplit<CR>
-nnoremap <c-w>p :action PrevSplitter<CR> 
 
 nnoremap <leader>en :action EditSourceInNewWindow<CR>
 

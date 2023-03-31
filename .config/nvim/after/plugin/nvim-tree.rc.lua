@@ -8,12 +8,11 @@ vim.g.loaded_netrwPlugin = 1
 -- set termguicolors to enable highlight groups
 vim.opt.termguicolors = true
 
-nvimTree.setup({})
+nvimTree.setup({
+    hijack_directories = {
+        enable = true,
+        auto_open = false,
+    },
+})
 
-local function open_nvim_tree(_)
-end
-
--- Only nvim
-vim.api.nvim_create_autocmd({ "VimEnter" }, { callback = open_nvim_tree})
-
-vim.keymap.set('n', '<S-M-l>', ':NvimTreeFindFileToggle<CR>')
+vim.keymap.set('n', '<S-M-l>', ':NvimTreeFindFileToggle!<CR>')

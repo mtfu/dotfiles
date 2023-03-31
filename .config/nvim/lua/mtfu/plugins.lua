@@ -27,6 +27,7 @@ require("lazy").setup({
     'dstein64/vim-startuptime',
     'sainnhe/gruvbox-material',
     'nanotee/zoxide.vim',
+    'kdheepak/lazygit.nvim',
     'mbbill/undotree',
     {
         'nvim-tree/nvim-tree.lua',
