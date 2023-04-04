@@ -9,6 +9,16 @@ set selectmode=key,ideas
 nnoremap \e :source ~/.ideavimrc<CR>
 nnoremap \r :action IdeaVim.ReloadVimRc.reload<CR>
 
+" leader key
+let mapleader=" "
+
+" disable annoying bells
+set visualbell
+set noerrorbells
+
+vnoremap < <gv
+vnoremap > >gv
+
 " plugins
 set surround            " commands: ys, cs, ds, S
 set multiple-cursors    " commands <A-n>, <A-x>, <A-p>, g<A-n>
@@ -159,4 +169,5 @@ sethandler <C-v> a:ide
 sethandler <C-c> a:ide
 sethandler <C-t> a:ide
 sethandler <C-f> a:ide
+sethandler <C-h> a:ide
 

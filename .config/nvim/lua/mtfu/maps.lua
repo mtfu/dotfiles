@@ -38,6 +38,9 @@ vim.keymap.set('', 'sk', '<C-w>k')
 vim.keymap.set('', 'sj', '<C-w>j')
 vim.keymap.set('', 'sl', '<C-w>l')
 
+vim.keymap.set('n', '<', '<gv')
+vim.keymap.set('n', '>', '>gv')
+
 -- Resize window
 vim.keymap.set('n', '<C-w><left>', '<C-w><')
 vim.keymap.set('n', '<C-w><right>', '<C-w>>')
@@ -46,6 +49,9 @@ vim.keymap.set('n', '<C-w><down>', '<C-w>-')
 
 -- Lazygit
 vim.keymap.set('n', '<leader>lg', '<cmd>LazyGit<CR>')
+
+-- Undo Tree
+vim.keymap.set('n', '<leader><F5>', '<cmd>UndotreeToggle<CR>')
 
 -- Change path
 vim.keymap.set('n', '<leader>cd', ':cd %:p:h<CR>:pwd<CR>')

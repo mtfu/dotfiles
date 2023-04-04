@@ -19,7 +19,10 @@ require("lazy").setup({
     {
         'nvim-telescope/telescope.nvim',
         tag = '0.1.1',
-        dependencies = { 'nvim-lua/plenary.nvim' }
+        dependencies = { 'nvim-lua/plenary.nvim', { "kdheepak/lazygit.nvim" } },
+         config = function()
+                require("telescope").load_extension("lazygit")
+            end,
     },
     'windwp/nvim-autopairs',
     'windwp/nvim-ts-autotag',
@@ -27,7 +30,15 @@ require("lazy").setup({
     'dstein64/vim-startuptime',
     'sainnhe/gruvbox-material',
     'nanotee/zoxide.vim',
-    'kdheepak/lazygit.nvim',
+    {
+        'ThePrimeagen/harpoon',
+        branch = 'master',
+        dependencies = {
+            {
+                'nvim-lua/plenary.nvim'
+            }
+        }
+    },
     'mbbill/undotree',
     {
         'nvim-tree/nvim-tree.lua',
@@ -59,4 +70,6 @@ require("lazy").setup({
             { 'rafamadriz/friendly-snippets' }, -- Optional
         }
     },
+    -- Make methods stay pinned to the top
+    'nvim-treesitter/nvim-treesitter-context'
 })
