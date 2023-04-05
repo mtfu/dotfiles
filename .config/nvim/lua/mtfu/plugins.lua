@@ -12,6 +12,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
+    'tpope/vim-fugitive',
     'tpope/vim-surround',
     'tpope/vim-commentary',
     'vim-scripts/ReplaceWithRegister',
@@ -20,13 +21,18 @@ require("lazy").setup({
         'nvim-telescope/telescope.nvim',
         tag = '0.1.1',
         dependencies = { 'nvim-lua/plenary.nvim', { "kdheepak/lazygit.nvim" } },
-         config = function()
-                require("telescope").load_extension("lazygit")
-            end,
+        config = function()
+            require("telescope").load_extension("lazygit")
+        end,
     },
     'windwp/nvim-autopairs',
     'windwp/nvim-ts-autotag',
-    'lewis6991/gitsigns.nvim',
+     {
+      'lewis6991/gitsigns.nvim',
+      config = function()
+        require('gitsigns').setup()
+      end
+    },
     'dstein64/vim-startuptime',
     'sainnhe/gruvbox-material',
     'nanotee/zoxide.vim',
