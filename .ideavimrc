@@ -16,8 +16,8 @@ let mapleader=" "
 set visualbell
 set noerrorbells
 
-vnoremap < <gv
-vnoremap > >gv
+" vnoremap < <gv
+" vnoremap > >gv
 
 " plugins
 set surround            " commands: ys, cs, ds, S
