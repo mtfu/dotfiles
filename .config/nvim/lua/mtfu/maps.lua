@@ -28,11 +28,8 @@ vim.keymap.set('n', 'te', ':tabedit<CR>')
 -- Split window
 vim.keymap.set('n', 'ss', ':split<Return><C-w>w')
 vim.keymap.set('n', 'sv', ':vsplit<Return><C-w>w')
---
-vim.keymap.set('n', '<', '<gv')
-vim.keymap.set('n', '>', '>gv')
 
--- Lazygit
+
 vim.keymap.set('n', '<leader>lg', '<cmd>LazyGit<CR>')
 
 -- Gitsigns blame current line
