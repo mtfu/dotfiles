@@ -2,113 +2,18 @@
 
 set -e
 
-skip_system_packages="${1}"
-
-os_type="$(uname -s)"
-
 clone_path="${clone_path:-"${PWD}"}"
 echo "Current working directory: $clone_path"
 
 apt_packages="curl git iproute2 python3-pip ripgrep tmux neovim zsh fd-find bat"
 apt_packages_optional="gnupg htop jq pass pwgen rsync shellcheck unzip"
 
-brew_packages="diffutils git python ripgrep tmux neovim zsh fd"
-brew_packages_optional="gnupg htop jq pass pwgen rsync shellcheck"
-
-install_asdf_version="v0.10.2"
-install_node_version="latest"
-
-###############################################################################
-# Detect OS and distro type
-###############################################################################
-
-function no_system_packages() {
-cat << EOF
-System package installation isn't supported with your OS / distro.
-
-Then re-run the script and explicitly skip installing system packages:
-
-    ./install --skip-system-packages
-EOF
-
-exit 1
-}
-
-case "${os_type}" in
-    Linux*)
-        os_type="Linux"
-
-        if [ !  -f "/etc/debian_version" ]; then
-           [ -z "${skip_system_packages}" ] && no_system_packages
-        fi
-
-        ;;
-    Darwin*) os_type="macOS";;
-    *)
-        os_type="Other"
-
-        [ -z "${skip_system_packages}" ] && no_system_packages
-
-        ;;
-esac
 
 ###############################################################################
 # Install packages using your OS' package manager
 ###############################################################################
 
-function apt_install_packages {
-    # shellcheck disable=SC2086
-    sudo apt-get update && sudo apt-get install -y ${apt_packages} ${apt_packages_optional}
-}
-
-function brew_install_self {
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-}
-
-function brew_install_packages {
-    [ -x "$(command -v brew > /dev/null 2>&1)" ] && brew_install_self
-
-    # shellcheck disable=SC2086
-    brew install ${brew_packages} ${brew_packages_optional}
-}
-
-function display_packages {
-    if [ "${os_type}" == "Linux" ]; then
-        echo "${apt_packages} ${apt_packages_optional}"
-    else
-        echo "${brew_packages} ${brew_packages_optional}"
-    fi
-}
-
-# add the newst veresion of neovim
-sudo add-apt-repository ppa:neovim-ppa/stable
-
-if [ -z "${skip_system_packages}" ]; then
-cat << EOF
-
-If you choose yes, all of the system packages below will be installed:
-
-$(display_packages)
-
-EOF
-    while true; do
-        read -rp "Do you want to install the above packages? (y/n) " yn
-        case "${yn}" in
-            [Yy]*)
-                if [ "${os_type}" == "Linux" ]; then
-                    apt_install_packages
-                else
-                    brew_install_packages
-                fi
-
-                break;;
-            [Nn]*) exit 0;;
-            *) echo "Please answer y or n";;
-        esac
-    done
-else
-    echo "System package installation was skipped!"
-fi
+sudo apt-get update && sudo apt-get install -y ${apt_packages} ${apt_packages_optional}
 
 ###############################################################################
 # Create initial directories
@@ -136,26 +41,6 @@ ln -fs /usr/bin/batcat $HOME/.local/bin/bat
 
 "${clone_path}/.local/bin/update-zsh-plugins"
 
-###############################################################################
-# Setup to make WSL use Windows clipboard for Neovim
-###############################################################################
-
-sudo apt remove xclip -y
-sudo ln -fs "/c/tools/neovim/nvim-win64/bin/win32yank.exe" "/usr/local/bin/win32yank.exe"
-
-###############################################################################
-# Install Plug (Vim plugin manager)
-###############################################################################
-
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
-
-###############################################################################
-# Install tpm (tmux plugin manager)
-###############################################################################
-
-rm -rf "${HOME}/.tmux/plugins/tpm"
-git clone --depth 1 https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
 
 ###############################################################################
 # Install fzf (fuzzy finder on the terminal and used by a Vim plugin)
@@ -169,8 +54,6 @@ ln -fs $(which fdfind) ~/.local/bin/fd
 ###############################################################################
 # Carefully create symlinks
 ###############################################################################
-
-# Make sure that nvim is deleted before creating symbolinc link
 
 rm -rf ~/.config/nvim;
 
@@ -191,12 +74,17 @@ if grep -qE "(Microsoft|microsoft|WSL)" /proc/version &>/dev/null; then
 fi
 
 ###############################################################################
+# Install Starship
+###############################################################################
+
+curl -sS https://starship.rs/install.sh | sh
+
+###############################################################################
 # Change default shell to zsh
 ###############################################################################
 
-[ "${os_type}" != "macOS" ] && chsh -s "$(command -v zsh)"
+sudo chsh -s $(which zsh) $USER
 
-# shellcheck disable=SC1090
 . "${HOME}/.config/zsh/.zprofile"
 
 ###############################################################################
@@ -205,11 +93,13 @@ fi
 
 printf "\n\nInstalling asdf %s...\n" "${install_asdf_version}"
 
+install_asdf_version="v0.11.3"
+install_node_version="latest"
+
 rm -rf "${HOME}/.local/share/asdf"
 git clone --depth 1 https://github.com/asdf-vm/asdf.git --branch "${install_asdf_version}" \
   "${HOME}/.local/share/asdf"
 
-# shellcheck disable=SC1090
 . "${HOME}/.local/share/asdf/asdf.sh"
 
 printf "\n\nInstalling node %s...\n" "${install_node_version}"
@@ -217,13 +107,6 @@ printf "\n\nInstalling node %s...\n" "${install_node_version}"
 "${HOME}/.local/share/asdf/bin/asdf" plugin add nodejs || true
 "${HOME}/.local/share/asdf/bin/asdf" install nodejs "${install_node_version}"
 "${HOME}/.local/share/asdf/bin/asdf" global nodejs "${install_node_version}"
-
-npm install --unsafe-perm=true --allow-root --global yarn
-
-###############################################################################
-# Install Starship
-###############################################################################
-curl -sS https://starship.rs/install.sh | sh
 
 ###############################################################################
 # Done!
