@@ -15,6 +15,7 @@ require("lazy").setup({
     'tpope/vim-fugitive',
     'tpope/vim-surround',
     'tpope/vim-commentary',
+    'tpope/vim-repeat',
     'vim-scripts/ReplaceWithRegister',
     'nvim-lualine/lualine.nvim',
     {
@@ -27,11 +28,11 @@ require("lazy").setup({
     },
     'windwp/nvim-autopairs',
     'windwp/nvim-ts-autotag',
-     {
-      'lewis6991/gitsigns.nvim',
-      config = function()
-        require('gitsigns').setup()
-      end
+    {
+        'lewis6991/gitsigns.nvim',
+        config = function()
+            require('gitsigns').setup()
+        end
     },
     'dstein64/vim-startuptime',
     'sainnhe/gruvbox-material',
@@ -50,6 +51,12 @@ require("lazy").setup({
         'nvim-tree/nvim-tree.lua',
         branch = 'master',
         dependencies = { 'nvim-tree/nvim-web-devicons' },
+    },
+    {
+        "iamcco/markdown-preview.nvim",
+        config = function()
+            vim.fn["mkdp#util#install"]()
+        end,
     },
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v1.x',
