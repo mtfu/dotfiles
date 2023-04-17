@@ -3,7 +3,6 @@ if (not status) then return end
 
 local treesitter_install = require 'nvim-treesitter.install'
 treesitter_install.prefer_git = false
-treesitter_install.compilers = { "zig" }
 
 local filetypes = {
     'html', 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'svelte', 'vue', 'tsx', 'jsx', 'rescript',
