@@ -84,5 +84,6 @@ require("lazy").setup({
         }
     },
     -- Make methods stay pinned to the top
-    'nvim-treesitter/nvim-treesitter-context'
+    'nvim-treesitter/nvim-treesitter-context',
+    'mg979/vim-visual-multi'
 })
