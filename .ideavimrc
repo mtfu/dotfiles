@@ -15,9 +15,10 @@ let mapleader=" "
 " disable annoying bells
 set visualbell
 set noerrorbells
+set relativenumber number
 
-" vnoremap < <gv
-" vnoremap > >gv
+vnoremap < <gv
+vnoremap > >gv
 
 " plugins
 set surround            " commands: ys, cs, ds, S
@@ -48,15 +49,14 @@ let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
 set argtextobj
 let g:argtextobj_pairs="(:),{:},<:>"
 
+vnoremap J :m '>+1<CR>gv=gv
+vnoremap K :m '<-2<CR>gv=gv
+
 " Hint use alt + arrows to move in insert mode
 """ Other
-nnoremap <c-z> :action ChangeView<CR>
 " Try to use same command as in nvim
-nnoremap <c-w>p :action JumpToLastWindow<CR>
-nnoremap <c-n> :action JumpToLastWindow<CR>
 nnoremap <c-x> :action HideAllWindows<CR>
-
-nnoremap <c-w>o :action HideAllWindows<CR>
+nnoremap <leader>nn :action JumpToLastWindow<CR>
 
 nnoremap <leader>ca :action Refactorings.QuickListPopupAction<CR>
 nnoremap <leader>ms :action RiderManageRecentProjects<CR>
