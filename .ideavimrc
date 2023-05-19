@@ -55,6 +55,8 @@ vnoremap K :m '<-2<CR>gv=gv
 " Hint use alt + arrows to move in insert mode
 """ Other
 " Try to use same command as in nvim
+
+nnoremap <leader>zz :action ChangeView<CR>
 nnoremap <c-x> :action HideAllWindows<CR>
 nnoremap <leader>nn :action JumpToLastWindow<CR>
 
@@ -111,6 +113,7 @@ nnoremap <leader>tb :action ToggleLineBreakpoint<CR>
 nnoremap <leader>bb :action BuildSolutionAction<CR>
 nnoremap <leader>be :action EditBreakpoint<CR>
 nnoremap <leader>bs :action RebuildSolutionAction<CR>
+nnoremap <leader>dy :action RiderDebuggerApplyEncChagnes<CR>
 nnoremap <leader>dd :action Debug<CR>
 nnoremap <leader>ru :action Rerun<CR>
 nnoremap <leader>rr :action Run<CR>
@@ -169,4 +172,5 @@ sethandler <C-v> a:ide
 sethandler <C-c> a:ide
 sethandler <C-t> a:ide
 sethandler <C-f> a:ide
+sethandler <C-z> a:ide
 
