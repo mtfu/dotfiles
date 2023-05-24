@@ -5,7 +5,10 @@ set -e
 clone_path="${clone_path:-"${PWD}"}"
 echo "Current working directory: $clone_path"
 
-apt_packages="curl git iproute2 python3-pip ripgrep tmux neovim zsh fd-find bat"
+# get newest version of nvim
+sudo add-apt-repository ppa:neovim-ppa/unstable
+
+apt_packages="curl git iproute2 python3-pip ripgrep tmux neovim zsh fd-find bat neovim"
 apt_packages_optional="gnupg htop jq pass pwgen rsync shellcheck unzip"
 
 
