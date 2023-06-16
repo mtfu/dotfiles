@@ -115,8 +115,8 @@ nnoremap <leader>be :action EditBreakpoint<CR>
 nnoremap <leader>bs :action RebuildSolutionAction<CR>
 nnoremap <leader>dy :action RiderDebuggerApplyEncChagnes<CR>
 nnoremap <leader>dd :action Debug<CR>
-nnoremap <leader>ru :action Rerun<CR>
-nnoremap <leader>rr :action Run<CR>
+nnoremap <leader>rr :action Rerun<CR>
+nnoremap <leader>ru :action Run<CR>
 nnoremap <leader>rc :action ChooseRunConfiguration <CR>
 nnoremap <leader>tt :action RiderUnitTestDebugContextAction<CR>
 nnoremap <leader>ts :action RiderUnitTestRunSolutionAction<CR>

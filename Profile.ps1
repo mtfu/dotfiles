@@ -25,11 +25,7 @@ $env:FZF_CTRL_T_COMMAND="$env:FZF_DEFAULT_COMMAND"
 $env:FZF_CTRL_T_OPTS="--preview 'bat --color=always --line-range :50 {}'"
 $env:FZF_ALT_C_COMMAND='fd --type d . --color=never --hidden --follow -E .git/*'
 
-# For zoxide v0.8.0+
-Invoke-Expression (& {
-    $hook = if ($PSVersionTable.PSVersion.Major -lt 6) { 'prompt' } else { 'pwd' }
-    (zoxide init --hook $hook powershell | Out-String)
-})
+Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 if (Test-Path($ChocolateyProfile)) {
