@@ -25,7 +25,7 @@ $env:FZF_CTRL_T_COMMAND="$env:FZF_DEFAULT_COMMAND"
 $env:FZF_CTRL_T_OPTS="--preview 'bat --color=always --line-range :50 {}'"
 $env:FZF_ALT_C_COMMAND='fd --type d . --color=never --hidden --follow -E .git/*'
 
-Invoke-Expression (& { (zoxide init powershell | Out-String) })
+# Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
 if (Test-Path($ChocolateyProfile)) {
@@ -113,4 +113,5 @@ function Invoke-Starship-PreCommand {
   $host.ui.Write("`e]0; PS> $pwd `a")
 }
 
+Invoke-Expression (& { (zoxide init powershell | Out-String) })
 Invoke-Expression (&starship init powershell)
