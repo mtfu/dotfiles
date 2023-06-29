@@ -23,9 +23,12 @@ lsp.on_attach(function(_, bufnr)
   local bind = vim.keymap.set
 
   bind("n", "<leader>re", function() vim.lsp.buf.rename() end, opts)
+  bind("n", "<F2>", function() vim.lsp.buf.rename() end, opts)
   bind("n", "<leader>ca", function() vim.lsp.buf.code_action() end, opts)
-  bind("n", "<leader>gr", require('telescope.builtin').lsp_references, {})
+  bind("n", "<leader>U", require('telescope.builtin').lsp_references, {})
   bind("n", "<leader>gi", function() vim.lsp.buf.implementation() end, opts)
+  bind("n", "<leader>ge", function() vim.diagnostic.goto_next() end, opts)
+  bind("n", "<leader>gE", function() vim.diagnostic.goto_prev() end, opts)
   bind("n", "<leader><leader>", function() vim.lsp.buf.format { async = true } end, opts)
 end)
 
