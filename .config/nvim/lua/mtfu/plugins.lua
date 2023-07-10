@@ -16,6 +16,7 @@ require("lazy").setup({
     'tpope/vim-surround',
     'tpope/vim-commentary',
     'tpope/vim-repeat',
+    'tommcdo/vim-exchange',
     'vim-scripts/ReplaceWithRegister',
     'nvim-lualine/lualine.nvim',
     {

@@ -14,7 +14,7 @@ lsp.configure('tsserver', {
     }
   }
 })
-
+--
 -- Configure language server for neomvim
 lsp.nvim_workspace()
 

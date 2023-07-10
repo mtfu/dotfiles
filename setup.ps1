@@ -12,6 +12,8 @@ if (-not (test-path -path $localgitconfig -pathtype leaf)) {
 
 ## Setup GIT_SSH
 [System.Environment]::SetEnvironmentVariable('GIT_SSH', "C:\Windows\System32\OpenSSH\ssh.exe", [System.EnvironmentVariableTarget]::User);
+# We want to expose Linux helpful commands like tig, less and xargs
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Git\usr\bin" , [System.EnvironmentVariableTarget]::Machine)
 
 ## Install PlugInstall
 iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim |`
@@ -33,3 +35,4 @@ Get-Service -Name ssh-agent | Set-Service -StartupType Automatic;
 
 #TODO 2022-09-09 Requirement for using nvim-tree-sitter might be possible to remove this later on (Fix for an error)
 npm install -g tree-sitter-cli 
+
