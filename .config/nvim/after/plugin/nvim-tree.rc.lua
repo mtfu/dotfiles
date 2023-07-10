@@ -15,4 +15,4 @@ nvimTree.setup({
     },
 })
 
-vim.keymap.set('n', '<S-M-l>', ':NvimTreeFindFileToggle!<CR>')
+vim.keymap.set('n', '<S-M-l>', ':NvimTreeFindFile<CR>')
