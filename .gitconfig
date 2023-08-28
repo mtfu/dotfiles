@@ -17,7 +17,7 @@
 	chaseFile = log --follow -p --
 	publish = "!git push -u origin \"$(git rev-parse --abbrev-ref HEAD)\""
 	prunebranches = remote prune origin
-	pruneLocal = "!git branch --merged | grep  -v '\\*\\|master\\|develop' | xargs -n 1 git branch -d"
+    pruneLocal = "!git branch --merged | grep  -v '\\*\\|master\\|develop\\|main' | xargs -n 1 git branch -d"
 	removeLocalBranches = "!git fetch -p && for branch in `git branch -vv | grep ': gone]' | awk '{print $1}'`; do git branch -D $branch; done"
 	a = add .
 	s = status
@@ -25,7 +25,7 @@
 	f = fetch
 	d = branch -d
 	ca = commit --amend 
-    new = lg main..HEAD
+    new = lg $(git main-branch)..HEAD
 	mdev = "!git fetch && git merge origin $(git main-branch)"
 	tagHistory = for-each-ref --format="%(refname:short) %(taggerdate) %(subject) %(body)" refs/tags
 [diff]
