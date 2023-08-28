@@ -25,7 +25,8 @@
 	f = fetch
 	d = branch -d
 	ca = commit --amend 
-    new = lg $(git main-branch)..HEAD
+    new = "!git lg $(git main-branch)..HEAD"
+    missing = "!git lg HEAD...$(git main-branch)"
 	mdev = "!git fetch && git merge origin $(git main-branch)"
 	tagHistory = for-each-ref --format="%(refname:short) %(taggerdate) %(subject) %(body)" refs/tags
 [diff]
@@ -46,3 +47,5 @@
 	smudge = git-lfs smudge -- %f
 [safe]
 	directory = *
+[rebase]
+	autosquash = true
