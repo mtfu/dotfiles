@@ -144,7 +144,7 @@ noremap <leader>ag :action ActivateServicesToolWindow<CR>
 noremap <leader>ab :action ViewBreakpoints<CR>
 
 """""""""""""""""""""""""""""Information""""""""""""""""""""""""""""""""""""""
-noremap <leader>ed :action ShowErrorDescription<CR>
+noremap gl :action ShowErrorDescription<CR>
 noremap <leader>pp :action ParameterInfo<CR>
 noremap <leader>ti :action ExpressionTypeInfo<CR>
 
