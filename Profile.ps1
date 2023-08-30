@@ -31,21 +31,29 @@ if (Test-Path($ChocolateyProfile)) {
   Import-Module "$ChocolateyProfile"
 }
 
-function vs($depth = 0, $max = 5) {
-  $item = Get-ChildItem "*.sln" -Depth $depth -Exclude *Test | Select-Object -First 1
-  if ($item) {
-    Invoke-Item $item
-    return
-  }
-  if ($depth -ge $max) {
-    Write-Host "not found at depth $depth"
-    return
-  }
-  $depth = $depth + 1
 
-  return vs -depth $depth -max $max
+function vs {
+    param (
+        [PSDefaultValue(Help = 'Current directory')]
+        [string[]] $SearchPath = '.',
+        [PSDefaultValue(Help = 'Current depth')]
+        $Depth = 1, 
+        [PSDefaultValue(Help = 'Max depth')]
+        $Max = 5
+    )
+    $item = Get-ChildItem "*.sln" -Depth $Depth -Path $SearchPath | Select-Object -First 1
+    if ($item) {
+        Invoke-Expression "rs $item"
+        return
+    }
+    if ($Depth -ge $Max) {
+        Write-Host "not found at depth $Depth"
+        return
+    }
+
+    $Depth = $Depth + 1
+    return vs -depth $Depth -Max $Max
 }
-
 function touch {
     $file = $args[0]
     if($file -eq $null) {
@@ -87,6 +95,8 @@ Set-Alias grep findstr
 # Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
 Set-Alias lg lazygit
 Set-Alias v vim
+Set-Alias ws 'C:\Program Files\JetBrains\WebStorm 2022.3\bin\webstorm64.exe'
+Set-Alias rs 'C:\Program Files\JetBrains\JetBrains Rider 2022.3\bin\rider64.exe'
 
 # Env
 $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
