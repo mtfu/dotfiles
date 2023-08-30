@@ -165,6 +165,15 @@ noremap <leader>co :action CloseAllEditorsButActive<CR>
 noremap <leader>cu :action CloseAllUnmodifiedEditors<CR>
 noremap <leader>ga :action Generate<CR>
 
+
+""""""""""""""""""""""""""""""""""""""Ide specific""""""""""""""""""""""""""""""""
+
+if &ide =~? 'WebStorm'
+    nnoremap <leader>ms :action $LRU<CR>
+else
+    nnoremap <leader>ms :action RiderManageRecentProjects<CR>
+endif
+
 " Shortcut conflict Ideavim (Exported from Vim)
 sethandler a:vim
 sethandler <C-v> a:ide
