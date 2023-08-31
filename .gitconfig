@@ -1,6 +1,6 @@
 [core]
 	editor = nvim -u ~/.vimrc.minimal
-	excludesFile = .gitignore_global
+	excludesFile = ~/.gitignore_global
 	autocrlf = false
 [commit]
 	verbose = true
