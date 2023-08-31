@@ -20,3 +20,5 @@ tags
 
 .aliases.local
 *.orig
+
+.idea

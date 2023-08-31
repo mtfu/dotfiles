@@ -77,7 +77,7 @@ map zo <Action>(ExpandRegion)
 imap <C-n> :action HippieCompletion<CR>
 imap <C-p> :action HippieBackwardCompletion<CR>
 
-noremap <leader>fs mm`m:action FileStructurePopup<CR>
+noremap <leader>\ mm`m:action FileStructurePopup<CR>
 nnoremap <leader>U :action ShowUsages<CR>
 nnoremap <leader>u :action FindUsages<CR>
 
@@ -90,8 +90,6 @@ noremap <leader>gsm mm`m:action GotoSuperMethod<CR>
 noremap <leader>gi mm`m:action GotoImplementation<CR>
 noremap <leader>ne mm`m:action GotoNextError<CR>
 noremap <leader>pe mm`m:action GotoPreviousError<CR>
-nnoremap <leader>ge :action ReSharperGotoNextErrorInSolution<CR>
-nnoremap <leader>gE :action ReSharperGotoPrevErrorInSolution<CR>
 nnoremap <leader>rl :action RecentLocations<CR>
 nnoremap <leader>fl :action RecentLocations<CR>
 noremap <leader>rF :action RecentChangedFiles<CR>
@@ -170,9 +168,15 @@ noremap <leader>ga :action Generate<CR>
 
 if &ide =~? 'WebStorm'
     nnoremap <leader>ms :action $LRU<CR>
+    noremap <leader>ge mm`m:action GotoNextError<CR>
+    noremap <leader>gE mm`m:action GotoPreviousError<CR>
 else
     nnoremap <leader>ms :action RiderManageRecentProjects<CR>
+    nnoremap <leader>ge :action ReSharperGotoNextErrorInSolution<CR>
+    nnoremap <leader>gE :action ReSharperGotoPrevErrorInSolution<CR>
 endif
+
+
 
 " Shortcut conflict Ideavim (Exported from Vim)
 sethandler a:vim
