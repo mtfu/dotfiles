@@ -22,6 +22,7 @@
 	a = add .
 	s = status
 	c = commit
+    ch = checkout
 	f = fetch
 	d = branch -d
 	ca = commit --amend 
