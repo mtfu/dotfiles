@@ -55,10 +55,11 @@ vnoremap K :m '<-2<CR>gv=gv
 " Hint use alt + arrows to move in insert mode
 """ Other
 " Try to use same command as in nvim
-
+nnoremap <leader>gf :action Vcs.ShowTabbedFileHistory<CR>
 nnoremap <leader>zz :action ChangeView<CR>
 nnoremap <c-x> :action HideAllWindows<CR>
 nnoremap <leader>nn :action JumpToLastWindow<CR>
+nnoremap <leader>jj :action JumpToStatement<CR>
 
 nnoremap <leader>ca :action Refactorings.QuickListPopupAction<CR>
 nnoremap <leader>ms :action RiderManageRecentProjects<CR>
