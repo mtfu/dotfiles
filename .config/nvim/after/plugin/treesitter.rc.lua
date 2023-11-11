@@ -17,7 +17,7 @@ local skip_tags = {
 }
 
 treesitter.setup {
-    ensure_installed = { "help", "yaml", "json", "javascript", "typescript", "lua", "c_sharp" },
+    ensure_installed = { "yaml", "json", "javascript", "typescript", "lua", "c_sharp" },
     sync_install = false,
     auto_install = true,
     highlight = {

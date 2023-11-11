@@ -117,6 +117,7 @@ nnoremap <leader>rd :action Debug<CR>
 nnoremap <leader>rr :action Rerun<CR>
 nnoremap <leader>rc :action ChooseRunConfiguration <CR>
 nnoremap <leader>tt :action RiderUnitTestDebugContextAction<CR>
+nnoremap <leader>rt :action RiderUnitTestRunContextAction<CR>
 nnoremap <leader>ts :action RiderUnitTestRunSolutionAction<CR>
 nnoremap <leader>tf :action RiderUnitTestSessionRerunFailedTestsAction<CR>
 nnoremap <leader>ss :action Stop<CR>

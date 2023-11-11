@@ -31,6 +31,9 @@ if (Test-Path($ChocolateyProfile)) {
   Import-Module "$ChocolateyProfile"
 }
 
+function weather {
+        curl "https://wttr.in"
+}
 
 function vs {
     param (
