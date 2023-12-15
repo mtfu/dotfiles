@@ -26,7 +26,6 @@ set multiple-cursors    " commands <A-n>, <A-x>, <A-p>, g<A-n>
 set ReplaceWithRegister " commands: gr, grr  ex:griw
 set exchange            " commands: cx, cxx, X, cxc
 set textobj-entire      " additional text objects: ae, ie
-set vim-indent-object   " additional text objects: ai, ii, aI, iI
 set highlightedyank     "
 set commentary
 " Emulation of the `NERDTree` plugin.
