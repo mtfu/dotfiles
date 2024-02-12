@@ -56,7 +56,7 @@ vnoremap K :m '<-2<CR>gv=gv
 " Try to use same command as in nvim
 nnoremap <leader>gf :action Vcs.ShowTabbedFileHistory<CR>
 nnoremap <leader>zz :action ChangeView<CR>
-nnoremap <c-x> :action HideAllWindows<CR>
+nnoremap <leader><S-Esc> :action HideAllWindows<CR>
 nnoremap <leader>nn :action JumpToLastWindow<CR>
 nnoremap <leader>jj :action JumpToStatement<CR>
 
@@ -187,3 +187,11 @@ sethandler <C-t> a:ide
 sethandler <C-f> a:ide
 sethandler <C-z> a:ide
 
+" Harpoon
+nmap <C-h><C-h> :action GotoHarpoon1<cr>
+nmap <C-h><C-j> :action GotoHarpoon2<cr>
+nmap <C-h><C-k> :action GotoHarpoon3<cr>
+nmap <C-h><C-l> :action GotoHarpoon4<cr>
+
+nmap <C-e> :action ShowHarpoon<cr>
+nmap <leader>ma :action AddToHarpoon<cr>

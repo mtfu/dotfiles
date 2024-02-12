@@ -35,12 +35,12 @@ require("lazy").setup({
             require('gitsigns').setup()
         end
     },
-    'dstein64/vim-startuptime',
     'sainnhe/gruvbox-material',
     'nanotee/zoxide.vim',
     {
         'ThePrimeagen/harpoon',
         branch = 'master',
+        branch = "harpoon2",
         dependencies = {
             {
                 'nvim-lua/plenary.nvim'
