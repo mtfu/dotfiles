@@ -1,5 +1,6 @@
 vim.cmd("autocmd!")
 
+vim.loader.enable()
 vim.opt.title = true
 vim.opt.termguicolors = true
 
