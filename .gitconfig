@@ -41,8 +41,8 @@
 [mergetool]
 	keepBackup = false
 [mergetool "kdiff3"]
-	path = C:/Program Files/KDiff3/kdiff3.exe
-	trustExitCode = false
+    path = /usr/bin/kdiff3
+    trustExitCode = false
 [filter "lfs"]
 	required = true
 	clean = git-lfs clean -- %f
