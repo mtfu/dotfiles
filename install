@@ -68,13 +68,20 @@ ln -fs "${clone_path}/.zshenv" "${HOME}/.zshenv" \
     && ln -fs "${clone_path}/.vimrc" "${HOME}/.vimrc" \
     && ln -fs "${clone_path}/.vimrc.minimal" "${HOME}/.vimrc.minimal" \
     && ln -fs "${clone_path}/.config/nvim" "${HOME}/.config/nvim" \
-    && ln -fs "${clone_path}/.tmux.conf" "${HOME}/.tmux.conf" \
+    && ln -fs "${clone_path}/.config/autokey" "${HOME}/.config/autokey" \
+    && ln -fs "${clone_path}/.tmux.conf/" "${HOME}/.tmux.conf" \
     && ln -fs "${clone_path}/.local/bin/update-zsh-plugins" "${HOME}/.local/bin/update-zsh-plugins" \
 	&& ln -fs "${clone_path}/.starship/starfield.toml" "${HOME}/.config/starfield.toml" \
 
 if grep -qE "(Microsoft|microsoft|WSL)" /proc/version &>/dev/null; then
     sudo ln -fs "${clone_path}/etc/wsl.conf" /etc/wsl.conf
 fi
+
+###############################################################################
+# Install Starship
+###############################################################################
+
+cat "${clone_path}/gnome-keys" | dconf load /org/gnome/settings-daemon/plugins/media-keys/
 
 ###############################################################################
 # Install Starship
