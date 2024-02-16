@@ -1,5 +1,7 @@
 export VISUAL=nvim
 export EDITOR=$VISUAL
+export XDG_DATA_HOME="$HOME/.local/share"
+
 
 # History settings.
 export HISTFILE="${XDG_CACHE_HOME}/zsh/.history"
