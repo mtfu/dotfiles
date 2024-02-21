@@ -188,10 +188,27 @@ sethandler <C-f> a:ide
 sethandler <C-z> a:ide
 
 " Harpoon
+nmap <leader><C-h> :action SetHarpoon1<cr>
+nmap <leader><C-j> :action SetHarpoon2<cr>
+nmap <leader><C-k> :action SetHarpoon3<cr>
+nmap <leader><C-l> :action SetHarpoon4<cr>
 nmap <C-h><C-h> :action GotoHarpoon1<cr>
 nmap <C-h><C-j> :action GotoHarpoon2<cr>
 nmap <C-h><C-k> :action GotoHarpoon3<cr>
 nmap <C-h><C-l> :action GotoHarpoon4<cr>
 
+
 nmap <C-e> :action ShowHarpoon<cr>
 nmap <leader>ma :action AddToHarpoon<cr>
+
+" Remap multiple-cursors shortcuts to match terryma/vim-multiple-cursors
+nmap <C-n> <Plug>NextWholeOccurrence
+xmap <C-n> <Plug>NextWholeOccurrence
+nmap g<C-n> <Plug>NextOccurrence
+xmap g<C-n> <Plug>NextOccurrence
+xmap <C-x> <Plug>SkipOccurrence
+xmap <C-p> <Plug>RemoveOccurrence
+nmap <leader><C-n> <Plug>AllWholeOccurrences
+xmap <leader><C-n> <Plug>AllWholeOccurrences
+nmap <leader>g<C-n> <Plug>AllOccurrences
+xmap <leader>g<C-n> <Plug>AllOccurrences
