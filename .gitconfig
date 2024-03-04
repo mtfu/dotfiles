@@ -31,6 +31,7 @@
     missing = "!git lg HEAD..$(git main-branch)"
 	mdev = "!git fetch && git merge origin $(git main-branch)"
 	tagHistory = for-each-ref --format="%(refname:short) %(taggerdate) %(subject) %(body)" refs/tags
+    lastcommit = log -1 --pretty=%B
 [diff]
 	guitool = kdiff3
 [difftool "kdiff3"]
@@ -41,7 +42,7 @@
 [mergetool]
 	keepBackup = false
 [mergetool "kdiff3"]
-    path = /usr/bin/kdiff3
+	path = C:/Program Files/KDiff3/kdiff3.exe
     trustExitCode = false
 [filter "lfs"]
 	required = true
