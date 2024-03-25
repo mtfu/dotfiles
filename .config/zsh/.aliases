@@ -82,6 +82,8 @@ alias pf="fzf --preview='less {}' --bind shift-up:preview-page-up,shift-down:pre
 
 alias gcl="git diff --name-only --diff-filter=U"
 
+alias lg=lazygit
+
 alias k="kubectl"
 alias tf="terraform"
 
