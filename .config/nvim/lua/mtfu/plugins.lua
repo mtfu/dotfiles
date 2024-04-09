@@ -20,7 +20,7 @@ require("lazy").setup({
     'nvim-lualine/lualine.nvim',
     {
         'nvim-telescope/telescope.nvim',
-        tag = '0.1.4',
+        tag = '0.1.5',
         dependencies = { 'nvim-lua/plenary.nvim', { "kdheepak/lazygit.nvim" } },
         config = function()
             require("telescope").load_extension("lazygit")

@@ -104,27 +104,45 @@ Set-Alias rs 'C:\Users\Epico_mtfu\AppData\Local\Programs\Rider\bin\rider64.exe'
 # Env
 $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
 
-# Git helpers
-Function stand { git standup $args }
-Function ci { git commit $args }
-Function cia { git commit --amend $args }
-Function rsh { git reset --hard $args }
-Function p { git request-pull $args }
-Function ri { git rebase -i $args }
-#
+# Git
+function ci { git commit $args }
+function cia { git commit --amend $args }
+
 # Runners
-Function nr { npm run $args }
-Function dn { dotnet watch $args }
-#
-# leverage PSFzf
-Function fua {Invoke-FuzzyGitStatus | % { git add $_ }}
-Function fur {Invoke-FuzzyGitStatus | % { git reset $_ }}
-Function fuc {Invoke-FuzzyGitStatus | % { git checkout $_ }}
+function nr { npm run $args }
+function dn { dotnet watch $args }
+
+# Leverage PSFzf
+function fua { Invoke-FuzzyGitStatus | % { git add $_ }}
+function fur { Invoke-FuzzyGitStatus | % { git reset $_ }}
+function fuc { Invoke-FuzzyGitStatus | % { git checkout $_ }}
+
+
+# Docker
+function fcon {
+     $CONTAINER = (docker ps | Select-String -Pattern "CONTAINER" -NotMatch | ForEach-Object { ($_ -split " ")[-1] } | Out-String).Trim() | fzf
+     return $CONTAINER;
+}
+
+function fexec {
+    $CONTAINER = fcon
+
+     if (-not [string]::IsNullOrEmpty($CONTAINER)) {
+         docker exec -it $CONTAINER bash
+     }
+ }
+
+ function flog {
+     $CONTAINER = fcon
+     if (-not [string]::IsNullOrEmpty($CONTAINER)){
+         docker logs $CONTAINER | less
+     }
+ }
 
 function Invoke-Starship-PreCommand {
   $host.ui.Write("`e]0; PS> $pwd `a")
 }
 
 Invoke-Expression (&starship init powershell)
-
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
+
