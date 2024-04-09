@@ -8,7 +8,7 @@ echo "Current working directory: $clone_path"
 # get newest version of nvim
 sudo add-apt-repository ppa:neovim-ppa/unstable
 
-apt_packages="curl git iproute2 python3-pip ripgrep tmux neovim zsh fd-find bat neovim"
+apt_packages="curl git iproute2 python3-pip ripgrep tmux neovim zsh fd-find bat neovim keychain layzgit"
 apt_packages_optional="gnupg htop jq pass pwgen rsync shellcheck unzip"
 
 

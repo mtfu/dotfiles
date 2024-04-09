@@ -63,6 +63,9 @@ function set_win_title(){
 }
 precmd_functions+=(set_win_title)
 
+# Start ssh-agent
+eval $(keychain --eval id_rsa)
+
 # Load / source zsh plugins.
 . "${XDG_DATA_HOME}/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
 . "${XDG_DATA_HOME}/zsh-z/zsh-z.plugin.zsh"
