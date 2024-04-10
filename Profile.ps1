@@ -143,6 +143,8 @@ function Invoke-Starship-PreCommand {
   $host.ui.Write("`e]0; PS> $pwd `a")
 }
 
+
+Invoke-Expression (& { (ory completion powershell | Out-String) })
 Invoke-Expression (&starship init powershell)
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
 
