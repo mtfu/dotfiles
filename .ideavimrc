@@ -54,6 +54,8 @@ vnoremap K :m '<-2<CR>gv=gv
 " Hint use alt + arrows to move in insert mode
 """ Other
 " Try to use same command as in nvim
+
+
 nnoremap <leader>gf :action Vcs.ShowTabbedFileHistory<CR>
 nnoremap <leader>zz :action ChangeView<CR>
 nnoremap <leader><S-Esc> :action HideAllWindows<CR>
@@ -138,7 +140,8 @@ noremap <leader>at :action ActivateTODOToolWindow<CR>
 noremap <leader>af :action ActivateFavoritesToolWindow<CR>
 noremap <leader>ap :action ActivateProjectToolWindow<CR>
 noremap <leader>ae :action ActivateVersionControlToolWindow<CR>
-noremap <leader>ag :action ActivateServicesToolWindow<CR>
+noremap <leader>ag :action ActivateGitHubCopilotChatToolWindow<CR>
+noremap <leader>as :action ActivateServicesToolWindow<CR>
 noremap <leader>ab :action ViewBreakpoints<CR>
 
 """""""""""""""""""""""""""""Information""""""""""""""""""""""""""""""""""""""
@@ -167,6 +170,13 @@ noremap <leader>ga :action Generate<CR>
 
 """"""""""""""""""""""""""""""""""""""Ide specific""""""""""""""""""""""""""""""""
 
+
+if &ide =~? 'rider'
+  nmap <leader>cc <Action>(RiderShowIncomingCalls)
+else
+  nmap <leader>cc <Action>(CallHierarchy)
+endi
+
 if &ide =~? 'WebStorm'
     nnoremap <leader>ms :action $LRU<CR>
     noremap <leader>ge :action GotoNextError<CR>
@@ -176,8 +186,6 @@ else
     nnoremap <leader>ge :action ReSharperGotoNextErrorInSolution<CR>
     nnoremap <leader>gE :action ReSharperGotoPrevErrorInSolution<CR>
 endif
-
-
 
 " Shortcut conflict Ideavim (Exported from Vim)
 sethandler a:vim

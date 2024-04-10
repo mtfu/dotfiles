@@ -11,6 +11,7 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+
 require("lazy").setup({
     'tpope/vim-surround',
     'tpope/vim-commentary',
@@ -33,6 +34,18 @@ require("lazy").setup({
         config = function()
             require('gitsigns').setup()
         end
+    },
+    {
+    'zbirenbaum/copilot.lua',
+    cmd = "Copilot",
+    event = "InsertEnter",
+    config = function()
+      require("copilot").setup({
+          suggestion = {
+              auto_trigger = true
+          }
+      })
+    end,
     },
     'sainnhe/gruvbox-material',
     'nanotee/zoxide.vim',
