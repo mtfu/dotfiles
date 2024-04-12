@@ -7,69 +7,40 @@ echo "Current working directory: $clone_path"
 
 # get newest version of nvim
 sudo add-apt-repository ppa:neovim-ppa/unstable
+apt_packages="curl git python3-pip tmux neovim zsh fd-find bat neovim"
 
-apt_packages="curl git iproute2 python3-pip ripgrep tmux neovim zsh fd-find bat neovim keychain layzgit"
-apt_packages_optional="gnupg htop jq pass pwgen rsync shellcheck unzip"
+# Install packages
+sudo apt-get update && sudo apt-get install -y ${apt_packages}
 
-
-###############################################################################
-# Install packages using your OS' package manager
-###############################################################################
-
-sudo apt-get update && sudo apt-get install -y ${apt_packages} ${apt_packages_optional}
-
-###############################################################################
 # Create initial directories
-###############################################################################
-
 mkdir -p "${HOME}/.config/zsh"  \
     "${HOME}/.local/bin" "${HOME}/.local/share" \
     "${HOME}/.local/state" "${HOME}/.cache/zsh" 
 
-###############################################################################
-# Personalize git user
-###############################################################################
-
+# Setup local git
 cp "${clone_path}/.gitconfig.local" "${HOME}/.gitconfig.local"
 
-###############################################################################
 # Make Bat avaiable in path
-###############################################################################
-
 ln -fs /usr/bin/batcat $HOME/.local/bin/bat
 
-###############################################################################
 # Install zsh plugins
-###############################################################################
-
 "${clone_path}/.local/bin/update-zsh-plugins"
 
 
-###############################################################################
-# Install fzf (fuzzy finder on the terminal and used by a Vim plugin)
-###############################################################################
-
+# Install fzf
 rm -rf "${HOME}/.local/share/fzf"
 git clone --depth 1 https://github.com/junegunn/fzf.git "${HOME}/.local/share/fzf" \
   && yes | "${HOME}/.local/share/fzf/install" --bin --no-update-rc
 ln -fs $(which fdfind) ~/.local/bin/fd
 
-###############################################################################
-# Carefully create symlinks
-###############################################################################
-
+# Create symbolic links
 rm -rf ~/.config/nvim;
-
 ln -fs "${clone_path}/.zshenv" "${HOME}/.zshenv" \
-    && ln -fs "${clone_path}/.config/zsh/.zshrc" "${HOME}/.config/zsh/.zshrc" \
-    && ln -fs "${clone_path}/.config/zsh/.zprofile" "${HOME}/.config/zsh/.zprofile" \
-    && ln -fs "${clone_path}/.config/zsh/.aliases" "${HOME}/.config/zsh/.aliases" \
+    && ln -fs "${clone_path}/.config/zsh" "${HOME}/.config/zsh"
     && ln -fs "${clone_path}/.gitconfig" "${HOME}/.gitconfig" \
     && ln -fs "${clone_path}/.vimrc" "${HOME}/.vimrc" \
     && ln -fs "${clone_path}/.vimrc.minimal" "${HOME}/.vimrc.minimal" \
     && ln -fs "${clone_path}/.config/nvim" "${HOME}/.config/nvim" \
-    && ln -fs "${clone_path}/.config/autokey" "${HOME}/.config/autokey" \
-    && ln -fs "${clone_path}/.tmux.conf/" "${HOME}/.tmux.conf" \
     && ln -fs "${clone_path}/.local/bin/update-zsh-plugins" "${HOME}/.local/bin/update-zsh-plugins" \
 	&& ln -fs "${clone_path}/.starship/starfield.toml" "${HOME}/.config/starfield.toml" \
 
@@ -77,50 +48,13 @@ if grep -qE "(Microsoft|microsoft|WSL)" /proc/version &>/dev/null; then
     sudo ln -fs "${clone_path}/etc/wsl.conf" /etc/wsl.conf
 fi
 
-###############################################################################
 # Install Starship
-###############################################################################
-
-cat "${clone_path}/gnome-keys" | dconf load /org/gnome/settings-daemon/plugins/media-keys/
-
-###############################################################################
-# Install Starship
-###############################################################################
-
 curl -sS https://starship.rs/install.sh | sh
 
-###############################################################################
 # Change default shell to zsh
-###############################################################################
-
 sudo chsh -s $(which zsh) $USER
-
 . "${HOME}/.config/zsh/.zprofile"
 
-###############################################################################
-# Install asdf and Node (Node is used for 1 Vim plugin)
-###############################################################################
-
-printf "\n\nInstalling asdf %s...\n" "${install_asdf_version}"
-
-install_asdf_version="v0.11.3"
-install_node_version="latest"
-
-rm -rf "${HOME}/.local/share/asdf"
-git clone --depth 1 https://github.com/asdf-vm/asdf.git --branch "${install_asdf_version}" \
-  "${HOME}/.local/share/asdf"
-
-. "${HOME}/.local/share/asdf/asdf.sh"
-
-printf "\n\nInstalling node %s...\n" "${install_node_version}"
-
-"${HOME}/.local/share/asdf/bin/asdf" plugin add nodejs || true
-"${HOME}/.local/share/asdf/bin/asdf" install nodejs "${install_node_version}"
-"${HOME}/.local/share/asdf/bin/asdf" global nodejs "${install_node_version}"
-
-###############################################################################
-# Done!
-###############################################################################
 
 cat << EOF
 Everything was installed successfully!
