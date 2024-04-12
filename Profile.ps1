@@ -27,15 +27,18 @@ $env:FZF_ALT_C_COMMAND='fd --type d . --color=never --hidden --follow -E .git/*'
 
 
 $ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-if (Test-Path($ChocolateyProfile)) {
-  Import-Module "$ChocolateyProfile"
+if (Test-Path($ChocolateyProfile))
+{
+    Import-Module "$ChocolateyProfile"
 }
 
-function weather {
-        curl "https://wttr.in"
+function weather
+{
+    curl "https://wttr.in"
 }
 
-function vs {
+function vs
+{
     param (
         [PSDefaultValue(Help = 'Current directory')]
         [string[]] $SearchPath = '.',
@@ -45,11 +48,13 @@ function vs {
         $Max = 5
     )
     $item = Get-ChildItem "*.sln" -Depth $Depth -Path $SearchPath | Select-Object -First 1
-    if ($item) {
+    if ($item)
+    {
         Invoke-Expression "rs $item"
         return
     }
-    if ($Depth -ge $Max) {
+    if ($Depth -ge $Max)
+    {
         Write-Host "not found at depth $Depth"
         return
     }
@@ -57,35 +62,39 @@ function vs {
     $Depth = $Depth + 1
     return vs -depth $Depth -Max $Max
 }
-function touch {
+function touch
+{
     $file = $args[0]
-    if($file -eq $null) {
+    if($null -eq $file )
+    {
         throw "No filename supplied"
     }
 
     if(Test-Path $file)
     {
         throw "file already exists"
-    }
-    else
+    } else
     {
         # echo $null > $file
-	New-Item -ItemType File -Name ($file)
+        New-Item -ItemType File -Name ($file)
     }
 }
 
-function which ($command) {
-  Get-Command -Name $command -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
+function which ($command)
+{
+    Get-Command -Name $command -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
 
-function sr {
-  Set-Location 'C:\repos'
+function sr
+{
+    Set-Location 'C:\repos'
 }
 
-function nGuid {
-  $guid = [guid]::NewGuid().ToString()
-  Write-Host $guid
-  $guid | clip
+function nGuid
+{
+    $guid = [guid]::NewGuid().ToString()
+    Write-Host $guid
+    $guid | clip
 }
 
 # Alias
@@ -105,46 +114,65 @@ Set-Alias rs 'C:\Users\Epico_mtfu\AppData\Local\Programs\Rider\bin\rider64.exe'
 $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
 
 # Git
-function ci { git commit $args }
-function cia { git commit --amend $args }
+function ci
+{ git commit $args 
+}
+function cia
+{ git commit --amend $args 
+}
 
 # Runners
-function nr { npm run $args }
-function dn { dotnet watch $args }
+function nr
+{ npm run $args 
+}
+function dn
+{ dotnet watch $args 
+}
 
 # Leverage PSFzf
-function fua { Invoke-FuzzyGitStatus | % { git add $_ }}
-function fur { Invoke-FuzzyGitStatus | % { git reset $_ }}
-function fuc { Invoke-FuzzyGitStatus | % { git checkout $_ }}
+function fua
+{ Invoke-FuzzyGitStatus | % { git add $_ } 
+}
+function fur
+{ Invoke-FuzzyGitStatus | % { git reset $_ }
+}
+function fuc
+{ Invoke-FuzzyGitStatus | % { git checkout $_ }
+}
 
 
 # Docker
-function fcon {
-     $CONTAINER = (docker ps | Select-String -Pattern "CONTAINER" -NotMatch | ForEach-Object { ($_ -split " ")[-1] } | Out-String).Trim() | fzf
-     return $CONTAINER;
+function fcon
+{
+    $CONTAINER = (docker ps | Select-String -Pattern "CONTAINER" -NotMatch | ForEach-Object { ($_ -split " ")[-1] } | Out-String).Trim() | fzf
+    return $CONTAINER;
 }
 
-function fexec {
+function fexec
+{
     $CONTAINER = fcon
 
-     if (-not [string]::IsNullOrEmpty($CONTAINER)) {
-         docker exec -it $CONTAINER bash
-     }
- }
-
- function flog {
-     $CONTAINER = fcon
-     if (-not [string]::IsNullOrEmpty($CONTAINER)){
-         docker logs $CONTAINER | less
-     }
- }
-
-function Invoke-Starship-PreCommand {
-  $host.ui.Write("`e]0; PS> $pwd `a")
+    if (-not [string]::IsNullOrEmpty($CONTAINER))
+    {
+        docker exec -it $CONTAINER bash
+    }
 }
 
+function flog
+{
+    $CONTAINER = fcon
+    if (-not [string]::IsNullOrEmpty($CONTAINER))
+    {
+        docker logs $CONTAINER | less
+    }
+}
+
+function Invoke-Starship-PreCommand
+{
+    $host.ui.Write("`e]0; PS> $pwd `a")
+}
 
 Invoke-Expression (& { (ory completion powershell | Out-String) })
+Invoke-Expression (& { (gh completion -s powershell | Out-String) })
 Invoke-Expression (&starship init powershell)
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
-
