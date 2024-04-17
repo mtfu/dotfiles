@@ -36,17 +36,6 @@ require("lazy").setup({
         end
     },
     {
-    'zbirenbaum/copilot.lua',
-    cmd = "Copilot",
-    event = "InsertEnter",
-    config = function()
-      require("copilot").setup({
-          suggestion = {
-              auto_trigger = true
-          }
-      })
-    end,
-    },
     'sainnhe/gruvbox-material',
     'nanotee/zoxide.vim',
     {
@@ -64,12 +53,6 @@ require("lazy").setup({
         'nvim-tree/nvim-tree.lua',
         branch = 'master',
         dependencies = { 'nvim-tree/nvim-web-devicons' },
-    },
-    {
-        "iamcco/markdown-preview.nvim",
-        config = function()
-            vim.fn["mkdp#util#install"]()
-        end,
     },
     'VonHeikemen/lsp-zero.nvim',
     branch = 'v1.x',
@@ -97,7 +80,5 @@ require("lazy").setup({
         }
     },
     -- Make methods stay pinned to the top
-    'nvim-treesitter/nvim-treesitter-context',
-    'mg979/vim-visual-multi',
-    'unblevable/quick-scope'
+    'nvim-treesitter/nvim-treesitter-context'
 })
