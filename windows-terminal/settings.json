@@ -4,16 +4,16 @@
     "actions": 
     [
         {
+            "command": "paste",
+            "keys": "ctrl+v"
+        },
+        {
             "command": 
             {
                 "action": "globalSummon",
                 "monitor": "any"
             },
             "keys": "ctrl+alt+t"
-        },
-        {
-            "command": "paste",
-            "keys": "ctrl+v"
         },
         {
             "command": 
@@ -24,10 +24,6 @@
             "keys": "ctrl+c"
         },
         {
-            "command": "find",
-            "keys": "ctrl+shift+f"
-        },
-        {
             "command": 
             {
                 "action": "splitPane",
@@ -35,6 +31,10 @@
                 "splitMode": "duplicate"
             },
             "keys": "alt+shift+d"
+        },
+        {
+            "command": "find",
+            "keys": "ctrl+shift+f"
         }
     ],
     "copyFormatting": "none",
@@ -92,6 +92,12 @@
                 "name": "WSL",
                 "startingDirectory": "~",
                 "tabTitle": "Ubuntu"
+            },
+            {
+                "guid": "{c397f356-5e7b-55bc-956b-8cb4b9762c26}",
+                "hidden": false,
+                "name": "NixOS",
+                "source": "Windows.Terminal.Wsl"
             }
         ]
     },
