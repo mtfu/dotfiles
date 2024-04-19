@@ -16,7 +16,6 @@ require("lazy").setup({
     'tpope/vim-surround',
     'tpope/vim-commentary',
     'tpope/vim-repeat',
-    'tommcdo/vim-exchange',
     'vim-scripts/ReplaceWithRegister',
     'nvim-lualine/lualine.nvim',
     {
@@ -35,7 +34,6 @@ require("lazy").setup({
             require('gitsigns').setup()
         end
     },
-    {
     'sainnhe/gruvbox-material',
     'nanotee/zoxide.vim',
     {
@@ -79,6 +77,6 @@ require("lazy").setup({
             { 'rafamadriz/friendly-snippets' }, -- Optional
         }
     },
-    -- Make methods stay pinned to the top
+    -- Make 
     'nvim-treesitter/nvim-treesitter-context'
 })
