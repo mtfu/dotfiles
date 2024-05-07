@@ -1,6 +1,4 @@
 " n Normal mode. Defined using :nmap or nnoremap i Insert mode map. Defined using imap or inoremap
-source ~/.vimrc
-
 set clipboard+=unnamed
 set ideajoin
 set idearefactormode=keep
@@ -19,6 +17,14 @@ set relativenumber number
 
 vnoremap < <gv
 vnoremap > >gv
+
+" Shortcut conflict Ideavim (Exported from Vim)
+sethandler a:vim
+sethandler <C-v> a:ide
+sethandler <C-c> a:ide
+sethandler <C-t> a:ide
+sethandler <C-f> a:ide
+sethandler <C-z> a:ide
 
 " plugins
 set surround            " commands: ys, cs, ds, S
@@ -54,8 +60,8 @@ vnoremap K :m '<-2<CR>gv=gv
 " Hint use alt + arrows to move in insert mode
 """ Other
 " Try to use same command as in nvim
-
-
+inoremap <C-k> :action ParameterInfo<CR>
+nnoremap <C-k> :action ParameterInfo<CR>
 nnoremap <leader>gf :action Vcs.ShowTabbedFileHistory<CR>
 nnoremap <leader>zz :action ChangeView<CR>
 nnoremap <leader><S-Esc> :action HideAllWindows<CR>
@@ -187,13 +193,6 @@ else
     nnoremap <leader>gE :action ReSharperGotoPrevErrorInSolution<CR>
 endif
 
-" Shortcut conflict Ideavim (Exported from Vim)
-sethandler a:vim
-sethandler <C-v> a:ide
-sethandler <C-c> a:ide
-sethandler <C-t> a:ide
-sethandler <C-f> a:ide
-sethandler <C-z> a:ide
 
 " Harpoon
 nmap <leader><C-h> :action SetHarpoon1<cr>
