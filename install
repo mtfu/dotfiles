@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 
+# Exit immediately if the script fails
 set -e
 
 clone_path="${clone_path:-"${PWD}"}"
 echo "Current working directory: $clone_path"
 
-# get newest version of nvim
+# Get newest version of nvim
 sudo add-apt-repository ppa:neovim-ppa/unstable
 apt_packages="curl git python3-pip tmux neovim zsh fd-find bat neovim"
 
@@ -36,7 +37,9 @@ ln -fs $(which fdfind) ~/.local/bin/fd
 # Create symbolic links
 rm -rf ~/.config/nvim;
 ln -fs "${clone_path}/.zshenv" "${HOME}/.zshenv" \
-    && ln -fs "${clone_path}/.config/zsh" "${HOME}/.config/zsh"
+    && ln -fs "${clone_path}/.config/zsh/.zshrc" "${HOME}/.config/zsh/.zshrc" \
+    && ln -fs "${clone_path}/.config/zsh/.zprofile" "${HOME}/.config/zsh/.zprofile" \
+    && ln -fs "${clone_path}/.config/zsh/.aliases" "${HOME}/.config/zsh/.aliases" \
     && ln -fs "${clone_path}/.gitconfig" "${HOME}/.gitconfig" \
     && ln -fs "${clone_path}/.vimrc" "${HOME}/.vimrc" \
     && ln -fs "${clone_path}/.vimrc.minimal" "${HOME}/.vimrc.minimal" \
@@ -52,9 +55,7 @@ fi
 curl -sS https://starship.rs/install.sh | sh
 
 # Change default shell to zsh
-sudo chsh -s $(which zsh) $USER
-. "${HOME}/.config/zsh/.zprofile"
-
+chsh -s $(which zsh) $USER
 
 cat << EOF
 Everything was installed successfully!
