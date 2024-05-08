@@ -2,7 +2,6 @@ export VISUAL=nvim
 export EDITOR=$VISUAL
 export XDG_DATA_HOME="$HOME/.local/share"
 
-
 # History settings.
 export HISTFILE="${XDG_CACHE_HOME}/zsh/.history"
 export HISTTIMEFORMAT="%Y/%m/%d %H:%M:%S:   "
@@ -13,8 +12,6 @@ setopt HIST_IGNORE_ALL_DUPS  # Never add duplicate entries.
 setopt HIST_IGNORE_SPACE     # Ignore commands that start with a space.
 setopt HIST_REDUCE_BLANKS    # Remove unnecessary blank lines.
 setopt HIST_FIND_NO_DUPS	 # Do not show duplicates on search.
-
-export PATH="$PATH:$HOME/.dotnet/tools/"
 
 # Load aliases if they exist.
 [ -f "${XDG_CONFIG_HOME}/zsh/.aliases" ] && . "${XDG_CONFIG_HOME}/zsh/.aliases"
@@ -28,7 +25,6 @@ if grep -q "microsoft" /proc/version > /dev/null 2>&1; then
     fi
 fi
 
-# Enable FZF (this replaces needing ~/.fzf.zsh in your home directory).
 if [[ ! "${PATH}" == *${XDG_DATA_HOME}/fzf/bin* ]]; then
     export PATH="${PATH:+${PATH}:}${XDG_DATA_HOME}/fzf/bin"
 fi
@@ -61,10 +57,8 @@ export FZF_ALT_C_OPTS="--preview 'tree -C {} | head -50'"
 function set_win_title(){
     echo -ne "\033]0; $(basename "$PWD") \007"
 }
-precmd_functions+=(set_win_title)
 
-# Start ssh-agent
-eval $(keychain --eval id_rsa)
+precmd_functions+=(set_win_title)
 
 # Load / source zsh plugins.
 . "${XDG_DATA_HOME}/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
