@@ -5,6 +5,10 @@ if (not status) then return end
 
 lsp.preset('recommended')
 
+lsp.ensure_installed({
+    'lua_ls'
+})
+
 lsp.configure('tsserver', {
     on_attach = function(_, _)
     end,

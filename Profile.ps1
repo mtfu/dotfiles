@@ -1,4 +1,3 @@
-Import-Module Terminal-Icons
 Import-Module PSfzf
 Import-Module posh-git
 
@@ -7,15 +6,12 @@ $env:HOME = $env:USERPROFILE
 Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
 Set-PSReadLineOption -BellStyle None -HistorySearchCursorMovesToEnd 
 
-Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward
-Set-PSReadLineKeyHandler -Key DownARrow -Function HistorySearchBackward
 Set-PSReadLineKeyHandler -Chord "Ctrl+p" -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptSuggestion()
     [Microsoft.PowerShell.PSConsoleReadLine]::EndOfLine()
 }
 
 Set-PSReadLineOption -ShowToolTips
-Set-PSReadLineOption -PredictionSource History
 Set-PSReadLineOption -Colors @{ InlinePrediction = '#000055'}
 
 Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
@@ -172,7 +168,5 @@ function Invoke-Starship-PreCommand
     $host.ui.Write("`e]0; PS> $pwd `a")
 }
 
-Invoke-Expression (& { (ory completion powershell | Out-String) })
-Invoke-Expression (& { (gh completion -s powershell | Out-String) })
 Invoke-Expression (&starship init powershell)
 Invoke-Expression (& { (zoxide init powershell | Out-String) })
