@@ -30,7 +30,7 @@ if (Test-Path($ChocolateyProfile))
 
 function weather
 {
-    curl "https://wttr.in"
+    curl "https://wttr.in/aarhus"
 }
 
 function vs
