@@ -1,1 +1,1 @@
-iwr -useb https://git.io/debloat|iex
+& ([scriptblock]::Create((irm "https://win11debloat.raphi.re/")))
