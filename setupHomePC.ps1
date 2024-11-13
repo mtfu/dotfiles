@@ -1,1 +1,1 @@
-choco install tidal qbittorrent discord signal obsidian -y
+choco install discord signal obsidian -y
