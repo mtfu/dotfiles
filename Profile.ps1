@@ -1,4 +1,7 @@
 Import-Module PSfzf
+
+# Set Git Alias before post-git, to make auto-completion work
+Set-Alias g git
 Import-Module posh-git
 
 $env:HOME = $env:USERPROFILE
@@ -96,7 +99,6 @@ function nGuid
 # Alias
 Set-Alias vim nvim
 Set-Alias ll ls
-Set-Alias g git
 Set-Alias htop ntop
 Set-Alias grep findstr
 # Set-Alias tig 'C:\Program Files\Git\usr\bin\tig.exe'
@@ -147,7 +149,6 @@ function fcon
 function fexec
 {
     $CONTAINER = fcon
-
     if (-not [string]::IsNullOrEmpty($CONTAINER))
     {
         docker exec -it $CONTAINER bash
