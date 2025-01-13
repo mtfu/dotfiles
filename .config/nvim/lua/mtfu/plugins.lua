@@ -17,7 +17,12 @@ require("lazy").setup({
     'tpope/vim-commentary',
     'tpope/vim-repeat',
     'vim-scripts/ReplaceWithRegister',
-    'nvim-lualine/lualine.nvim',
+    {
+        'nvim-lualine/lualine.nvim',
+        config = function()
+            require("lualine").setup()
+        end
+    },
     {
         'nvim-telescope/telescope.nvim',
         tag = '0.1.5',
@@ -26,8 +31,17 @@ require("lazy").setup({
             require("telescope").load_extension("lazygit")
         end,
     },
-    'windwp/nvim-autopairs',
-    'windwp/nvim-ts-autotag',
+    {
+        'windwp/nvim-autopairs',
+        event = "InsertEnter",
+        config = true
+    },
+    {
+        'windwp/nvim-ts-autotag',
+        config = function()
+            require('nvim-ts-autotag')
+        end
+    },
     {
         'lewis6991/gitsigns.nvim',
         config = function()
