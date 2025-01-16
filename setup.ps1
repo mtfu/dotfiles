@@ -35,4 +35,6 @@ Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0;
 Get-Service -Name ssh-agent | Set-Service -StartupType Automatic;
 
 #TODO 2022-09-09 Requirement for using nvim-tree-sitter might be possible to remove this later on (Fix for an error)
+nvm install latest
+nvm use latest
 npm install -g tree-sitter-cli 
