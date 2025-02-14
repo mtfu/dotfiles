@@ -41,10 +41,11 @@ vim.opt.signcolumn = 'yes'
 
 vim.opt.updatetime = 50
 
+vim.opt.clipboard:prepend { 'unnamed', 'unnamedplus' }
+
 -- Turn off paste mode when leaving insert
 vim.api.nvim_create_autocmd("InsertLeave", {
   pattern = '*',
   command = "set nopaste"
 })
-
 vim.g.mapleader = " "
