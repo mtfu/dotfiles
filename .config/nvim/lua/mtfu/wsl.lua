@@ -1,3 +1,5 @@
+vim.opt.clipboard:prepend { 'unnamed', 'unnamedplus' }
+
 vim.cmd [[
   augroup Yank
   autocmd!
