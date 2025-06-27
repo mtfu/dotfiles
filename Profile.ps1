@@ -33,7 +33,8 @@ if (Test-Path($ChocolateyProfile))
 
 function weather
 {
-    curl "https://wttr.in/aarhus"
+    param([string]$location = "aarhus")
+    curl "https://wttr.in/$location"
 }
 
 function vs
@@ -61,6 +62,7 @@ function vs
     $Depth = $Depth + 1
     return vs -depth $Depth -Max $Max
 }
+
 function touch
 {
     $file = $args[0]
@@ -164,10 +166,12 @@ function flog
     }
 }
 
+
 function Invoke-Starship-PreCommand
 {
     $host.ui.Write("`e]0; PS> $pwd `a")
 }
+
 
 Invoke-Expression (&starship init powershell)
 Invoke-Expression (& { (zoxide init powershell | Out-String) })

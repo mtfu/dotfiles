@@ -7,6 +7,7 @@ set selectmode=key,ideas
 nnoremap \e :source ~/.ideavimrc<CR>
 nnoremap \r :action IdeaVim.ReloadVimRc.reload<CR>
 
+map <C-\> :action ActivateTerminalToolWindow<CR>
 " leader key
 let mapleader=" "
 
@@ -100,7 +101,7 @@ noremap <leader>ne :action GotoNextError<CR>
 noremap <leader>pe :action GotoPreviousError<CR>
 nnoremap <leader>rl :action RecentLocations<CR>
 nnoremap <leader>fl :action RecentLocations<CR>
-noremap <leader>rF :action RecentChangedFiles<CR>
+noremap <leader>hh :action RecentChangedFiles<CR>
 nnoremap <leader>fb :action Switcher<CR>
 nnoremap <leader>fc :action GotoClass<CR>
 nnoremap <leader>fs :action GotoSymbol<CR>
@@ -194,19 +195,6 @@ else
 endif
 
 
-" Harpoon
-nmap <leader><C-h> :action SetHarpoon1<cr>
-nmap <leader><C-j> :action SetHarpoon2<cr>
-nmap <leader><C-k> :action SetHarpoon3<cr>
-nmap <leader><C-l> :action SetHarpoon4<cr>
-nmap <C-h><C-h> :action GotoHarpoon1<cr>
-nmap <C-h><C-j> :action GotoHarpoon2<cr>
-nmap <C-h><C-k> :action GotoHarpoon3<cr>
-nmap <C-h><C-l> :action GotoHarpoon4<cr>
-
-
-nmap <C-e> :action ShowHarpoon<cr>
-nmap <leader>ma :action AddToHarpoon<cr>
 
 " Remap multiple-cursors shortcuts to match terryma/vim-multiple-cursors
 nmap <C-n> <Plug>NextWholeOccurrence
