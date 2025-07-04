@@ -19,7 +19,6 @@
     prune = true
     pruneTags = true
     all = true
-
 [core]
 	editor = nvim -u ~/.vimrc.minimal
 	excludesFile = ~/.gitignore_global
@@ -57,14 +56,14 @@
 [diff]
 	guitool = kdiff3
 [difftool "kdiff3"]
-	path = C:/Program Files/KDiff3/kdiff3.exe
+	path = kdiff3
 	trustExitCode = false
 [merge]
 	tool = kdiff3
 [mergetool]
 	keepBackup = false
 [mergetool "kdiff3"]
-	path = C:/Program Files/KDiff3/kdiff3.exe
+	path = kdiff3
     trustExitCode = false
 [filter "lfs"]
 	required = true

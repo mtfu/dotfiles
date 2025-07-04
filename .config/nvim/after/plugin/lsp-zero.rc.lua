@@ -1,5 +1,8 @@
 -- Learn the keybindings, see :help lsp-zero-keybindings
 -- Learn to configure LSP servers, see :help lsp-zero-api-showcase
+
+
+
 local status, lsp = pcall(require, "lsp-zero")
 if (not status) then return end
 
@@ -18,7 +21,16 @@ lsp.configure('tsserver', {
         }
     }
 })
---
+
+lsp.configure('powershell_es', {
+  cmd = {
+    "pwsh", "-NoLogo", "-NoProfile", "-Command",
+    "Import-Module PowerShellEditorServices; Start-EditorServices -HostName 'nvim' -HostProfileId 'nvim' -HostVersion '1.0.0' -LogLevel 'Normal' -LogPath '/tmp/powershell_es.log' -SessionDetailsPath '/tmp/powershell_es.session' -FeatureFlags @() -AdditionalModules @() -BundledModulesPath '/path/to/modules'"
+  },
+  filetypes = { "ps1", "psm1", "pwsh" },
+  root_dir = require('lspconfig.util').root_pattern(".git", vim.fn.getcwd()),
+})
+
 -- Configure language server for neomvim
 lsp.nvim_workspace()
 
@@ -37,3 +49,4 @@ lsp.on_attach(function(_, bufnr)
 end)
 
 lsp.setup()
+
