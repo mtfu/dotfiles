@@ -115,4 +115,22 @@ require("lazy").setup({
       -- vim.api.nvim_set_keymap("n", "<C-\\>", "<cmd>ToggleTerm<CR>", {noremap = true, silent = true})
     end
   },
-})
+},
+{
+    -- This runs after all plugins are loaded
+    config = function()
+        vim.api.nvim_create_autocmd('LspAttach', {
+            callback = function(args)
+                vim.defer_fn(function()
+                    pcall(vim.keymap.del, 'n', 'grn', { buffer = args.buf })
+                    pcall(vim.keymap.del, 'n', 'gra', { buffer = args.buf })
+                    pcall(vim.keymap.del, 'n', 'grr', { buffer = args.buf })
+                    pcall(vim.keymap.del, 'n', 'gri', { buffer = args.buf })
+                    pcall(vim.keymap.del, 'n', 'grt', { buffer = args.buf })
+                    pcall(vim.keymap.del, 'v', 'gra', { buffer = args.buf })
+                end, 100)
+            end,
+        })
+    end
+}
+)

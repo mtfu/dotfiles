@@ -87,6 +87,7 @@ imap <C-n> :action HippieCompletion<CR>
 imap <C-p> :action HippieBackwardCompletion<CR>
 
 noremap <leader>\ :action FileStructurePopup<CR>
+noremap <M>\ :action FileStructurePopup<CR>
 nnoremap <leader>U :action ShowUsages<CR>
 nnoremap <leader>u :action FindUsages<CR>
 
@@ -120,7 +121,7 @@ nnoremap <leader>tb :action ToggleLineBreakpoint<CR>
 nnoremap <leader>bb :action BuildSolutionAction<CR>
 nnoremap <leader>be :action EditBreakpoint<CR>
 nnoremap <leader>bs :action RebuildSolutionAction<CR>
-nnoremap <leader>dy :action RiderDebuggerApplyEncChagnes<CR>
+nnoremap <leader>dy :action RiderDebuggerApplyEncChannes<CR>
 nnoremap <leader>rd :action Debug<CR>
 nnoremap <leader>rr :action Rerun<CR>
 nnoremap <leader>rc :action ChooseRunConfiguration <CR>
@@ -146,7 +147,7 @@ noremap <leader>ad :action ActivateDatabaseToolWindow<CR>
 noremap <leader>at :action ActivateTODOToolWindow<CR>
 noremap <leader>af :action ActivateFavoritesToolWindow<CR>
 noremap <leader>ap :action ActivateProjectToolWindow<CR>
-noremap <leader>ae :action ActivateVersionControlToolWindow<CR>
+noremap <leader>ae :action ActivateAssemblyExplorerToolWindow<CR>
 noremap <leader>ag :action ActivateGitHubCopilotChatToolWindow<CR>
 noremap <leader>as :action ActivateServicesToolWindow<CR>
 noremap <leader>ab :action ViewBreakpoints<CR>
