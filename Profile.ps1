@@ -4,20 +4,20 @@ Import-Module PSfzf
 Set-Alias g git
 Import-Module posh-git
 
-$env:HOME = $env:USERPROFILE
 
 Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
 Set-PSReadLineOption -BellStyle None -HistorySearchCursorMovesToEnd 
+Set-PSReadLineOption -ShowToolTips
+Set-PSReadLineOption -Colors @{ InlinePrediction = '#000055'}
 
 Set-PSReadLineKeyHandler -Chord "Ctrl+p" -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptSuggestion()
     [Microsoft.PowerShell.PSConsoleReadLine]::EndOfLine()
 }
 
-Set-PSReadLineOption -ShowToolTips
-Set-PSReadLineOption -Colors @{ InlinePrediction = '#000055'}
-
 Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
+Set-PsFzfOption -PSReadlineChordSetLocation 'Alt+c'
+
 $env:FZF_DEFAULT_COMMAND='fd --type f --color=never --hidden --follow -E .git/*'
 $env:FZF_DEFAULT_OPTS='--no-height --color=bg+:#343d46,gutter:-1,pointer:#ff3c3c,info:#0dbc79,hl:#0dbc79,hl+:#23d18b'
 $env:FZF_CTRL_T_COMMAND="$env:FZF_DEFAULT_COMMAND"
@@ -115,7 +115,8 @@ $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
 
 # Git
 function ci
-{ git commit $args 
+{ 
+    git commit $args 
 }
 function cia
 { git commit --amend $args 
@@ -164,6 +165,25 @@ function flog
     {
         docker logs $CONTAINER | less
     }
+}
+
+
+
+# Enable completion for winget
+Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
+    param($wordToComplete, $commandAst, $cursorPosition)
+        [Console]::InputEncoding = [Console]::OutputEncoding = $OutputEncoding = [System.Text.Utf8Encoding]::new()
+        $Local:word = $wordToComplete.Replace('"', '""')
+        $Local:ast = $commandAst.ToString().Replace('"', '""')
+        winget complete --word="$Local:word" --commandline "$Local:ast" --position $cursorPosition | ForEach-Object {
+            [System.Management.Automation.CompletionResult]::new($_, $_, 'ParameterValue', $_)
+        }
+}
+
+$localAliasFile = "$HOME\PowerShell\machine.local.ps1"
+if (Test-Path $localAliasFile) {
+    . $localAliasFile
+    Write-Host "Loaded machine.local.ps1" -ForegroundColor DarkGray
 }
 
 
