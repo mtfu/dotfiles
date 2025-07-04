@@ -8,7 +8,7 @@ echo "Current working directory: $clone_path"
 
 # Get newest version of nvim
 sudo add-apt-repository ppa:neovim-ppa/unstable
-apt_packages="curl git python3-pip tmux neovim zsh fd-find bat neovim"
+apt_packages="curl git python3-pip tmux git neovim zsh fzf fd-find bat direnv keychain"
 
 # Install packages
 sudo apt-get update && sudo apt-get install -y ${apt_packages}
@@ -26,13 +26,6 @@ ln -fs /usr/bin/batcat $HOME/.local/bin/bat
 
 # Install zsh plugins
 "${clone_path}/.local/bin/update-zsh-plugins"
-
-
-# Install fzf
-rm -rf "${HOME}/.local/share/fzf"
-git clone --depth 1 https://github.com/junegunn/fzf.git "${HOME}/.local/share/fzf" \
-  && yes | "${HOME}/.local/share/fzf/install" --bin --no-update-rc
-ln -fs $(which fdfind) ~/.local/bin/fd
 
 # Create symbolic links
 rm -rf ~/.config/nvim;
