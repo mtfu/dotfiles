@@ -33,8 +33,9 @@ set multiple-cursors    " commands <A-n>, <A-x>, <A-p>, g<A-n>
 set ReplaceWithRegister " commands: gr, grr  ex:griw
 set exchange            " commands: cx, cxx, X, cxc
 set textobj-entire      " additional text objects: ae, ie
-set highlightedyank     "
-set commentary
+set highlightedyank     
+set commentary          " command: gcc
+set functiontextobj     " command: dif, caf, vif
 " Emulation of the `NERDTree` plugin.
 " `r` - recursively refresh the current directory.
 " `R` - recursively refresh the current root.
