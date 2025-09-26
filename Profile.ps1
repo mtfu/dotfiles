@@ -9,6 +9,29 @@ Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
 Set-PSReadLineOption -BellStyle None -HistorySearchCursorMovesToEnd 
 Set-PSReadLineOption -ShowToolTips
 Set-PSReadLineOption -Colors @{ InlinePrediction = '#000055'}
+#
+# Move cursor
+Set-PSReadLineKeyHandler -Chord Ctrl+a -Function BeginningOfLine
+Set-PSReadLineKeyHandler -Chord Ctrl+e -Function EndOfLine
+Set-PSReadLineKeyHandler -Chord Ctrl+b -Function BackwardChar
+Set-PSReadLineKeyHandler -Chord Ctrl+f -Function ForwardChar
+Set-PSReadLineKeyHandler -Chord Alt+b  -Function BackwardWord
+Set-PSReadLineKeyHandler -Chord Alt+f  -Function NextWord
+
+# Deleting
+Set-PSReadLineKeyHandler -Chord Ctrl+h -Function BackwardDeleteChar
+Set-PSReadLineKeyHandler -Chord Ctrl+w -Function BackwardKillWord
+Set-PSReadLineKeyHandler -Chord Alt+d  -Function KillWord
+Set-PSReadLineKeyHandler -Chord Ctrl+u -Function BackwardKillLine
+Set-PSReadLineKeyHandler -Chord Ctrl+k -Function KillLine
+
+# Pasting
+Set-PSReadLineKeyHandler -Chord Ctrl+y -Function Yank
+Set-PSReadLineKeyHandler -Chord Alt+y  -Function YankPop
+
+# Other useful bindings
+Set-PSReadLineKeyHandler -Chord Ctrl+l -Function ClearScreen
+Set-PSReadLineKeyHandler -Chord Ctrl+_ -Function Undo
 
 Set-PSReadLineKeyHandler -Chord "Ctrl+p" -ScriptBlock {
     [Microsoft.PowerShell.PSConsoleReadLine]::AcceptSuggestion()

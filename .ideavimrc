@@ -36,6 +36,11 @@ set textobj-entire      " additional text objects: ae, ie
 set highlightedyank     
 set commentary          " command: gcc
 set functiontextobj     " command: dif, caf, vif
+
+nmap cp  <Plug>ReplaceWithRegisterOperator
+nmap cpp <Plug>ReplaceWithRegisterLine
+xmap cp  <Plug>ReplaceWithRegisterVisual
+
 " Emulation of the `NERDTree` plugin.
 " `r` - recursively refresh the current directory.
 " `R` - recursively refresh the current root.
@@ -209,3 +214,5 @@ nmap <leader><C-n> <Plug>AllWholeOccurrences
 xmap <leader><C-n> <Plug>AllWholeOccurrences
 nmap <leader>g<C-n> <Plug>AllOccurrences
 xmap <leader>g<C-n> <Plug>AllOccurrences
+To
+n

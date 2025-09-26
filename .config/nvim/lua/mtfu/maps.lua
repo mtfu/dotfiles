@@ -3,6 +3,10 @@ vim.keymap.set('n', 'x', '"_x')
 -- Delete a word backwards
 vim.keymap.set('n', 'dw', 'vb"_d')
 
+-- Modify shortcuts from cpp
+vim.keymap.set('n', 'cp', '<Plug>ReplaceWithRegisterOperator', { silent = true })
+vim.keymap.set('x', 'cp', '<Plug>ReplaceWithRegisterVisual', { silent = true })
+vim.keymap.set('n', 'cpp', '<Plug>ReplaceWithRegisterLine', { silent = true })
 
 -- Map Ctrl-Backspace to delete the previous word in insert mode.
 vim.keymap.set('i', '<C-BS>', '<C-W>', { noremap = true })
