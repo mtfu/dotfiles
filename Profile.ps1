@@ -4,7 +4,6 @@ Import-Module PSfzf
 Set-Alias g git
 Import-Module posh-git
 
-
 Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
 Set-PSReadLineOption -BellStyle None -HistorySearchCursorMovesToEnd 
 Set-PSReadLineOption -ShowToolTips

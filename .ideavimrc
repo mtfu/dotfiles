@@ -89,8 +89,8 @@ nnoremap ]] :action MethodDown<CR>
 map zc <Action>(CollapseRegion)
 map zo <Action>(ExpandRegion)
 
-imap <C-n> :action HippieCompletion<CR>
-imap <C-p> :action HippieBackwardCompletion<CR>
+imap <C-n> <ESC>:action HippieCompletion<CR>a
+imap <C-p> <ESC>:action HippieBackwardCompletion<CR>a
 
 noremap <leader>\ :action FileStructurePopup<CR>
 noremap <M>\ :action FileStructurePopup<CR>
@@ -129,7 +129,7 @@ nnoremap <leader>be :action EditBreakpoint<CR>
 nnoremap <leader>bs :action RebuildSolutionAction<CR>
 nnoremap <leader>dy :action RiderDebuggerApplyEncChannes<CR>
 nnoremap <leader>rd :action Debug<CR>
-nnoremap <leader>rr :action Rerun<CR>
+nnoremap <leader>rr :action Debug<CR>
 nnoremap <leader>rc :action ChooseRunConfiguration <CR>
 nnoremap <leader>tt :action RiderUnitTestDebugContextAction<CR>
 nnoremap <leader>rt :action RiderUnitTestRunContextAction<CR>
