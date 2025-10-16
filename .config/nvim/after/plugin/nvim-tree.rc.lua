@@ -13,6 +13,12 @@ nvimTree.setup({
         enable = true,
         auto_open = false,
     },
+    view = {
+        width = {
+            min = 30,
+            max = 80
+        }
+    }
 })
 
 vim.keymap.set('n', '<S-M-l>', ':NvimTreeFindFile<CR>')

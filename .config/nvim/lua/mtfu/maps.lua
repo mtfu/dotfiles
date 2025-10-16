@@ -47,7 +47,7 @@ vim.keymap.set('n', '<leader>lg', '<cmd>LazyGit<CR>')
 vim.keymap.set('n', '<leader>aa', '<cmd>Gitsigns blame_line<CR>')
 
 -- Undo Tree
-vim.keymap.set('n', '<leader><F5>', '<cmd>UndotreeToggle<CR>')
+vim.keymap.set('n', '<leader><F5>', vim.cmd.UndotreeToggle)
 
 -- Change path
 vim.keymap.set('n', '<leader>cd', ':cd %:p:h<CR>:pwd<CR>')
