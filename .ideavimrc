@@ -94,8 +94,8 @@ imap <C-p> <ESC>:action HippieBackwardCompletion<CR>a
 
 noremap <leader>\ :action FileStructurePopup<CR>
 noremap <M>\ :action FileStructurePopup<CR>
-nnoremap <leader>U :action ShowUsages<CR>
-nnoremap <leader>u :action FindUsages<CR>
+nnoremap <leader>u :action ShowUsages<CR>
+nnoremap <leader>U :action FindUsages<CR>
 
 " File and GoTo
 nnoremap <C-S-p> :action GotoAction<CR>
@@ -151,6 +151,7 @@ noremap <leader>pd :action MemberPushDown<CR>
 noremap <leader>pu :action MembersPullUp<CR>
 noremap <leader>ad :action ActivateDatabaseToolWindow<CR>
 noremap <leader>at :action ActivateTODOToolWindow<CR>
+noremap <leader>ac :action ActivateCommitToolWindow<CR>
 noremap <leader>af :action ActivateFavoritesToolWindow<CR>
 noremap <leader>ap :action ActivateProjectToolWindow<CR>
 noremap <leader>ae :action ActivateAssemblyExplorerToolWindow<CR>
