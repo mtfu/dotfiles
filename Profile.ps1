@@ -109,8 +109,8 @@ Set-Alias grep findstr
 # Set-Alias less 'C:\Program Files\Git\usr\bin\less.exe'
 Set-Alias lg lazygit
 Set-Alias v vim
-Set-Alias ws 'C:\Users\Epico_mtfu\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\JetBrains Toolbox\WebStorm.lnk'
-Set-Alias rs 'C:\Users\Epico_mtfu\AppData\Local\Programs\Rider\bin\rider64.exe'
+Set-Alias ws webstorm
+Set-Alias rs rider
 
 # Env
 $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"

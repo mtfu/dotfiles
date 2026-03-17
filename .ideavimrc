@@ -5,7 +5,6 @@ set idearefactormode=keep
 set selectmode=key,ideas
 
 nnoremap \e :source ~/.ideavimrc<CR>
-nnoremap \r :action IdeaVim.ReloadVimRc.reload<CR>
 
 map <C-\> :action ActivateTerminalToolWindow<CR>
 " leader key
@@ -26,6 +25,7 @@ sethandler <C-c> a:ide
 sethandler <C-t> a:ide
 sethandler <C-f> a:ide
 sethandler <C-z> a:ide
+sethandler <C-A-l> a:vim
 
 " plugins
 set surround            " commands: ys, cs, ds, S
@@ -183,6 +183,8 @@ noremap <leader>cu :action CloseAllUnmodifiedEditors<CR>
 noremap <leader>ga :action Generate<CR>
 
 
+map <s-a-l> :action SelectInProjectView<CR>
+
 """"""""""""""""""""""""""""""""""""""Ide specific""""""""""""""""""""""""""""""""
 
 
@@ -212,4 +214,5 @@ xmap g<C-n> <Plug>NextOccurrence
 xmap <C-x> <Plug>SkipOccurrence
 xmap <C-p> <Plug>RemoveOccurrence
 nmap <leader><C-n> <Plug>AllWholeOccurrences
+xmap <leader><C-n> <Plug>AllWholeOccurrences
 nmap <leader>g<C-n> <Plug>AllOccurrences
