@@ -16,9 +16,6 @@ if (-not (test-path -path $localgitconfig -pathtype leaf)) {
 # We want to expose Linux helpful commands like tig, less and xargs
 [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Git\usr\bin" , [System.EnvironmentVariableTarget]::Machine)
 
-## Install PlugInstall
-iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim |`
-    ni "$(@($env:XDG_DATA_HOME, $env:LOCALAPPDATA)[$null -eq $env:XDG_DATA_HOME])/nvim-data/site/autoload/plug.vim" -Force;
 
 function Install($moduleName) {
     Install-Module $moduleName  -Confirm:$False -Force;

@@ -1,216 +1,230 @@
 {
-    "$help": "https://aka.ms/terminal-documentation",
-    "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": 
-    [
-        {
-            "command": 
-            {
-                "action": "globalSummon",
-                "monitor": "any"
-            },
-            "id": "User.globalSummon.C79E99FF"
-        }
-    ],
-    "copyFormatting": "none",
-    "copyOnSelect": false,
-    "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
-    "keybindings": 
-    [
-        {
-            "id": "Terminal.PasteFromClipboard",
-            "keys": "ctrl+v"
-        },
-        {
-            "id": "Terminal.FindText",
-            "keys": "ctrl+shift+f"
-        },
-        {
-            "id": "User.globalSummon.C79E99FF",
-            "keys": "ctrl+alt+t"
-        },
-        {
-            "id": "Terminal.CopyToClipboard",
-            "keys": "ctrl+c"
-        },
-        {
-            "id": "Terminal.DuplicatePaneAuto",
-            "keys": "alt+shift+d"
-        }
-    ],
-    "newTabMenu": 
-    [
-        {
-            "type": "remainingProfiles"
-        }
-    ],
-    "profiles": 
+  "$help": "https://aka.ms/terminal-documentation",
+  "$schema": "https://aka.ms/terminal-profiles-schema",
+  "actions": [
     {
-        "defaults": 
-        {
-            "colorScheme": "Gruvbox Dark",
-            "elevate": false,
-            "font": 
-            {
-                "face": "JetBrainsMono Nerd Font"
-            }
-        },
-        "list": 
-        [
-            {
-                "bellStyle": "none",
-                "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
-                "hidden": false,
-                "name": "PowerShell",
-                "source": "Windows.Terminal.PowershellCore"
-            },
-            {
-                "bellStyle": "none",
-                "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-                "hidden": false,
-                "name": "Windows PowerShell"
-            },
-            {
-                "bellStyle": "none",
-                "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
-                "hidden": false,
-                "name": "Command Prompt"
-            },
-            {
-                "bellStyle": "none",
-                "commandline": "WSL",
-                "cursorShape": "filledBox",
-                "font": 
-                {
-                    "size": 13
-                },
-                "guid": "{27a9a615-d17a-4f9f-973b-0120b3b31303}",
-                "hidden": false,
-                "icon": "none",
-                "name": "WSL",
-                "startingDirectory": "~",
-                "tabTitle": "Ubuntu"
-            },
-            {
-                "guid": "{963ff2f7-6aed-5ce3-9d91-90d99571f53a}",
-                "hidden": true,
-                "name": "Ubuntu-24.04",
-                "source": "Windows.Terminal.Wsl"
-            },
-            {
-                "guid": "{acbafd15-cbbb-5bb3-8a61-bed446ff4b83}",
-                "hidden": false,
-                "name": "Ubuntu 24.04 LTS",
-                "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc"
-            },
-            {
-                "guid": "{ab33f4c4-23cd-5b4c-a9a8-da670f20a797}",
-                "hidden": false,
-                "name": "Developer Command Prompt for VS 2022",
-                "source": "Windows.Terminal.VisualStudio"
-            },
-            {
-                "guid": "{b150e7f0-b831-5473-9bb6-a34cf669bd3b}",
-                "hidden": false,
-                "name": "Developer PowerShell for VS 2022",
-                "source": "Windows.Terminal.VisualStudio"
-            }
-        ]
+      "command": {
+        "action": "globalSummon",
+        "monitor": "any"
+      },
+      "id": "User.globalSummon.C79E99FF"
+    }
+  ],
+  "copyFormatting": "none",
+  "copyOnSelect": false,
+  "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+  "keybindings": [
+    {
+      "id": "Terminal.PasteFromClipboard",
+      "keys": "ctrl+v"
     },
-    "schemes": 
-    [
-        {
-            "background": "#1E1E1E",
-            "black": "#1E1E1E",
-            "blue": "#377375",
-            "brightBlack": "#7F7061",
-            "brightBlue": "#719586",
-            "brightCyan": "#7DB669",
-            "brightGreen": "#AAB01E",
-            "brightPurple": "#C77089",
-            "brightRed": "#F73028",
-            "brightWhite": "#E6D4A3",
-            "brightYellow": "#F7B125",
-            "cursorColor": "#E6D4A3",
-            "cyan": "#578E57",
-            "foreground": "#E6D4A3",
-            "green": "#868715",
-            "name": "Gruvbox Dark",
-            "purple": "#A04B73",
-            "red": "#BE0F17",
-            "selectionBackground": "#E6D4A3",
-            "white": "#978771",
-            "yellow": "#CC881A"
+    {
+      "id": "Terminal.FindText",
+      "keys": "ctrl+shift+f"
+    },
+    {
+      "id": "User.globalSummon.C79E99FF",
+      "keys": "ctrl+alt+t"
+    },
+    {
+      "id": "Terminal.CopyToClipboard",
+      "keys": "ctrl+c"
+    },
+    {
+      "id": "Terminal.DuplicatePaneAuto",
+      "keys": "alt+shift+d"
+    },
+    {
+      "keys": "ctrl+shift+-",
+      "command": "unbound"
+    },
+    {
+      "keys": "ctrl+shift+=",
+      "command": "unbound"
+    },
+    {
+      "keys": "ctrl+shift+=",
+      "command": {
+        "action": "splitPane",
+        "direction": "vertical",
+        "splitMode": "duplicate"
+      }
+    },
+    {
+      "keys": "ctrl+shift+-",
+      "command": {
+        "action": "splitPane",
+        "direction": "horizontal",
+        "splitMode": "duplicate"
+      }
+    }
+  ],
+  "newTabMenu": [
+    {
+      "type": "remainingProfiles"
+    }
+  ],
+  "profiles": {
+    "defaults": {
+      "colorScheme": "Gruvbox Dark",
+      "elevate": false,
+      "font": {
+        "face": "JetBrainsMono Nerd Font"
+      }
+    },
+    "list": [
+      {
+        "bellStyle": "none",
+        "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
+        "hidden": false,
+        "name": "PowerShell",
+        "source": "Windows.Terminal.PowershellCore"
+      },
+      {
+        "bellStyle": "none",
+        "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
+        "hidden": false,
+        "name": "Windows PowerShell"
+      },
+      {
+        "bellStyle": "none",
+        "guid": "{0caa0dad-35be-5f56-a8ff-afceeeaa6101}",
+        "hidden": false,
+        "name": "Command Prompt"
+      },
+      {
+        "bellStyle": "none",
+        "commandline": "WSL",
+        "cursorShape": "filledBox",
+        "font": {
+          "size": 13
         },
-        {
-            "background": "#300A24",
-            "black": "#171421",
-            "blue": "#0037DA",
-            "brightBlack": "#767676",
-            "brightBlue": "#08458F",
-            "brightCyan": "#2C9FB3",
-            "brightGreen": "#26A269",
-            "brightPurple": "#A347BA",
-            "brightRed": "#C01C28",
-            "brightWhite": "#F2F2F2",
-            "brightYellow": "#A2734C",
-            "cursorColor": "#FFFFFF",
-            "cyan": "#3A96DD",
-            "foreground": "#FFFFFF",
-            "green": "#26A269",
-            "name": "Ubuntu-22.04-ColorScheme",
-            "purple": "#881798",
-            "red": "#C21A23",
-            "selectionBackground": "#FFFFFF",
-            "white": "#CCCCCC",
-            "yellow": "#A2734C"
-        },
-        {
-            "background": "#300A24",
-            "black": "#171421",
-            "blue": "#0037DA",
-            "brightBlack": "#767676",
-            "brightBlue": "#08458F",
-            "brightCyan": "#2C9FB3",
-            "brightGreen": "#26A269",
-            "brightPurple": "#A347BA",
-            "brightRed": "#C01C28",
-            "brightWhite": "#F2F2F2",
-            "brightYellow": "#A2734C",
-            "cursorColor": "#FFFFFF",
-            "cyan": "#3A96DD",
-            "foreground": "#FFFFFF",
-            "green": "#26A269",
-            "name": "Ubuntu-24.04-ColorScheme",
-            "purple": "#881798",
-            "red": "#C21A23",
-            "selectionBackground": "#FFFFFF",
-            "white": "#CCCCCC",
-            "yellow": "#A2734C"
-        },
-        {
-            "background": "#300A24",
-            "black": "#171421",
-            "blue": "#0037DA",
-            "brightBlack": "#767676",
-            "brightBlue": "#08458F",
-            "brightCyan": "#2C9FB3",
-            "brightGreen": "#26A269",
-            "brightPurple": "#A347BA",
-            "brightRed": "#C01C28",
-            "brightWhite": "#F2F2F2",
-            "brightYellow": "#A2734C",
-            "cursorColor": "#FFFFFF",
-            "cyan": "#3A96DD",
-            "foreground": "#FFFFFF",
-            "green": "#26A269",
-            "name": "Ubuntu-ColorScheme",
-            "purple": "#881798",
-            "red": "#C21A23",
-            "selectionBackground": "#FFFFFF",
-            "white": "#CCCCCC",
-            "yellow": "#A2734C"
-        }
-    ],
-    "themes": []
+        "guid": "{27a9a615-d17a-4f9f-973b-0120b3b31303}",
+        "hidden": false,
+        "icon": "none",
+        "name": "WSL",
+        "startingDirectory": "~",
+        "tabTitle": "Ubuntu"
+      },
+      {
+        "guid": "{963ff2f7-6aed-5ce3-9d91-90d99571f53a}",
+        "hidden": true,
+        "name": "Ubuntu-24.04",
+        "source": "Windows.Terminal.Wsl"
+      },
+      {
+        "guid": "{acbafd15-cbbb-5bb3-8a61-bed446ff4b83}",
+        "hidden": false,
+        "name": "Ubuntu 24.04 LTS",
+        "source": "CanonicalGroupLimited.Ubuntu24.04LTS_79rhkp1fndgsc"
+      },
+      {
+        "guid": "{ab33f4c4-23cd-5b4c-a9a8-da670f20a797}",
+        "hidden": false,
+        "name": "Developer Command Prompt for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      },
+      {
+        "guid": "{b150e7f0-b831-5473-9bb6-a34cf669bd3b}",
+        "hidden": false,
+        "name": "Developer PowerShell for VS 2022",
+        "source": "Windows.Terminal.VisualStudio"
+      }
+    ]
+  },
+  "schemes": [
+    {
+      "background": "#1E1E1E",
+      "black": "#1E1E1E",
+      "blue": "#377375",
+      "brightBlack": "#7F7061",
+      "brightBlue": "#719586",
+      "brightCyan": "#7DB669",
+      "brightGreen": "#AAB01E",
+      "brightPurple": "#C77089",
+      "brightRed": "#F73028",
+      "brightWhite": "#E6D4A3",
+      "brightYellow": "#F7B125",
+      "cursorColor": "#E6D4A3",
+      "cyan": "#578E57",
+      "foreground": "#E6D4A3",
+      "green": "#868715",
+      "name": "Gruvbox Dark",
+      "purple": "#A04B73",
+      "red": "#BE0F17",
+      "selectionBackground": "#E6D4A3",
+      "white": "#978771",
+      "yellow": "#CC881A"
+    },
+    {
+      "background": "#300A24",
+      "black": "#171421",
+      "blue": "#0037DA",
+      "brightBlack": "#767676",
+      "brightBlue": "#08458F",
+      "brightCyan": "#2C9FB3",
+      "brightGreen": "#26A269",
+      "brightPurple": "#A347BA",
+      "brightRed": "#C01C28",
+      "brightWhite": "#F2F2F2",
+      "brightYellow": "#A2734C",
+      "cursorColor": "#FFFFFF",
+      "cyan": "#3A96DD",
+      "foreground": "#FFFFFF",
+      "green": "#26A269",
+      "name": "Ubuntu-22.04-ColorScheme",
+      "purple": "#881798",
+      "red": "#C21A23",
+      "selectionBackground": "#FFFFFF",
+      "white": "#CCCCCC",
+      "yellow": "#A2734C"
+    },
+    {
+      "background": "#300A24",
+      "black": "#171421",
+      "blue": "#0037DA",
+      "brightBlack": "#767676",
+      "brightBlue": "#08458F",
+      "brightCyan": "#2C9FB3",
+      "brightGreen": "#26A269",
+      "brightPurple": "#A347BA",
+      "brightRed": "#C01C28",
+      "brightWhite": "#F2F2F2",
+      "brightYellow": "#A2734C",
+      "cursorColor": "#FFFFFF",
+      "cyan": "#3A96DD",
+      "foreground": "#FFFFFF",
+      "green": "#26A269",
+      "name": "Ubuntu-24.04-ColorScheme",
+      "purple": "#881798",
+      "red": "#C21A23",
+      "selectionBackground": "#FFFFFF",
+      "white": "#CCCCCC",
+      "yellow": "#A2734C"
+    },
+    {
+      "background": "#300A24",
+      "black": "#171421",
+      "blue": "#0037DA",
+      "brightBlack": "#767676",
+      "brightBlue": "#08458F",
+      "brightCyan": "#2C9FB3",
+      "brightGreen": "#26A269",
+      "brightPurple": "#A347BA",
+      "brightRed": "#C01C28",
+      "brightWhite": "#F2F2F2",
+      "brightYellow": "#A2734C",
+      "cursorColor": "#FFFFFF",
+      "cyan": "#3A96DD",
+      "foreground": "#FFFFFF",
+      "green": "#26A269",
+      "name": "Ubuntu-ColorScheme",
+      "purple": "#881798",
+      "red": "#C21A23",
+      "selectionBackground": "#FFFFFF",
+      "white": "#CCCCCC",
+      "yellow": "#A2734C"
+    }
+  ],
+  "themes": []
 }

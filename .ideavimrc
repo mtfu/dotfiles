@@ -94,8 +94,8 @@ imap <C-p> <ESC>:action HippieBackwardCompletion<CR>a
 
 noremap <leader>\ :action FileStructurePopup<CR>
 noremap <M>\ :action FileStructurePopup<CR>
-nnoremap <leader>u :action ShowUsages<CR>
-nnoremap <leader>U :action FindUsages<CR>
+nnoremap <leader>U :action ShowUsages<CR>
+nnoremap <leader>u :action FindUsages<CR>
 
 " File and GoTo
 nnoremap <C-S-p> :action GotoAction<CR>
@@ -212,8 +212,4 @@ xmap g<C-n> <Plug>NextOccurrence
 xmap <C-x> <Plug>SkipOccurrence
 xmap <C-p> <Plug>RemoveOccurrence
 nmap <leader><C-n> <Plug>AllWholeOccurrences
-xmap <leader><C-n> <Plug>AllWholeOccurrences
 nmap <leader>g<C-n> <Plug>AllOccurrences
-xmap <leader>g<C-n> <Plug>AllOccurrences
-To
-n
