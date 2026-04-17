@@ -1,0 +1,7 @@
+require('config.options')
+require('config.pack')
+require('config.ui')
+require('config.editor')
+require('config.lsp')
+require('config.keymaps')
+require('config.autocmds')

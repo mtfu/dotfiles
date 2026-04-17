@@ -4,7 +4,7 @@ $env:home = "$userprofile"
 $localgitconfig = "$env:userprofile/.gitconfig.local"
 
 if (-not (test-path -path $localgitconfig -pathtype leaf)) {
-		cp .gitconfig.local $localgitconfig
+    cp .gitconfig.local $localgitconfig
 }
 
 & '.\updateSymbolicLinks.ps1'; 
@@ -16,12 +16,12 @@ if (-not (test-path -path $localgitconfig -pathtype leaf)) {
 # We want to expose Linux helpful commands like tig, less and xargs
 [Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Git\usr\bin" , [System.EnvironmentVariableTarget]::Machine)
 
-
 function Install($moduleName) {
-    Install-Module $moduleName  -Confirm:$False -Force;
+    Install-Module $moduleName  -Confirm:$False -Force -AllowClobber;
 }
 
 Install("posh-git")
+Install("lazy-posh-git")
 Install("PSfzf");
 Install("posh-sshell");
 Install("Terminal-Icons");
@@ -34,4 +34,4 @@ Get-Service -Name ssh-agent | Set-Service -StartupType Automatic;
 #TODO 2022-09-09 Requirement for using nvim-tree-sitter might be possible to remove this later on (Fix for an error)
 nvm install latest
 nvm use latest
-npm install -g tree-sitter-cli 
+npm install -g tree-sitter-cli
