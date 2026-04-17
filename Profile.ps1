@@ -47,17 +47,20 @@ $env:FZF_CTRL_T_OPTS = "--preview 'bat --color=always --line-range :50 {}'"
 $env:FZF_ALT_C_COMMAND = 'fd --type d . --color=never --hidden --follow -E .git/*'
 
 
-function choco {
+function choco
+{
     Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
     & choco.exe @args
 }
 
-function weather {
+function weather
+{
     param([string]$location = "aarhus")
     curl "https://wttr.in/$location"
 }
 
-function vs {
+function vs
+{
     param (
         [PSDefaultValue(Help = 'Current directory')]
         [string[]] $SearchPath = '.',
@@ -67,11 +70,13 @@ function vs {
         $Max = 5
     )
     $item = Get-ChildItem "*.sln" -Depth $Depth -Path $SearchPath | Select-Object -First 1
-    if ($item) {
+    if ($item)
+    {
         Invoke-Expression "rs $item"
         return
     }
-    if ($Depth -ge $Max) {
+    if ($Depth -ge $Max)
+    {
         Write-Host "not found at depth $Depth"
         return
     }
@@ -80,21 +85,30 @@ function vs {
     return vs -depth $Depth -Max $Max
 }
 
-function touch {
-    if (!$args[0]) { throw "No filename supplied" }
-    if (Test-Path $args[0]) { (Get-Item $args[0]).LastWriteTime = Get-Date }
-    else { New-Item -ItemType File -Name $args[0] }
+function touch
+{
+    if (!$args[0])
+    { throw "No filename supplied" 
+    }
+    if (Test-Path $args[0])
+    { (Get-Item $args[0]).LastWriteTime = Get-Date 
+    } else
+    { New-Item -ItemType File -Name $args[0] 
+    }
 }
 
-function which ($command) {
+function which ($command)
+{
     Get-Command -Name $command -ErrorAction SilentlyContinue | Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
 
-function sr {
+function sr
+{
     Set-Location 'C:\repos'
 }
 
-function nGuid {
+function nGuid
+{
     $guid = [guid]::NewGuid().ToString()
     Write-Host $guid
     $guid | clip
@@ -116,49 +130,61 @@ Set-Alias rs rider
 $env:GIT_SSH = "C:\Windows\system32\OpenSSH\ssh.exe"
 
 # Git
-function ci { 
+function ci
+{ 
     git commit $args 
 }
-function cia {
+function cia
+{
     git commit --amend $args 
 }
 
 # Runners
-function nr {
+function nr
+{
     npm run $args 
 }
-function dn {
+function dn
+{
     dotnet watch $args 
 }
 
 # Leverage PSFzf
-function fua {
+function fua
+{
     Invoke-FuzzyGitStatus | % { git add $_ } 
 }
-function fur {
+function fur
+{
     Invoke-FuzzyGitStatus | % { git reset $_ }
 }
-function fuc {
+function fuc
+{
     Invoke-FuzzyGitStatus | % { git checkout $_ }
 }
 
 
 # Docker
-function fcon {
+function fcon
+{
     $CONTAINER = (docker ps | Select-String -Pattern "CONTAINER" -NotMatch | ForEach-Object { ($_ -split " ")[-1] } | Out-String).Trim() | fzf
     return $CONTAINER;
 }
 
-function fexec {
+function fexec
+{
     $CONTAINER = fcon
-    if (-not [string]::IsNullOrEmpty($CONTAINER)) {
+    if (-not [string]::IsNullOrEmpty($CONTAINER))
+    {
         docker exec -it $CONTAINER bash
     }
 }
 
-function flog {
+function flog
+{
     $CONTAINER = fcon
-    if (-not [string]::IsNullOrEmpty($CONTAINER)) {
+    if (-not [string]::IsNullOrEmpty($CONTAINER))
+    {
         docker logs $CONTAINER | less
     }
 }
@@ -177,20 +203,25 @@ Register-ArgumentCompleter -Native -CommandName winget -ScriptBlock {
 }
 
 $localAliasFile = "$HOME\PowerShell\machine.local.ps1"
-if (Test-Path $localAliasFile) {
+if (Test-Path $localAliasFile)
+{
     . $localAliasFile
     Write-Host "Loaded machine.local.ps1" -ForegroundColor DarkGray
 }
 
+function removeOrigFiles
+{
+    Get-ChildItem -Recurse -Filter '*.orig' | Remove-Item
+}
 
-function Invoke-Starship-PreCommand {
+function Invoke-Starship-PreCommand
+{
     $esc = [char]27
     # OSC 9;9 for Windows Terminal directory tracking
     [Console]::Write("$esc]9;9;$($PWD.Path)$esc\")
     # Set terminal title
     [Console]::Write("$esc]0;PS> $PWD$esc\")
 }
-
 
 Invoke-Expression (&starship init powershell)
 Invoke-Expression (& { (zoxide init powershell | Out-String) })

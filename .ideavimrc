@@ -1,24 +1,15 @@
-" n Normal mode. Defined using :nmap or nnoremap i Insert mode map. Defined using imap or inoremap
+" ── Core settings ────────────────────────────────────────────────────────────
 set clipboard+=unnamed
 set ideajoin
 set idearefactormode=keep
 set selectmode=key,ideas
-
-nnoremap \e :source ~/.ideavimrc<CR>
-
-map <C-\> :action ActivateTerminalToolWindow<CR>
-" leader key
-let mapleader=" "
-
-" disable annoying bells
 set visualbell
 set noerrorbells
 set relativenumber number
 
-vnoremap < <gv
-vnoremap > >gv
+let mapleader=" "
 
-" Shortcut conflict Ideavim (Exported from Vim)
+" ── Key handler conflicts ─────────────────────────────────────────────────────
 sethandler a:vim
 sethandler <C-v> a:ide
 sethandler <C-c> a:ide
@@ -27,118 +18,109 @@ sethandler <C-f> a:ide
 sethandler <C-z> a:ide
 sethandler <C-A-l> a:vim
 
-" plugins
-set surround            " commands: ys, cs, ds, S
-set multiple-cursors    " commands <A-n>, <A-x>, <A-p>, g<A-n>
-set ReplaceWithRegister " commands: gr, grr  ex:griw
-set exchange            " commands: cx, cxx, X, cxc
-set textobj-entire      " additional text objects: ae, ie
-set highlightedyank     
-set commentary          " command: gcc
-set functiontextobj     " command: dif, caf, vif
+" ── Plugins ───────────────────────────────────────────────────────────────────
+set surround            " ys, cs, ds, S
+set multiple-cursors    " <A-n>, <A-x>, <A-p>, g<A-n>
+set ReplaceWithRegister " cp, cpp
+set exchange            " cx, cxx, X, cxc
+set textobj-entire      " ae, ie
+set highlightedyank
+set commentary          " gcc
+set functiontextobj     " dif, caf, vif
+set NERDTree
+set matchit
+set argtextobj
+
+let g:argtextobj_pairs="(:),{:},<:>"
+
+" ── Editing ───────────────────────────────────────────────────────────────────
+vnoremap < <gv
+vnoremap > >gv
 
 nmap cp  <Plug>ReplaceWithRegisterOperator
 nmap cpp <Plug>ReplaceWithRegisterLine
 xmap cp  <Plug>ReplaceWithRegisterVisual
 
-" Emulation of the `NERDTree` plugin.
-" `r` - recursively refresh the current directory.
-" `R` - recursively refresh the current root.
-" `K` - navigate to the first sibling of current file/directory.
-" `J` - navigate to the last sibling of current file/directory.
-" `o` (<CR>) - open file in a new tab.
-" `O` - recursively open the selected directory.
-" `P` - jump to the root node.
-" `p` - jump to current nodes parent.
-" `A` - zoom (maximize/minimize) the NERDTree window.
-" `v` - split vertically.
-" `h` - split horizontally.
-set NERDTree
-set matchit
+" Multiple-cursors: <C-n> add next, <C-x> skip, <C-p> undo, <leader><C-n> select all
+nmap <C-n>          <Plug>NextWholeOccurrence
+xmap <C-n>          <Plug>NextWholeOccurrence
+nmap g<C-n>         <Plug>NextOccurrence
+xmap g<C-n>         <Plug>NextOccurrence
+xmap <C-x>          <Plug>SkipOccurrence
+xmap <C-p>          <Plug>RemoveOccurrence
+nmap <leader><C-n>  <Plug>AllWholeOccurrences
+xmap <leader><C-n>  <Plug>AllWholeOccurrences
+nmap <leader>g<C-n> <Plug>AllOccurrences
 
-set quickscope
-let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
-set argtextobj
-let g:argtextobj_pairs="(:),{:},<:>"
+" ── LSP / Code ────────────────────────────────────────────────────────────────
+" gr* matches Neovim 0.12 LSP defaults
+nmap <F2>  <Action>(RenameElement)
+nmap grn   <Action>(RenameElement)
+nmap gra   <Action>(Refactorings.QuickListPopupAction)
+nmap grr   <Action>(ShowUsages)
+nmap gri   <Action>(GotoImplementation)
+nmap grt   <Action>(GotoTypeDeclaration)
 
-vnoremap J :m '>+1<CR>gv=gv
-vnoremap K :m '<-2<CR>gv=gv
+nmap K  <Action>(QuickJavaDoc)
+nmap <C-k> <Action>(ParameterInfo)
+imap <C-k> <Action>(ParameterInfo)
+nmap gl    <Action>(ShowErrorDescription)
+noremap  <leader>ti :action ExpressionTypeInfo<CR>
+noremap  <leader>u  :action FindUsages<CR>
+nmap     <A-CR>     <Action>(ShowIntentionActions)
 
-" Hint use alt + arrows to move in insert mode
-""" Other
-" Try to use same command as in nvim
-inoremap <C-k> :action ParameterInfo<CR>
-nnoremap <C-k> :action ParameterInfo<CR>
-nnoremap <leader>gf :action Vcs.ShowTabbedFileHistory<CR>
-nnoremap <leader>zz :action ChangeView<CR>
-nnoremap <leader><S-Esc> :action HideAllWindows<CR>
-nnoremap <leader>nn :action JumpToLastWindow<CR>
+" ── Navigation ────────────────────────────────────────────────────────────────
+nnoremap <C-o>      :action Back<CR>
+nnoremap <C-i>      :action Forward<CR>
+nnoremap g;         :action JumpToLastChange<CR>
+nnoremap g,         :action JumpToNextChange<CR>
+nnoremap [[         :action MethodUp<CR>
+nnoremap ]]         :action MethodDown<CR>
 nnoremap <leader>jj :action JumpToStatement<CR>
+nnoremap <leader>nn :action JumpToLastWindow<CR>
+nnoremap <leader>rl :action RecentLocations<CR>
 
-nnoremap <leader>ca :action Refactorings.QuickListPopupAction<CR>
-nnoremap <leader>ms :action RiderManageRecentProjects<CR>
-nnoremap <leader>aa :action Annotate<CR>
-
-" To make Back and Forward work more smooth
-nnoremap <C-o> :action Back<CR>
-nnoremap <C-i> :action Forward<CR>
-nnoremap g; :action JumpToLastChange<CR>
-nnoremap g, :action JumpToNextChange<CR>
-nnoremap [[ :action MethodUp<CR>
-nnoremap ]] :action MethodDown<CR>
 map zc <Action>(CollapseRegion)
 map zo <Action>(ExpandRegion)
 
-imap <C-n> <ESC>:action HippieCompletion<CR>a
-imap <C-p> <ESC>:action HippieBackwardCompletion<CR>a
+" ── File / Search ─────────────────────────────────────────────────────────────
+nnoremap <C-p>       :action GotoFile<CR>
+noremap  <leader>hh  :action RecentFiles<CR>
+noremap  <leader>hr  :action RecentChangedFiles<CR>
+noremap  <leader>fg  :action FindInPath<CR>
+nnoremap <leader>fb  :action Switcher<CR>
+nnoremap <leader>fc  :action GotoClass<CR>
+nnoremap <leader>fs  :action GotoSymbol<CR>
+nnoremap <leader>fa  :action GotoAction<CR>
+noremap  <leader>gsm :action GotoSuperMethod<CR>
+noremap  <M-\>       :action FileStructurePopup<CR>
+nnoremap <leader>en  :action EditSourceInNewWindow<CR>
 
-noremap <leader>\ :action FileStructurePopup<CR>
-noremap <M>\ :action FileStructurePopup<CR>
-nnoremap <leader>U :action ShowUsages<CR>
-nnoremap <leader>u :action FindUsages<CR>
+" ── Git ───────────────────────────────────────────────────────────────────────
+nnoremap <leader>aa :action Annotate<CR>
+nnoremap <leader>gf :action Vcs.ShowTabbedFileHistory<CR>
 
-" File and GoTo
-nnoremap <C-S-p> :action GotoAction<CR>
-nnoremap <C-p> :action GotoFile<CR>
-noremap <leader>hh :action RecentFiles<CR>
-noremap <leader>gi :action GotoImplementation<CR>
-noremap <leader>fg :action FindInPath<CR>
-noremap <leader>gsm :action GotoSuperMethod<CR>
-noremap <leader>ne :action GotoNextError<CR>
-noremap <leader>pe :action GotoPreviousError<CR>
-nnoremap <leader>rl :action RecentLocations<CR>
-nnoremap <leader>fl :action RecentLocations<CR>
-noremap <leader>hh :action RecentChangedFiles<CR>
-nnoremap <leader>fb :action Switcher<CR>
-nnoremap <leader>fc :action GotoClass<CR>
-nnoremap <leader>fs :action GotoSymbol<CR>
-nnoremap <leader>fa :action GotoAction<CR>
+" ── Window / Terminal ─────────────────────────────────────────────────────────
+map      <C-\>           :action ActivateTerminalToolWindow<CR>
+map      <s-a-l>         :action SelectInProjectView<CR>
+nnoremap <c-w>q          :action Unsplit<CR>
+nnoremap <leader>zz      :action ChangeView<CR>
+nnoremap <leader><S-Esc> :action HideAllWindows<CR>
 
-nnoremap sh <c-w>h
-nnoremap sl <c-w>l
-nnoremap sj <c-w>j
-nnoremap sk <c-w>k
-nnoremap <c-w>q :action Unsplit<CR>
-
-nnoremap <leader>en :action EditSourceInNewWindow<CR>
-
-" Running and Debugging
-nnoremap <leader>tb :action ToggleLineBreakpoint<CR>
-nnoremap <leader>bb :action BuildSolutionAction<CR>
-nnoremap <leader>be :action EditBreakpoint<CR>
-nnoremap <leader>bs :action RebuildSolutionAction<CR>
-nnoremap <leader>dy :action RiderDebuggerApplyEncChannes<CR>
-nnoremap <leader>rd :action Debug<CR>
+" ── Running / Debugging ───────────────────────────────────────────────────────
 nnoremap <leader>rr :action Debug<CR>
-nnoremap <leader>rc :action ChooseRunConfiguration <CR>
+nnoremap <leader>rc :action ChooseRunConfiguration<CR>
+nnoremap <leader>ss :action Stop<CR>
+nnoremap <leader>tb :action ToggleLineBreakpoint<CR>
+nnoremap <leader>be :action EditBreakpoint<CR>
+nnoremap <leader>bb :action BuildSolutionAction<CR>
+nnoremap <leader>bs :action RebuildSolutionAction<CR>
 nnoremap <leader>tt :action RiderUnitTestDebugContextAction<CR>
 nnoremap <leader>rt :action RiderUnitTestRunContextAction<CR>
 nnoremap <leader>ts :action RiderUnitTestRunSolutionAction<CR>
 nnoremap <leader>tf :action RiderUnitTestSessionRerunFailedTestsAction<CR>
-nnoremap <leader>ss :action Stop<CR>
 
-""""""""""""""""""""""""""""""""""""""Refactoring""""""""""""""""""""""""""""""""""""""
-noremap <leader>re :action RenameElement<CR>
+" ── Refactoring ───────────────────────────────────────────────────────────────
 noremap <leader>mv :action Move<CR>
 noremap <leader>il :action Inline<CR>
 noremap <leader>em :action ExtractMethod<CR>
@@ -149,6 +131,8 @@ noremap <leader>ip :action IntroduceParameter<CR>
 noremap <leader>if :action IntroduceField<CR>
 noremap <leader>pd :action MemberPushDown<CR>
 noremap <leader>pu :action MembersPullUp<CR>
+
+" ── Tool windows ──────────────────────────────────────────────────────────────
 noremap <leader>ad :action ActivateDatabaseToolWindow<CR>
 noremap <leader>at :action ActivateTODOToolWindow<CR>
 noremap <leader>ac :action ActivateCommitToolWindow<CR>
@@ -157,62 +141,41 @@ noremap <leader>ap :action ActivateProjectToolWindow<CR>
 noremap <leader>ae :action ActivateAssemblyExplorerToolWindow<CR>
 noremap <leader>ag :action ActivateGitHubCopilotChatToolWindow<CR>
 noremap <leader>as :action ActivateServicesToolWindow<CR>
-noremap <leader>ab :action ViewBreakpoints<CR>
 
-"""""""""""""""""""""""""""""Information""""""""""""""""""""""""""""""""""""""
-noremap gl :action ShowErrorDescription<CR>
-noremap <leader>pp :action ParameterInfo<CR>
-noremap <leader>ti :action ExpressionTypeInfo<CR>
-
-""""""""""""""""""""""""""""""""""""""Project""""""""""""""""""""""""""""""""""""""
+" ── Project ───────────────────────────────────────────────────────────────────
 noremap <leader>cp :action CloseProject<CR>
-noremap <leader>np :action NewProject<CR>
 noremap <leader>np :action NewProject<CR>
 noremap <leader>nf :action NewFile<CR>
 noremap <leader>nc :action NewClass<CR>
 
-""""""""""""""""""""""""""""""""""""""Utilities""""""""""""""""""""""""""""""""
-noremap <leader>sw :action SurroundWith<CR>
+" ── Utilities ─────────────────────────────────────────────────────────────────
 noremap <leader><leader> :action ReformatCode<CR>
-noremap <leader>sm :action ShowPopupMenu<CR>
-noremap <leader>de :action SafeDelete<CR>
-noremap <leader>oi :action OptimizeImports<CR>
-noremap <leader>on :action RiderBackendAction-Refactorings.AdjustNamespaces<CR>
-noremap <leader>co :action CloseAllEditorsButActive<CR>
-noremap <leader>cu :action CloseAllUnmodifiedEditors<CR>
-noremap <leader>ga :action Generate<CR>
+noremap <leader>sw       :action SurroundWith<CR>
+noremap <leader>oi       :action OptimizeImports<CR>
+noremap <leader>on       :action RiderBackendAction-Refactorings.AdjustNamespaces<CR>
+noremap <leader>de       :action SafeDelete<CR>
+noremap <leader>ga       :action Generate<CR>
+noremap <leader>sm       :action ShowPopupMenu<CR>
+noremap <leader>co       :action CloseAllEditorsButActive<CR>
+noremap <leader>cu       :action CloseAllUnmodifiedEditors<CR>
 
-
-map <s-a-l> :action SelectInProjectView<CR>
-
-""""""""""""""""""""""""""""""""""""""Ide specific""""""""""""""""""""""""""""""""
-
+" ── IDE-specific ──────────────────────────────────────────────────────────────
+nnoremap <leader>sv :source ~/.ideavimrc<CR>
 
 if &ide =~? 'rider'
   nmap <leader>cc <Action>(RiderShowIncomingCalls)
 else
   nmap <leader>cc <Action>(CallHierarchy)
-endi
-
-if &ide =~? 'WebStorm'
-    nnoremap <leader>ms :action $LRU<CR>
-    noremap <leader>ge :action GotoNextError<CR>
-    noremap <leader>gE :action GotoPreviousError<CR>
-else
-    nnoremap <leader>ms :action RiderManageRecentProjects<CR>
-    nnoremap <leader>ge :action ReSharperGotoNextErrorInSolution<CR>
-    nnoremap <leader>gE :action ReSharperGotoPrevErrorInSolution<CR>
 endif
 
+nmap ]d <Action>(GotoNextError)
+nmap [d <Action>(GotoPreviousError)
 
+nmap <leader>ms <Action>(RiderManageRecentProjects)
 
-" Remap multiple-cursors shortcuts to match terryma/vim-multiple-cursors
-nmap <C-n> <Plug>NextWholeOccurrence
-xmap <C-n> <Plug>NextWholeOccurrence
-nmap g<C-n> <Plug>NextOccurrence
-xmap g<C-n> <Plug>NextOccurrence
-xmap <C-x> <Plug>SkipOccurrence
-xmap <C-p> <Plug>RemoveOccurrence
-nmap <leader><C-n> <Plug>AllWholeOccurrences
-xmap <leader><C-n> <Plug>AllWholeOccurrences
-nmap <leader>g<C-n> <Plug>AllOccurrences
+if &ide =~? 'WebStorm'
+  nmap <leader>ms <Action>($LRU)
+elseif &ide =~? 'Rider'
+  nmap ]e <Action>(ReSharperGotoNextErrorInSolution)
+  nmap [e <Action>(ReSharperGotoPrevErrorInSolution)
+endif
