@@ -26,7 +26,6 @@ Install("posh-git")
 Install("lazy-posh-git")
 Install("PSfzf");
 Install("posh-sshell");
-Install("Terminal-Icons");
 
 #SSH Agent
 Get-WindowsCapability -Online | ? Name -like 'OpenSSH*';
