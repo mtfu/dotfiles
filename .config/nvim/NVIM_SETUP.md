@@ -11,6 +11,8 @@
 
 nvim-lspconfig is still needed because Neovim ships with zero built-in server configs — the plugin provides all of them as `lsp/*.lua` files.
 
+This setup follows [Part 6 — Recommended setup for most people](https://dotfiles.substack.com/i/193270606/part-6-recommended-setup-for-most-people) from *Native LSP in Neovim 0.12*.
+
 ### Adding a new LSP server
 
 **No custom settings needed:**
@@ -26,6 +28,9 @@ nvim-lspconfig is still needed because Neovim ships with zero built-in server co
 
 1. Open nvim — `vim.pack` will auto-download missing plugins on startup.
 2. LSP servers auto-install on first launch via mason-lspconfig `ensure_installed`.
+3. Treesitter parsers auto-install on demand when opening a file (`auto_install = true`).
+
+> **Note:** `nvim-treesitter` is kept solely as a parser manager/installer. The treesitter *runtime* (highlighting, queries, parsing API) is native in Neovim 0.12 — but parser *installation* is not. The plugin exists only because there is no built-in equivalent for auto-installing parsers.
 
 ---
 

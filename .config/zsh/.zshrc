@@ -56,7 +56,7 @@ precmd_functions+=('echo -ne "\033]0; $(basename "$PWD") \007"')
 # Must be placed after zsh-autosuggestions.zsh
 bindkey '^P' autosuggest-accept
 bindkey '^r' fzf-history-widget
-fpath=(path/to/zsh-completions/src $fpath)
+fpath=("${XDG_DATA_HOME}/zsh-completions/src" $fpath)
 
 
 eval "$(direnv hook zsh)"

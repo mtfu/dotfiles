@@ -33,7 +33,7 @@
     mb = !git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f4
 	tree = log --graph --all --pretty=format:'%C(yellow)%h -%C(auto)%d %C(bold white)%s %C(bold cyan)(%cr)%Creset %C(dim white)<%an>'
 	treeStat = log --graph --all --pretty=format:'%C(yellow)%h -%C(auto)%d %C(bold cyan)%s %C(bold white)(%cr)%Creset %C(dim white)<%an>' --stat
-    lg = log --pretty='%C(red)%h%Creset%C(yellow)%d Creset%s %C(cyan)(%ar)%Creset'
+    lg = log --pretty='%C(red)%h%Creset%C(yellow)%d%Creset%s %C(cyan)(%ar)%Creset'
 	logChangesPerFile = log --pretty=format:'%C(yellow)%h%Cred%d %Creset%C(bold white)%s %C(dim white)<%an>' --decorate --numstat
 	chaseFile = log --follow -p --
 	publish = "!git push -u origin \"$(git rev-parse --abbrev-ref HEAD)\""
@@ -48,9 +48,9 @@
 	f = fetch
 	d = branch -d
 	ca = commit --amend 
-    new = "!git lg $(git main-branch)..HEAD"
+    new = "!git lg $(git mb)..HEAD"
     missing = "!git lg HEAD..$(git mb)"
-	mdev = "!git fetch && git merge origin $(git main-branch)"
+	mdev = "!git fetch && git merge origin $(git mb)"
 	tagHistory = for-each-ref --format="%(refname:short) %(taggerdate) %(subject) %(body)" refs/tags
     lastcommit = log -1 --pretty=%B
 [diff]
