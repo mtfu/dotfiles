@@ -1,16 +1,46 @@
-#### Purpose of the repo
-To easy get a new computer up and running with the same configuration as my other machines.
+# dotfiles
 
-Contains installation scripts to download and install programs with choco and winget.
+Personal dotfiles for Windows + WSL/Linux. Installs programs, creates symbolic links, and keeps config in sync across machines.
 
-Creates a bunch of symbolic links, so it is easy to update the config between machines.
-# Git
-Insert into gitconfig.local
+## What's included
+
+- **Neovim** — Lua config with `vim.pack`, LSP via Mason, Telescope, Treesitter
+- **IdeaVim** — JetBrains/Rider config mirroring Neovim keymaps
+- **Zsh** — Shell config, aliases, fzf/fd/bat/starship integration
+- **PowerShell** — Profile with PSfzf, PSReadLine, git/docker fuzzy helpers
+- **Git** — Aliases, histogram diffs, auto-setup remote
+- **Windows Terminal** — Theme and profile config
+- **AutoHotkey** — Windows-specific key remaps
+
+## Windows setup
+
+1. Enable **Developer Mode** (required for Treesitter symlinks)  
+   Settings → System → For developers → Developer Mode
+2. Run `setup.ps1` to install programs via winget/choco and create symbolic links
+
+## Linux / WSL setup
+
+1. Run `./install.sh` to install programs and create symbolic links
+
+## Post-install (all platforms)
+
+Add to `~/.gitconfig.local`:
+```ini
 [user]
-    email = 
-    name = 
+    email = your@email.com
+    name = Your Name
+```
 
-# Treesitter
-1. Enable Developer Mode In Windows to make sure that the parsers can do symbolic links
+See [Neovim post-install](#neovim-post-install) below for editor setup.
 
-https://github.com/nvim-treesitter/nvim-treesitter/wiki/Windows-support
+## Neovim post-install
+
+1. Open `nvim` — `vim.pack` auto-downloads missing plugins on startup
+2. LSP servers auto-install on first launch via Mason (`ensure_installed`)
+3. **C# only** — Roslyn requires a manual step (not supported by `ensure_installed`):
+   ```
+   :MasonInstall roslyn
+   ```
+   This uses the [Crashdummyy/mason-registry](https://github.com/Crashdummyy/mason-registry).
+
+See [.config/nvim/NVIM_SETUP.md](.config/nvim/NVIM_SETUP.md) for full keymaps, LSP reference, and plugin commands.
