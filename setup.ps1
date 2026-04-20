@@ -3,7 +3,8 @@ param ([parameter()]$gitconfig = '.gitconfig', $path = "dotfiles")
 $env:home = "$userprofile"
 $localgitconfig = "$env:userprofile/.gitconfig.local"
 
-if (-not (test-path -path $localgitconfig -pathtype leaf)) {
+if (-not (test-path -path $localgitconfig -pathtype leaf))
+{
     cp .gitconfig.local $localgitconfig
 }
 
@@ -14,9 +15,10 @@ if (-not (test-path -path $localgitconfig -pathtype leaf)) {
 [System.Environment]::SetEnvironmentVariable('GIT_SSH', "C:\Windows\System32\OpenSSH\ssh.exe", [System.EnvironmentVariableTarget]::User);
 #
 # We want to expose Linux helpful commands like tig, less and xargs
-[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Git\usr\bin" , [System.EnvironmentVariableTarget]::Machine)
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Git\usr\bin" , [System.EnvironmentVariableTarget]::User)
 
-function Install($moduleName) {
+function Install($moduleName)
+{
     Install-Module $moduleName  -Confirm:$False -Force -AllowClobber;
 }
 
@@ -31,7 +33,3 @@ Get-WindowsCapability -Online | ? Name -like 'OpenSSH*';
 Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0;
 Get-Service -Name ssh-agent | Set-Service -StartupType Automatic;
 
-#TODO 2022-09-09 Requirement for using nvim-tree-sitter might be possible to remove this later on (Fix for an error)
-nvm install latest
-nvm use latest
-npm install -g tree-sitter-cli
