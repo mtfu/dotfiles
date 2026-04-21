@@ -20,7 +20,7 @@ Personal dotfiles for Windows + WSL/Linux. Installs programs, creates symbolic l
 
 ## Linux / WSL setup
 
-1. Run `./install.sh` to install programs and create symbolic links
+1. Run `install.sh` to install programs and create symbolic links
 
 ## Post-install (all platforms)
 
