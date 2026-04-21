@@ -25,7 +25,7 @@ cp "${clone_path}/.gitconfig.local" "${HOME}/.gitconfig.local"
 ln -fs /usr/bin/batcat $HOME/.local/bin/bat
 
 # Install zsh plugins
-"${clone_path}/.local/bin/update-zsh-plugins"
+"${clone_path}/.local/bin/update-zsh-plugins.sh"
 
 # Create symbolic links
 rm -rf ~/.config/nvim;
@@ -36,7 +36,7 @@ ln -fs "${clone_path}/.zshenv" "${HOME}/.zshenv" \
     && ln -fs "${clone_path}/.gitconfig" "${HOME}/.gitconfig" \
     && ln -fs "${clone_path}/.vimrc.minimal" "${HOME}/.vimrc.minimal" \
     && ln -fs "${clone_path}/.config/nvim" "${HOME}/.config/nvim" \
-    && ln -fs "${clone_path}/.local/bin/update-zsh-plugins" "${HOME}/.local/bin/update-zsh-plugins" \
+    && ln -fs "${clone_path}/.local/bin/update-zsh-plugins.sh" "${HOME}/.local/bin/update-zsh-plugins.sh" \
 	&& ln -fs "${clone_path}/.starship/starship.toml" "${HOME}/.config/starship.toml" \
 
 if grep -qE "(Microsoft|microsoft|WSL)" /proc/version &>/dev/null; then
@@ -44,7 +44,7 @@ if grep -qE "(Microsoft|microsoft|WSL)" /proc/version &>/dev/null; then
 fi
 
 # Install Starship
-curl -sS https://starship.rs/install.sh | sh
+curl -sS https://starship.rs/install.sh | sh -s -- --bin-dir "$HOME/.local/bin" --yes
 
 # Change default shell to zsh
 chsh -s $(which zsh) $USER

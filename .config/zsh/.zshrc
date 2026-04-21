@@ -33,7 +33,7 @@ setopt HIST_FIND_NO_DUPS	 # Do not show duplicates on search.
 
 # fzf
 [[ $- == *i* ]] && . "${XDG_DATA_HOME}/fzf/shell/completion.zsh" 2> /dev/null
-. "${XDG_DATA_HOME}/fzf/shell/key-bindings.zsh"
+[[ -f "${XDG_DATA_HOME}/fzf/shell/key-bindings.zsh" ]] && . "${XDG_DATA_HOME}/fzf/shell/key-bindings.zsh"
 
 export FZF_DEFAULT_COMMAND='fd --type f --color=never --hidden'
 export FZF_DEFAULT_OPTS='--no-height --color=bg+:#343d46,gutter:-1,pointer:#ff3c3c,info:#0dbc79,hl:#0dbc79,hl+:#23d18b'
