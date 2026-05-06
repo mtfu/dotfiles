@@ -26,20 +26,20 @@
     "keybindings": 
     [
         {
-            "id": "Terminal.DuplicatePaneAuto",
-            "keys": "alt+shift+d"
-        },
-        {
             "id": "User.sendInput.8F63D3A9",
             "keys": "shift+enter"
         },
         {
-            "id": "Terminal.FindText",
-            "keys": "ctrl+shift+f"
+            "id": "Terminal.DuplicatePaneAuto",
+            "keys": "alt+shift+d"
         },
         {
             "id": "Terminal.PasteFromClipboard",
             "keys": "ctrl+v"
+        },
+        {
+            "id": "Terminal.FindText",
+            "keys": "ctrl+shift+f"
         },
         {
             "id": "User.globalSummon.C79E99FF",
@@ -56,6 +56,10 @@
         {
             "id": "Terminal.DuplicatePaneAuto",
             "keys": "ctrl+shift+plus"
+        },
+        {
+            "id": "Terminal.ClosePane",
+            "keys": "ctrl+f4"
         }
     ],
     "newTabMenu": 
@@ -134,6 +138,12 @@
                 "hidden": false,
                 "name": "Developer PowerShell for VS 2022",
                 "source": "Windows.Terminal.VisualStudio"
+            },
+            {
+                "guid": "{d94d8b0a-8b9d-54e7-b0bd-2146be0c68c2}",
+                "hidden": false,
+                "name": "Ubuntu",
+                "source": "Microsoft.WSL"
             }
         ]
     },

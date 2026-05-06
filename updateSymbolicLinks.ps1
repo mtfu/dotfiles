@@ -13,3 +13,7 @@ New-Item -ItemType SymbolicLink -Force -Path $env:LOCALAPPDATA/nvim -Target $env
 New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.ideavimrc -Target $env:USERPROFILE\$path\.ideavimrc
 New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.config/starship.toml -Target $env:USERPROFILE\$path\.starship\starship.toml
 
+## AI skills folder (symlink entire skills directory)
+New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.claude/skills -Target $env:USERPROFILE\$path\ai\skills
+New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.copilot/skills -Target $env:USERPROFILE\$path\ai\skills
+

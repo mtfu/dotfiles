@@ -2,9 +2,8 @@
 set clipboard+=unnamed
 set ideajoin
 set idearefactormode=keep
-set selectmode=key,ideas
+set selectmode=key,ideaselection
 set visualbell
-set noerrorbells
 set relativenumber number
 
 let mapleader=" "
@@ -17,6 +16,9 @@ sethandler <C-t> a:ide
 sethandler <C-f> a:ide
 sethandler <C-z> a:ide
 sethandler <C-A-l> a:vim
+sethandler <C-=> a:vim
+sethandler <C--> a:vim
+sethandler <C-0> a:vim
 
 " ── Plugins ───────────────────────────────────────────────────────────────────
 set surround            " ys, cs, ds, S
@@ -26,10 +28,10 @@ set exchange            " cx, cxx, X, cxc
 set textobj-entire      " ae, ie
 set highlightedyank
 set commentary          " gcc
-set functiontextobj     " dif, caf, vif
 set NERDTree
 set matchit
 set argtextobj
+set functiontextobj
 
 let g:argtextobj_pairs="(:),{:},<:>"
 
@@ -106,6 +108,11 @@ map      <s-a-l>         :action SelectInProjectView<CR>
 nnoremap <c-w>q          :action Unsplit<CR>
 nnoremap <leader>zz      :action ChangeView<CR>
 nnoremap <leader><S-Esc> :action HideAllWindows<CR>
+
+" ── Font zoom ─────────────────────────────────────────────────────────────────
+nmap <C-=> <Action>(EditorIncreaseFontSize)
+nmap <C--> <Action>(EditorDecreaseFontSize)
+nmap <C-0> <Action>(EditorResetFontSize)
 
 " ── Running / Debugging ───────────────────────────────────────────────────────
 nnoremap <leader>rr :action Debug<CR>
