@@ -7,7 +7,8 @@ clone_path="${clone_path:-"${PWD}"}"
 echo "Current working directory: $clone_path"
 
 # Get newest version of nvim
-sudo add-apt-repository ppa:neovim-ppa/unstable
+sudo apt-get install -y software-properties-common
+sudo add-apt-repository -y ppa:neovim-ppa/unstable
 apt_packages="curl git python3-pip tmux git neovim zsh fzf fd-find bat direnv keychain"
 
 # Install packages
@@ -37,7 +38,7 @@ ln -fs "${clone_path}/.zshenv" "${HOME}/.zshenv" \
     && ln -fs "${clone_path}/.vimrc.minimal" "${HOME}/.vimrc.minimal" \
     && ln -fs "${clone_path}/.config/nvim" "${HOME}/.config/nvim" \
     && ln -fs "${clone_path}/.local/bin/update-zsh-plugins.sh" "${HOME}/.local/bin/update-zsh-plugins.sh" \
-	&& ln -fs "${clone_path}/.starship/starship.toml" "${HOME}/.config/starship.toml" \
+	&& ln -fs "${clone_path}/.starship/starship.toml" "${HOME}/.config/starship.toml"
 
 if grep -qE "(Microsoft|microsoft|WSL)" /proc/version &>/dev/null; then
     sudo ln -fs "${clone_path}/etc/wsl.conf" /etc/wsl.conf
@@ -47,7 +48,7 @@ fi
 curl -sS https://starship.rs/install.sh | sh -s -- --bin-dir "$HOME/.local/bin" --yes
 
 # Change default shell to zsh
-chsh -s $(which zsh) $USER
+sudo chsh -s $(which zsh) $USER
 
 cat << EOF
 Everything was installed successfully!
