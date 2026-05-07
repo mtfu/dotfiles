@@ -26,12 +26,12 @@
     "keybindings": 
     [
         {
-            "id": "User.sendInput.8F63D3A9",
-            "keys": "shift+enter"
-        },
-        {
             "id": "Terminal.DuplicatePaneAuto",
             "keys": "alt+shift+d"
+        },
+        {
+            "id": "User.sendInput.8F63D3A9",
+            "keys": "shift+enter"
         },
         {
             "id": "Terminal.PasteFromClipboard",
@@ -141,6 +141,24 @@
             },
             {
                 "guid": "{d94d8b0a-8b9d-54e7-b0bd-2146be0c68c2}",
+                "hidden": false,
+                "name": "Ubuntu",
+                "source": "Microsoft.WSL"
+            },
+            {
+                "guid": "{2c905983-d851-5f4c-9028-34f577140b30}",
+                "hidden": false,
+                "name": "Ubuntu",
+                "source": "Microsoft.WSL"
+            },
+            {
+                "guid": "{9bda5c1d-bb31-5569-9ef7-4d174a900f8a}",
+                "hidden": false,
+                "name": "Ubuntu",
+                "source": "Microsoft.WSL"
+            },
+            {
+                "guid": "{bf8f0c62-2c75-5895-bf97-25939f0aca3c}",
                 "hidden": false,
                 "name": "Ubuntu",
                 "source": "Microsoft.WSL"

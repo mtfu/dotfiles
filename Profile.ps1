@@ -47,10 +47,8 @@ $env:FZF_CTRL_T_OPTS = "--preview 'bat --color=always --line-range :50 {}'"
 $env:FZF_ALT_C_COMMAND = 'fd --type d . --color=never --hidden --follow -E .git/*'
 
 
-function choco
-{
+if ($env:ChocolateyInstall) {
     Import-Module "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
-    & choco.exe @args
 }
 
 function weather
