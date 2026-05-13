@@ -23,6 +23,9 @@ cp "${clone_path}/.gitconfig.local" "${HOME}/.gitconfig.local"
 # Make Bat avaiable in path
 ln -fs /usr/bin/batcat $HOME/.local/bin/bat
 
+# Make fd available (Debian/Ubuntu installs it as fdfind)
+ln -fs /usr/bin/fdfind $HOME/.local/bin/fd
+
 # Install zsh plugins
 "${clone_path}/.local/bin/update-zsh-plugins.sh"
 
