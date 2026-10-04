@@ -12,7 +12,6 @@ vim.keymap.set("n", "J", "mzJ`z")
 vim.keymap.set("n", "n", "nzzzv")
 vim.keymap.set("n", "N", "Nzzzv")
 
-vim.keymap.set("x", "<leader>p", [["_dP]])
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
@@ -31,9 +30,11 @@ vim.keymap.set("n", "[e", function()
 end)
 
 vim.keymap.set("n", "gl", vim.diagnostic.open_float)
-vim.keymap.set("n", "<A-0>", function()
-	vim.diagnostic.setqflist()
-end)
+for _, lhs in ipairs({ "<A-0>", "<leader>q" }) do
+	vim.keymap.set("n", lhs, function()
+		vim.diagnostic.setqflist()
+	end)
+end
 
 vim.keymap.set("n", "<A-\\>", require("telescope.builtin").lsp_document_symbols)
 vim.keymap.set("n", "<leader>lg", "<cmd>LazyGit<CR>")

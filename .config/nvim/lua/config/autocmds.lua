@@ -14,3 +14,11 @@ if vim.fn.has('wsl') == 1 then
     end,
   })
 end
+
+-- Close quickfix / location list with q
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = 'qf',
+  callback = function(args)
+    vim.keymap.set('n', 'q', '<cmd>close<CR>', { buffer = args.buf, silent = true })
+  end,
+})

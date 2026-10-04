@@ -67,7 +67,7 @@ This setup follows [Part 6 — Recommended setup for most people](https://dotfil
 | `]d` / `[d` | Next/prev diagnostic (with float)     |
 | `]e` / `[e` | Next/prev error only                  |
 | `gl`        | Open diagnostic float                 |
-| `<A-0>`     | Send all diagnostics to quickfix      |
+| `<A-0>` / `<leader>q` | Send all diagnostics to quickfix |
 
 ### Telescope
 
@@ -81,6 +81,7 @@ This setup follows [Part 6 — Recommended setup for most people](https://dotfil
 | `<leader>fs`     | Go to symbol             |
 | `<leader>fc`     | Go to class              |
 | `<leader>:`      | Command history          |
+| `<leader>fr`     | Registers (pick to paste)|
 
 ### Other
 
@@ -91,6 +92,7 @@ This setup follows [Part 6 — Recommended setup for most people](https://dotfil
 | `<leader>aa`     | Git blame line                         |
 | `<leader>s`      | Search & replace word under cursor     |
 | `<leader>cd`     | cd to current file's directory         |
+| `g;` / `g,`      | Prev/next change across all buffers   |
 | `<S-M-l>`        | Reveal current file in nvim-tree       |
 | `-`              | Open oil (parent dir of current file)  |
 | `<C-\>`          | Toggle terminal (float)                |
