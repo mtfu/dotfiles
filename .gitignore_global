@@ -22,3 +22,5 @@ tags
 *.orig
 
 .idea
+
+**/.claude/settings.local.json
