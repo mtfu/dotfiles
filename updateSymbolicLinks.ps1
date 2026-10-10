@@ -1,19 +1,25 @@
 
 param ([Parameter()]$gitconfig = '.gitconfig', $path = "dotfiles")
 
-New-Item -ItemType SymbolicLink -Force -Path $PROFILE -Target $env:USERPROFILE\$path\Profile.ps1;
-New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.gitconfig -Target $env:USERPROFILE\$path\$gitconfig;
-New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.gitignore_global -Target $env:USERPROFILE\$path\.gitignore_global 
+$dotfiles = "$env:USERPROFILE\$path"
+
+function Link($target, $source) {
+    New-Item -ItemType Directory -Force -Path (Split-Path -Parent $target) | Out-Null
+    New-Item -ItemType SymbolicLink -Force -Path $target -Target $source | Out-Null
+}
+
+Link $PROFILE "$dotfiles\Profile.ps1"
+Link "$env:USERPROFILE\.gitconfig" "$dotfiles\$gitconfig"
+Link "$env:USERPROFILE\.gitignore_global" "$dotfiles\.gitignore_global"
 
 ## Install Vim and set HOME environment
 [System.Environment]::SetEnvironmentVariable('HOME', "C:\Users\" + $env:username, [System.EnvironmentVariableTarget]::User);
 
-New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.vimrc.minimal -Target $env:USERPROFILE\$path\.vimrc.minimal
-New-Item -ItemType SymbolicLink -Force -Path $env:LOCALAPPDATA/nvim -Target $env:USERPROFILE\$path\.config\nvim
-New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.ideavimrc -Target $env:USERPROFILE\$path\.ideavimrc
-New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.config/starship.toml -Target $env:USERPROFILE\$path\.starship\starship.toml
+Link "$env:USERPROFILE\.vimrc.minimal" "$dotfiles\.vimrc.minimal"
+Link "$env:LOCALAPPDATA\nvim" "$dotfiles\.config\nvim"
+Link "$env:USERPROFILE\.ideavimrc" "$dotfiles\.ideavimrc"
+Link "$env:USERPROFILE\.config\starship.toml" "$dotfiles\.starship\starship.toml"
+Link "$env:APPDATA\herdr\config.toml" "$dotfiles\herdr\config.toml"
 
-## AI skills folder (symlink entire skills directory)
-New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.claude/skills -Target $env:USERPROFILE\$path\ai\skills
-New-Item -ItemType SymbolicLink -Force -Path $env:USERPROFILE/.copilot/skills -Target $env:USERPROFILE\$path\ai\skills
-
+## AI instructions and skills for Copilot CLI and Claude Code
+& "$dotfiles\ai\setup.ps1" -path $path

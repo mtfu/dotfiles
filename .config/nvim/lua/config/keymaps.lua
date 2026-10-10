@@ -40,6 +40,11 @@ vim.keymap.set("n", "<A-\\>", require("telescope.builtin").lsp_document_symbols)
 vim.keymap.set("n", "<leader>lg", "<cmd>LazyGit<CR>")
 vim.keymap.set("n", "<leader>aa", "<cmd>Gitsigns blame_line<CR>")
 vim.keymap.set("n", "<leader>cd", ":cd %:p:h<CR>:pwd<CR>")
+vim.keymap.set("n", "<leader>yp", function()
+	local path = vim.fn.expand("%:p")
+	vim.fn.setreg("+", path)
+	vim.notify(path)
+end)
  -- fuzzy; q: for full editable history; @: to repeat last command
 vim.keymap.set("n", "<leader>:", "<cmd>Telescope command_history<CR>")
 

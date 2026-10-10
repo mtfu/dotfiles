@@ -1,0 +1,35 @@
+onboarding = false
+
+[keys]
+split_horizontal = "prefix+s"
+settings = "prefix+comma"
+# Back-jump to the previously focused pane, across tabs and workspaces.
+# ctrl+alt+* is unusable here: Windows treats it as AltGr, and US-International
+# maps AltGr+; to the pilcrow, so the chord never reaches herdr.
+last_pane = "prefix+semicolon"
+
+# Positional cycling through the agent list.
+next_agent = "prefix+shift+a"
+previous_agent = "ctrl+alt+shift+a"
+focus_agent = "prefix+alt+1..9"
+# Jump straight to whatever raised the last notification.
+open_notification_target = ["prefix+o", "ctrl+alt+o"]
+
+# Spaces
+next_workspace = "ctrl+alt+j"
+previous_workspace = "ctrl+alt+k"
+switch_workspace = "prefix+shift+1..9"
+goto = ["prefix+g", "ctrl+alt+g"]
+
+[theme]
+name = "gruvbox"
+auto_switch = false
+
+[ui]
+# Use the outer terminal's real cursor instead of Herdr's drawn block, so nvim's
+# guicursor shape changes (block in normal, bar in insert) come through.
+host_cursor = "native"
+# Group the agent panel by space so each agent keeps a stable position. Navigation here is
+# positional (focus_agent 1..9, next_agent), and "priority" would reshuffle the list on every
+# state change, moving agents out from under the number keys.
+agent_panel_sort = "spaces"

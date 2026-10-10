@@ -25,10 +25,15 @@ vim.pack.add({
 
 	-- Git
 	"https://github.com/lewis6991/gitsigns.nvim",
+	"https://github.com/sindrets/diffview.nvim",
 
 	-- File tree + filesystem editing
 	"https://github.com/nvim-tree/nvim-tree.lua",
 	"https://github.com/stevearc/oil.nvim",
+
+	-- Markdown
+	"https://github.com/MeanderingProgrammer/render-markdown.nvim",
+	"https://github.com/brianhuster/live-preview.nvim",
 
 	-- Treesitter
 	"https://github.com/nvim-treesitter/nvim-treesitter",

@@ -48,6 +48,9 @@ fi
 # Install Neovim via snap
 sudo snap install nvim --classic
 
+# Markdown
+sudo snap install glow
+
 # Install Starship
 curl -sS https://starship.rs/install.sh | sh -s -- --bin-dir "$HOME/.local/bin" --yes
 

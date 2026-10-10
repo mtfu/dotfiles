@@ -6,6 +6,24 @@ vim.api.nvim_create_autocmd('TextYankPost', {
   end,
 })
 
+-- Pick up edits made outside nvim (Copilot CLI, git, etc.)
+vim.o.autoread = true
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'TermLeave' }, {
+  callback = function()
+    if vim.fn.mode() ~= 'c' and vim.bo.buftype == '' then
+      vim.cmd('checktime')
+    end
+  end,
+})
+vim.api.nvim_create_autocmd('FileChangedShellPost', {
+  callback = function()
+    vim.notify('Buffer reloaded from disk', vim.log.levels.INFO)
+    pcall(function()
+      require('gitsigns').refresh()
+    end)
+  end,
+})
+
 -- WSL clipboard via clip.exe
 if vim.fn.has('wsl') == 1 then
   vim.api.nvim_create_autocmd('TextYankPost', {
