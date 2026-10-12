@@ -9,7 +9,7 @@ settings = "prefix+comma"
 last_pane = "prefix+semicolon"
 
 # Positional cycling through the agent list.
-next_agent = "prefix+shift+a"
+next_agent = ["prefix+a", "prefix+shift+a"]
 previous_agent = "ctrl+alt+shift+a"
 focus_agent = "prefix+alt+1..9"
 # Jump straight to whatever raised the last notification.

@@ -109,6 +109,92 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+-- The git index is the ledger: unstaged means unreviewed. <leader>gr lists
+-- every file still carrying unreviewed changes, <leader>gy stages a hunk once
+-- you have read it, and re-running <leader>gr shows a shorter list. gitsigns
+-- only knows about tracked files, so brand new ones are collected separately.
+local function unreviewed()
+	local function git(args)
+		local res = vim.system(vim.list_extend({ "git" }, args), { text = true }):wait()
+		return res.code == 0 and vim.split(res.stdout or "", "\n", { trimempty = true }) or {}
+	end
+
+	local root = git({ "rev-parse", "--show-toplevel" })[1]
+	if not root then
+		return nil
+	end
+
+	local items = {}
+	local function add(paths, label)
+		for _, p in ipairs(paths) do
+			table.insert(items, { filename = root .. "/" .. p, lnum = 1, col = 1, text = label })
+		end
+	end
+	add(git({ "-C", root, "diff", "--name-only", "--diff-filter=d" }), "changed")
+	add(git({ "-C", root, "ls-files", "--others", "--exclude-standard" }), "new file")
+	-- A deleted file has no buffer to jump to, so it is listed as text only.
+	-- Read it in diffview (<leader>gv) and accept it with `git rm` or lazygit.
+	for _, p in ipairs(git({ "-C", root, "diff", "--name-only", "--diff-filter=D" })) do
+		table.insert(items, { text = "deleted: " .. p })
+	end
+	return items
+end
+
+local function same_path(a, b)
+	a, b = vim.fs.normalize(a), vim.fs.normalize(b)
+	if vim.fn.has("win32") == 1 then
+		a, b = a:lower(), b:lower()
+	end
+	return a == b
+end
+
+-- After accepting a hunk: go to the next unreviewed hunk in this file, or open
+-- the next unreviewed file once this one is done, like `s` in fugitive/lazygit.
+local function review_next()
+	local gs = require("gitsigns")
+	if #(gs.get_hunks(0) or {}) > 0 then
+		gs.nav_hunk("next", { target = "unstaged" })
+		return gs.preview_hunk_inline()
+	end
+
+	local current = vim.api.nvim_buf_get_name(0)
+	local items = vim.tbl_filter(function(item)
+		return item.filename and not same_path(item.filename, current)
+	end, unreviewed() or {})
+	if #items == 0 then
+		return vim.notify("Nothing left to review")
+	end
+
+	vim.cmd.edit(vim.fn.fnameescape(items[1].filename))
+	vim.notify(string.format("Next: %s (%d file(s) left)", vim.fn.expand("%:."), #items))
+
+	-- gitsigns computes hunks asynchronously after attaching, so wait for them.
+	local buf = vim.api.nvim_get_current_buf()
+	local function first_hunk()
+		if vim.api.nvim_get_current_buf() ~= buf then
+			return
+		end
+		gs.nav_hunk("first", { target = "unstaged" })
+		gs.preview_hunk_inline()
+	end
+	if #(gs.get_hunks(buf) or {}) > 0 then
+		return first_hunk()
+	end
+	local id = vim.api.nvim_create_autocmd("User", {
+		pattern = "GitSignsUpdate",
+		callback = function(ev)
+			if ev.data and ev.data.buffer == buf and #(gs.get_hunks(buf) or {}) > 0 then
+				first_hunk()
+				return true
+			end
+		end,
+	})
+	-- New (untracked) files never get hunks; don't leave the listener behind.
+	vim.defer_fn(function()
+		pcall(vim.api.nvim_del_autocmd, id)
+	end, 3000)
+end
+
 -- Gitsigns
 -- Symbols instead of coloured bars, so added / changed / deleted read apart
 -- without relying on colour. Hidden until review mode (<leader>gh) shows them.
@@ -121,9 +207,19 @@ require("gitsigns").setup({
 		topdelete = { text = "‾" },
 		changedelete = { text = "~" },
 	},
-	-- Staged means reviewed, so staged lines carry no sign at all. The default
-	-- dims them instead, which is too subtle to see that staging worked.
-	signs_staged_enable = false,
+	-- Staged lines stay visible, but with their own mark. Hiding them made an
+	-- accepted file look identical to an untouched one, which matters when an
+	-- agent edits files you never opened: empty would mean both "nothing
+	-- happened" and "reviewed and accepted". The default dim is too subtle to
+	-- tell apart, so reviewed hunks get a check of their own instead.
+	signs_staged_enable = true,
+	signs_staged = {
+		add = { text = "✓" },
+		change = { text = "✓" },
+		delete = { text = "✓" },
+		topdelete = { text = "✓" },
+		changedelete = { text = "✓" },
+	},
 	on_attach = function(bufnr)
 		local gs = require("gitsigns")
 		local function map(mode, lhs, rhs, desc)
@@ -173,8 +269,10 @@ require("gitsigns").setup({
 			if not unstaged_hunk_at_cursor() then
 				return vim.notify("Nothing to accept here")
 			end
-			gs.stage_hunk()
-		end, "Accept hunk (stage)")
+			gs.stage_hunk(nil, nil, function()
+				vim.schedule(review_next)
+			end)
+		end, "Accept hunk (stage) and go to the next unreviewed one")
 		map("n", "<leader>gu", gs.reset_buffer_index, "Undo all accepts in this file (unstage)")
 		map("v", "<leader>gy", function()
 			gs.stage_hunk({ vim.fn.line("."), vim.fn.line("v") })
@@ -204,37 +302,6 @@ require("gitsigns").setup({
 
 -- Review loop: jump between files Copilot touched
 vim.keymap.set("n", "<leader>gg", builtin.git_status, { desc = "Changed files" })
-
--- The git index is the ledger: unstaged means unreviewed. <leader>gr lists
--- every file still carrying unreviewed changes, <leader>gy stages a hunk once
--- you have read it, and re-running <leader>gr shows a shorter list. gitsigns
--- only knows about tracked files, so brand new ones are collected separately.
-local function unreviewed()
-	local function git(args)
-		local res = vim.system(vim.list_extend({ "git" }, args), { text = true }):wait()
-		return res.code == 0 and vim.split(res.stdout or "", "\n", { trimempty = true }) or {}
-	end
-
-	local root = git({ "rev-parse", "--show-toplevel" })[1]
-	if not root then
-		return nil
-	end
-
-	local items = {}
-	local function add(paths, label)
-		for _, p in ipairs(paths) do
-			table.insert(items, { filename = root .. "/" .. p, lnum = 1, col = 1, text = label })
-		end
-	end
-	add(git({ "-C", root, "diff", "--name-only", "--diff-filter=d" }), "changed")
-	add(git({ "-C", root, "ls-files", "--others", "--exclude-standard" }), "new file")
-	-- A deleted file has no buffer to jump to, so it is listed as text only.
-	-- Read it in diffview (<leader>gv) and accept it with `git rm` or lazygit.
-	for _, p in ipairs(git({ "-C", root, "diff", "--name-only", "--diff-filter=D" })) do
-		table.insert(items, { text = "deleted: " .. p })
-	end
-	return items
-end
 
 vim.keymap.set("n", "<leader>gr", function()
 	local items = unreviewed()

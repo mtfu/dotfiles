@@ -201,7 +201,7 @@ is already what you commit from.
 | `<leader>gr` | **Review list**: every file with unreviewed changes, into quickfix |
 | `<leader>gl` | Fuzzy-jump to a file in the list by name instead of scrolling it |
 | `]a` / `[a` | Next / previous **unreviewed** hunk, showing what it replaced |
-| `<leader>gy` | **Yes**: accept (stage) the hunk. Only ever accepts; `<leader>gu` undoes all accepts in the file |
+| `<leader>gy` | **Yes**: accept (stage) the hunk and jump to the next unreviewed one, opening the next unreviewed file when this one is done. Only ever accepts; `<leader>gu` undoes all accepts in the file |
 | `<leader>gn` | **No**: reject (discard) the hunk |
 | `<leader>hc` / `<leader>hs` | Needs work: comment on it, then send all comments to the agent (see Herdr keys above) |
 | `<leader>gr` | Re-run. A shorter list is your progress bar. Empty means done |
@@ -215,7 +215,12 @@ Then commit normally (`<leader>lg` for lazygit).
 clean. `<leader>gh` turns them all on together: `+` / `~` / `_` signs, line
 colour on every unstaged line, and the exact words changed. Press it again to
 hide them. `]a`, accepting and the rest work either way; review mode only makes
-progress visible, since a hunk loses its marks the moment it is accepted.
+progress visible, since an accepted hunk swaps its `+` / `~` / `_` for a `✓`.
+
+Accepted hunks keep a `✓` rather than going blank, so a reviewed file still
+reads as changed. Blank then means genuinely untouched, which is the state that
+matters when an agent edits files you never opened. `]a` / `[a` still stop only
+on unreviewed hunks.
 
 `<leader>gr` lists both modified **and** brand-new files. That matters: gitsigns
 only knows about tracked files, so a file the agent just created has no hunks and
@@ -280,5 +285,5 @@ window to see what is staged.
 ### Why it is built this way
 
 Everything above is gitsigns, telescope, diffview and git. The only custom code
-is `<leader>gr` (about 20 lines in `lua/config/editor.lua`, because gitsigns
-cannot see untracked files).
+is `<leader>gr` and the advance after `<leader>gy` (in `lua/config/editor.lua`,
+because gitsigns cannot see untracked files or move between files).

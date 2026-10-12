@@ -19,7 +19,7 @@ FocusOrRun(exe, target) {
 
 LocalAppData := EnvGet("LOCALAPPDATA")
 
-!o::FocusOrRun("rider64.exe", LocalAppData "\Programs\Rider\bin\rider64.exe")
+!r::FocusOrRun("rider64.exe", LocalAppData "\Programs\Rider\bin\rider64.exe")
 !y::FocusOrRun("brave.exe", A_ProgramFiles "\BraveSoftware\Brave-Browser\Application\brave.exe")
 !u::FocusOrRun("WindowsTerminal.exe", "wt.exe")
-!r::FocusOrRun("Obsidian.exe", LocalAppData "\Programs\Obsidian\Obsidian.exe")
+!o::FocusOrRun("Obsidian.exe", LocalAppData "\Programs\Obsidian\Obsidian.exe")
