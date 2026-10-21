@@ -15,7 +15,7 @@ bindings straight from the running server, which always beats this file.
 | Key | Action |
 |---|---|
 | `prefix+h` / `j` / `k` / `l` | Focus pane left / down / up / right |
-| ● `prefix+semicolon` | Back-jump to the previously focused pane (crosses tabs and spaces) |
+| ● `prefix+semicolon` / `ctrl+alt+p` | Back-jump to the previously focused pane (crosses tabs and spaces) |
 | `prefix+tab` / `prefix+shift+tab` | Cycle pane next / previous |
 | `prefix+v` | Split right |
 | ● `prefix+s` | Split down |
@@ -29,6 +29,7 @@ bindings straight from the running server, which always beats this file.
 | Key | Action |
 |---|---|
 | `prefix+1..9` | Switch to tab N |
+| ● `ctrl+alt+u` / `ctrl+alt+y` | Next / previous tab (`prefix+n` / `prefix+p` still work) |
 | `prefix+c` | New tab |
 | `prefix+shift+x` | Close tab |
 
@@ -46,9 +47,10 @@ bindings straight from the running server, which always beats this file.
 | Key | Action |
 |---|---|
 | ● `prefix+alt+1..9` | Focus agent N in the sidebar |
-| ● `prefix+shift+a` / `ctrl+alt+shift+a` | Next / previous agent |
+| ● `prefix+a` / `prefix+shift+a` / `ctrl+alt+o` | Next agent |
+| ● `ctrl+alt+i` | Previous agent |
 | ● `prefix+g` / `ctrl+alt+g` | Goto picker — `b`/`w`/`i`/`d` to filter by state, `/` to search |
-| ● `prefix+o` / `ctrl+alt+o` | Jump to whatever raised the last notification |
+| `prefix+o` | Jump to the agent behind the visible popup (only while it is on screen) |
 
 ## Session
 
@@ -95,8 +97,14 @@ picker if you don't.
   `agent_panel_sort` changes the order of that list, never what the key does. A custom
   `type = "shell"` command used to do attention-ranked jumping on `prefix+a`; it was dropped
   in favour of positional navigation, so `prefix+a` and `ctrl+alt+a` are free.
-- `ctrl+alt+*` is unusable for some chords on Windows: the OS treats it as AltGr, and
-  US-International maps AltGr+`;` to the pilcrow, so that chord never reaches herdr.
+- Windows treats ctrl+left alt as AltGr, so on US-International `ctrl+alt+;` used to arrive
+  as `¶`. Windows Terminal has `"altGrAliasing": false` to stop that; real AltGr (right alt)
+  still types ø etc.
+- Even so, `ctrl+alt+h`, `ctrl+alt+l` and `ctrl+alt+0` never reach herdr (cause unknown).
+  Verified working: `j k g y u i o [ ]`.
+- herdr has no "last tab" action; `ctrl+alt+p` (last pane) is the closest.
+- Direct chords are laid out as pairs on the right hand: `y/u` tabs, `i/o` agents,
+  `j/k` spaces, `p` back-jump.
 - Chords already taken on my machines: `ctrl+alt+t` (Windows Terminal globalSummon) and
   `alt+o` / `alt+y` / `alt+u` / `alt+r` (AHK window focus, see `ahk/focusprograms.ahk`).
 - If a binding does nothing, the outer terminal or the OS ate it first.

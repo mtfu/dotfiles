@@ -3,17 +3,20 @@ onboarding = false
 [keys]
 split_horizontal = "prefix+s"
 settings = "prefix+comma"
+# ctrl+alt+h and ctrl+alt+l never reach herdr here (unclear why; y/u/j/k do).
 # Back-jump to the previously focused pane, across tabs and workspaces.
-# ctrl+alt+* is unusable here: Windows treats it as AltGr, and US-International
-# maps AltGr+; to the pilcrow, so the chord never reaches herdr.
-last_pane = "prefix+semicolon"
+last_pane = ["prefix+semicolon", "ctrl+alt+p"]
 
 # Positional cycling through the agent list.
-next_agent = ["prefix+a", "prefix+shift+a"]
-previous_agent = "ctrl+alt+shift+a"
+next_agent = ["prefix+a", "prefix+shift+a", "ctrl+alt+o"]
+previous_agent = "ctrl+alt+i"
 focus_agent = "prefix+alt+1..9"
 # Jump straight to whatever raised the last notification.
-open_notification_target = ["prefix+o", "ctrl+alt+o"]
+open_notification_target = "prefix+o"
+
+# Tabs
+next_tab = ["prefix+n", "ctrl+alt+u"]
+previous_tab = ["prefix+p", "ctrl+alt+y"]
 
 # Spaces
 next_workspace = "ctrl+alt+j"
@@ -33,3 +36,8 @@ host_cursor = "native"
 # positional (focus_agent 1..9, next_agent), and "priority" would reshuffle the list on every
 # state change, moving agents out from under the number keys.
 agent_panel_sort = "spaces"
+
+# In-app popups when an agent finishes or needs input. open_notification_target (prefix+o)
+# only jumps to a visible notification, so it does nothing while delivery is "off" (default).
+[ui.toast]
+delivery = "herdr"
