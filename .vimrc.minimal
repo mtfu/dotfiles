@@ -1,2 +1,90 @@
 set backspace=indent,eol,start
 set clipboard=unnamed,unnamedplus
+
+" ----------------------------------------------------------------------------
+" <Space>m in a git commit buffer asks Haiku (via the Copilot CLI) for a commit
+" message. Runs in the background (~15s); the result is inserted at the top, so
+" `u` drops it. nvim only, since it uses jobstart().
+"
+"   SuggestCommit()  sends the staged diff to `copilot -p` as a background job
+"   OnStdout()       collects the reply
+"   OnExit()         cleans the reply up and inserts it into the buffer
+" ----------------------------------------------------------------------------
+if has('nvim')
+  let mapleader = ' '
+
+  let s:model = 'claude-haiku-5.5'
+  let s:max_diff_lines = 2000
+  " git's '# ------------------------ >8 ------------------------' line;
+  " with commit.verbose the diff is shown below it.
+  let s:scissors = '^. -\+ >8 -\+$'
+  " No < > | & ^ % in here: on Windows the CLI is a .cmd shim run through cmd.exe.
+  let s:prompt = 'Write a git commit message for the diff on stdin. '
+        \ . 'Imperative subject line of at most 72 characters, then optionally a blank line and a short body. '
+        \ . 'Output only the message, no code fences, no trailers.'
+
+  augroup commit_suggest
+    autocmd!
+    autocmd FileType gitcommit nnoremap <buffer> <silent> <leader>m :call <SID>SuggestCommit()<CR>
+  augroup END
+
+  function! s:SuggestCommit() abort
+    let l:diff = s:StagedDiff()
+    if empty(filter(copy(l:diff), {_, line -> line =~ '^[+-]'}))
+      echo 'No diff to describe'
+      return
+    endif
+
+    let l:job = jobstart(['copilot', '-p', s:prompt, '-s', '--no-color', '--model', s:model], {
+          \ 'buf': bufnr(),
+          \ 'stdout_buffered': 1,
+          \ 'on_stdout': function('s:OnStdout'),
+          \ 'on_exit': function('s:OnExit'),
+          \ })
+    if l:job <= 0
+      echohl ErrorMsg | echo 'Could not start copilot' | echohl None
+      return
+    endif
+
+    call chansend(l:job, l:diff[: s:max_diff_lines])
+    call chanclose(l:job, 'stdin')
+    echo 'Asking Haiku for a commit message...'
+  endfunction
+
+  " Prefer the diff commit.verbose already put in the buffer; fall back to git.
+  function! s:StagedDiff() abort
+    let l:lines = getline(1, '$')
+    let l:cut = match(l:lines, s:scissors)
+    return l:cut >= 0 ? l:lines[l:cut + 1 :] : systemlist('git diff --cached')
+  endfunction
+
+  " Job callbacks: `self` is the jobstart() options dict, so it carries `buf` and `out`.
+  function! s:OnStdout(id, data, event) dict
+    let self.out = a:data
+  endfunction
+
+  function! s:OnExit(id, code, event) dict
+    let l:msg = s:CleanMessage(get(self, 'out', []))
+    if a:code != 0 || empty(l:msg)
+      echohl ErrorMsg | echo 'Commit suggestion failed (exit ' . a:code . ')' | echohl None
+      return
+    endif
+    if bufexists(self.buf)
+      call appendbufline(self.buf, 0, l:msg)
+      echo 'Commit suggestion inserted (u to undo)'
+    endif
+  endfunction
+
+  " Drop Windows CRs, code fences and Co-authored-by trailers, then trim blank lines.
+  function! s:CleanMessage(lines) abort
+    let l:msg = map(copy(a:lines), {_, line -> substitute(line, '\r$', '', '')})
+    call filter(l:msg, {_, line -> line !~? '^co-authored-by:' && line !~ '^```'})
+    while !empty(l:msg) && l:msg[0] =~ '^\s*$'
+      call remove(l:msg, 0)
+    endwhile
+    while !empty(l:msg) && l:msg[-1] =~ '^\s*$'
+      call remove(l:msg, -1)
+    endwhile
+    return l:msg
+  endfunction
+endif

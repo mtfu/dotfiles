@@ -276,6 +276,27 @@ lot of the time. It earns its keep on the hunks that quietly take things away.
 
 Both open in their own tab. Close with `:DiffviewClose` (or `:tabclose`).
 
+### Merge conflicts
+
+`git mergetool` opens git's built-in `nvimdiff`, one conflicted file at a time:
+LOCAL (ours), BASE and REMOTE on top, MERGED (the file you edit) below.
+
+| Key / command | Does |
+|---|---|
+| `]x` / `[x` | Next / previous conflict |
+| `<leader>1` / `2` / `3` | Take A (BASE) / B (LOCAL) / C (REMOTE) for this conflict, like kdiff3 Ctrl+1/2/3 |
+| `<leader>x1` / `x2` / `x3` | Take A / B / C for every remaining conflict |
+| `]c` / `[c` | Next / previous change (any difference, not only conflicts) |
+| `:wqa` | Done with this file, go to the next |
+| `:cqa` | Abort this file (stays conflicted) |
+
+The keys work on the conflict markers in MERGED (`lua/config/conflicts.lua`), so
+they also work on any conflicted file opened normally. Taking BASE needs the
+`|||||||` section, which `merge.conflictStyle = zdiff3` provides.
+
+`git difftool` uses `nvimdiff` too. kdiff3 is still installed as a fallback:
+`git mergetool -t kdiff3`, `git difftool -g`.
+
 ### Rider
 
 The review loop is nvim-only. Rider keeps `<leader>r` for run/debug, which is

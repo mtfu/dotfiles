@@ -3,6 +3,11 @@ Import-Module PSfzf
 # Set Git Alias before post-git, to make auto-completion work
 Set-Alias g git
 Import-Module 'lazy-posh-git'
+# lazy-posh-git only loads posh-git on cd, so load it when the shell starts inside a repo
+$gitRoot = $PWD.ProviderPath
+while ($gitRoot -and -not (Test-Path (Join-Path $gitRoot '.git'))) { $gitRoot = Split-Path $gitRoot }
+if ($gitRoot) { Import-Module posh-git }
+Remove-Variable gitRoot
 
 Set-PSReadLineKeyHandler -Key Tab -ScriptBlock { Invoke-FzfTabCompletion }
 Set-PSReadLineOption -BellStyle None -HistorySearchCursorMovesToEnd 
@@ -39,6 +44,9 @@ Set-PSReadLineKeyHandler -Chord "Ctrl+p" -ScriptBlock {
 
 Set-PsFzfOption -PSReadlineChordReverseHistory 'Ctrl+r'
 Set-PsFzfOption -PSReadlineChordSetLocation 'Alt+c'
+
+$env:EDITOR = 'nvim'
+$env:VISUAL = 'nvim'
 
 $env:FZF_DEFAULT_COMMAND = 'fd --type f --color=never --hidden --follow -E .git/*'
 $env:FZF_DEFAULT_OPTS = '--no-height --color=bg+:#343d46,gutter:-1,pointer:#ff3c3c,info:#0dbc79,hl:#0dbc79,hl+:#23d18b'
