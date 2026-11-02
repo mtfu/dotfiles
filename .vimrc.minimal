@@ -6,7 +6,7 @@ set clipboard=unnamed,unnamedplus
 " message. Runs in the background (~15s); the result is inserted at the top, so
 " `u` drops it. nvim only, since it uses jobstart().
 "
-"   SuggestCommit()  sends the staged diff to `copilot -p` as a background job
+"   SuggestCommit()  pipes prompt + staged diff to `copilot` as a background job
 "   OnStdout()       collects the reply
 "   OnExit()         cleans the reply up and inserts it into the buffer
 " ----------------------------------------------------------------------------
@@ -18,8 +18,8 @@ if has('nvim')
   " git's '# ------------------------ >8 ------------------------' line;
   " with commit.verbose the diff is shown below it.
   let s:scissors = '^. -\+ >8 -\+$'
-  " No < > | & ^ % in here: on Windows the CLI is a .cmd shim run through cmd.exe.
-  let s:prompt = 'Write a git commit message for the diff on stdin. '
+  " Sent on stdin ahead of the diff: with -p, copilot ignores stdin and runs git itself.
+  let s:prompt = 'Write a git commit message for the diff below. Do not use tools. '
         \ . 'Imperative subject line of at most 72 characters, then optionally a blank line and a short body. '
         \ . 'Output only the message, no code fences, no trailers.'
 
@@ -35,7 +35,7 @@ if has('nvim')
       return
     endif
 
-    let l:job = jobstart(['copilot', '-p', s:prompt, '-s', '--no-color', '--model', s:model], {
+    let l:job = jobstart(['copilot', '-s', '--no-color', '--model', s:model], {
           \ 'buf': bufnr(),
           \ 'stdout_buffered': 1,
           \ 'on_stdout': function('s:OnStdout'),
@@ -46,7 +46,7 @@ if has('nvim')
       return
     endif
 
-    call chansend(l:job, l:diff[: s:max_diff_lines])
+    call chansend(l:job, [s:prompt, ''] + l:diff[: s:max_diff_lines])
     call chanclose(l:job, 'stdin')
     echo 'Asking Haiku for a commit message...'
   endfunction

@@ -138,13 +138,32 @@ vim.keymap.set("n", "<leader>mb", function()
 end, { desc = "Markdown: toggle browser preview" })
 vim.keymap.set("n", "<leader>mq", "<cmd>LivePreview close<CR>", { desc = "Markdown: stop browser preview" })
 
+-- Same as Alt+T (Tasks: toggle done) in Obsidian: tick adds the done date, untick removes it.
+local function toggle_task()
+	local line = vim.api.nvim_get_current_line()
+	local new, n = line:gsub("^(%s*[-*+] )%[ %]", "%1[x]", 1)
+	if n == 1 then
+		new = new:gsub("%s+$", "") .. " ✅ " .. os.date("%Y-%m-%d")
+	else
+		new, n = line:gsub("^(%s*[-*+] )%[[xX]%]", "%1[ ]", 1)
+		new = new:gsub("%s*✅ %d%d%d%d%-%d%d%-%d%d", "")
+	end
+	if n == 1 then
+		vim.api.nvim_set_current_line(new)
+	end
+end
+
 -- Reading prose wants soft wrap on word boundaries; code defaults do not.
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = { "markdown" },
-	callback = function()
+	callback = function(args)
 		vim.opt_local.wrap = true
 		vim.opt_local.linebreak = true
 		vim.opt_local.breakindent = true
+		-- Enter/o on a list or task line continues it; Ctrl-U clears an unwanted marker.
+		vim.opt_local.comments = { "b:- [ ]", "b:-" }
+		vim.opt_local.formatoptions:append("ro")
+		vim.keymap.set({ "n", "i" }, "<M-t>", toggle_task, { buffer = args.buf, desc = "Markdown: toggle task done" })
 	end,
 })
 

@@ -29,6 +29,18 @@ vim.keymap.set("n", "[e", function()
 	vim.diagnostic.jump({ count = -1, float = true, severity = vim.diagnostic.severity.ERROR })
 end)
 
+-- Resize the current window (any split, quickfix, nvim-tree); takes a count, e.g. 5<C-Down>
+for lhs, cmd in pairs({
+	["<C-Up>"] = "resize +",
+	["<C-Down>"] = "resize -",
+	["<C-Left>"] = "vertical resize -",
+	["<C-Right>"] = "vertical resize +",
+}) do
+	vim.keymap.set("n", lhs, function()
+		vim.cmd(cmd .. 2 * vim.v.count1)
+	end)
+end
+
 vim.keymap.set("n", "gl", vim.diagnostic.open_float)
 for _, lhs in ipairs({ "<A-0>", "<leader>q" }) do
 	vim.keymap.set("n", lhs, function()

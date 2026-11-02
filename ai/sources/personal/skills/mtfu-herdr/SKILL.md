@@ -56,15 +56,31 @@ Set in `%APPDATA%\herdr\config.toml`. Defaults stay active unless listed here.
 
 | Action | Key | Config key |
 |---|---|---|
-| Cycle agents positionally | `prefix+shift+a`, `ctrl+alt+shift+a` | `next_agent`, `previous_agent` |
+| Next / previous agent (positional) | `prefix+a`, `ctrl+alt+i` / `prefix+shift+a`, `ctrl+alt+u` | `next_agent`, `previous_agent` |
 | Focus agent 1–9 | `prefix+alt+1..9` | `focus_agent` |
-| Back-jump to previous pane | `prefix+semicolon` | `last_pane` |
-| Jump to last notification source | `prefix+o` / `ctrl+alt+o` | `open_notification_target` |
+| Back-jump to previous pane (history, crosses tabs and spaces) | `prefix+semicolon`, `ctrl+alt+p` | `last_pane` |
+| Toggle / cycle panes in the current tab | `prefix+tab`, `ctrl+alt+o` / `prefix+shift+tab`, `ctrl+alt+shift+o` | `cycle_pane_next`, `cycle_pane_previous` |
+| Zoom pane (default) | `prefix+z` | `zoom` |
+| Jump to last notification source | `prefix+o` | `open_notification_target` |
+| Next / previous tab | `prefix+n`, `ctrl+alt+m` / `prefix+p`, `ctrl+alt+n` | `next_tab`, `previous_tab` |
 | Next / previous space | `ctrl+alt+j` / `ctrl+alt+k` | `next_workspace`, `previous_workspace` |
 | Switch to space 1–9 | `prefix+shift+1..9` | `switch_workspace` |
 | Goto picker | `prefix+g` / `ctrl+alt+g` | `goto` |
+| Remove the focused space's worktree (confirms) | `prefix+shift+d` | `remove_worktree` |
+| Close a space, keep files | `prefix+alt+x` | `close_workspace` |
+| Jump to the Desk space | `ctrl+alt+slash` | `[[keys.command]]`, `type = "shell"` |
 | Split horizontal | `prefix+s` | `split_horizontal` |
 | Settings | `prefix+comma` | `settings` |
+
+`last_pane` follows focus history, so after visiting another space it goes there. To switch
+between Copilot and nvim in the same tab, use `cycle_pane_next` (`ctrl+alt+o`), not `last_pane`.
+
+**Desk space:** Copilot for non-code questions plus nvim on the Obsidian task list. The binding
+focuses the space id cached in `%LOCALAPPDATA%\herdr-desk-id`, and runs
+`dotfiles\herdr\desk.ps1` only when the cache is missing or stale (it recreates the space if gone).
+
+Other settings: `[theme] name = "gruvbox"`, `[ui.toast] delivery = "herdr"` (in-app popups when an
+agent finishes or needs input; `open_notification_target` does nothing while delivery is `off`).
 
 ### `next_agent` does NOT seek the blocked agent
 
@@ -84,7 +100,7 @@ triaging by hand — finished-but-unlooked-at agents come before the ones active
 **There is no native attention-jump action, and I have deliberately stopped trying to build one.**
 A custom `type = "shell"` command doing this used to be bound to `prefix+a`; it was removed, along
 with its script, in favour of plain positional navigation. Do not suggest reinstating it unless I
-ask. `prefix+a` and `ctrl+alt+a` are now free.
+ask. `prefix+a` is now `next_agent`.
 
 `[ui] agent_panel_sort = "spaces"` — grouped by space, **not** `"priority"`. Navigation here is
 positional, and a priority-ordered panel reshuffles on every state change, which moves agents out
@@ -100,7 +116,8 @@ The Goto picker (`prefix+g`) filters with `b` blocked / `w` working / `i` idle /
 `a` for all, `/` to search.
 
 Chords to avoid on my machine: `ctrl+alt+t` (Windows Terminal globalSummon), `alt+o` / `alt+y`
-/ `alt+u` (AHK window focus in `dotfiles/ahk/focusprograms.ahk`). `prefix+shift+h/j/k/l` is
+/ `alt+u` (AHK window focus in `dotfiles/ahk/focusprograms.ahk`). `ctrl+alt+h` and `ctrl+alt+l`
+never reach herdr here (cause unknown). `prefix+shift+h/j/k/l` is
 swap-pane and has no config key, so don't shadow it.
 
 ## Plugins
@@ -130,6 +147,8 @@ herdr worktree remove ...
 - A worktree made with plain `git worktree add` is not lost: `herdr worktree open --path <dir>`
   adopts it as a workspace without touching git or files.
 - My worktrees live next to the repo as `C:\repos\wt-<short-name>`.
+- `create` and `open` fail with `linked_worktree_source` when run from a linked worktree. Pass
+  `--cwd <main checkout>` (find it with `git worktree list`, first line).
 - Verify flags with `herdr worktree <cmd> --help` before using any not listed here.
 
 ### Handing the new worktree a task
@@ -141,6 +160,15 @@ every run of characters outside `a-z0-9_-` replaced by `-` and trimmed of `-`
 (`feature/123-login` → `feature-123-login`). The plugin waits until the agent is idle,
 prompts "Read the task in <file> and do it.", and renames the file to `.started.md` so a reopen
 doesn't repeat it. Make the task self-contained: the new agent has none of your context.
+
+My plugin `mtfu.workspace-layout` (`dotfiles\herdr\plugins\workspace-layout`) gives every new
+workspace, worktree or not, a second pane split right and zooms the first. Copilot runs in `p1`.
+
+**Always write the task file, and always pass `--focus`.** The worktree is where I continue the
+work, so the agent there must start with the context and I must land in it. Open questions are no
+reason to skip it: the task then says which notes to read (e.g. the vault initiative's `START-HER`,
+`Opgaver`, `Stories`), lists the open questions, and says to raise them with me and write no code
+until they're answered. Create without a task file only when I say so.
 
 Without a task file the agent just starts idle. For an already running agent, use
 `herdr agent prompt <pane-or-name> "<text>"`.

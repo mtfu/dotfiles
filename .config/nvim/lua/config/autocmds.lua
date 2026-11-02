@@ -33,10 +33,13 @@ if vim.fn.has('wsl') == 1 then
   })
 end
 
--- Close quickfix / location list with q
+-- Close quickfix / location list with q; quickfix opens full width at the bottom, 8 lines
 vim.api.nvim_create_autocmd('FileType', {
   pattern = 'qf',
   callback = function(args)
     vim.keymap.set('n', 'q', '<cmd>close<CR>', { buffer = args.buf, silent = true })
+    if vim.fn.win_gettype() == 'quickfix' then
+      vim.cmd('wincmd J | resize 8')
+    end
   end,
 })

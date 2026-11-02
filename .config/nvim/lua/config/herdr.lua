@@ -51,41 +51,147 @@ local function label(agent)
 	}, "  ")
 end
 
---- Resolve a target agent, asking only when the choice is ambiguous.
-local function resolve(callback)
-	if target then
-		return callback(target)
+local function herdr_async(args, callback)
+	vim.system(vim.list_extend({ "herdr" }, args), { text = true }, function(res)
+		vim.schedule(function()
+			if res.code ~= 0 then
+				return callback(nil, (res.stderr or res.stdout or ""):gsub("%s+$", ""))
+			end
+			callback(res.stdout)
+		end)
+	end)
+end
+
+--- Split a pane right of nvim and start Copilot in it. Async: the shell and
+--- Copilot take seconds to come up, and blocking would freeze the editor.
+local function spawn(callback)
+	local split = { "pane", "split", "--direction", "right", "--no-focus", "--cwd", vim.fn.getcwd() }
+	vim.list_extend(split, vim.env.HERDR_PANE_ID and { vim.env.HERDR_PANE_ID } or { "--current" })
+	local out, err = herdr(split)
+	local ok, decoded = pcall(vim.json.decode, out or "")
+	local pane_id = ok and type(decoded) == "table" and vim.tbl_get(decoded, "result", "pane", "pane_id")
+	if not pane_id then
+		return vim.notify("herdr: split failed: " .. (err or "unexpected output"), vim.log.levels.ERROR)
 	end
 
+	-- Agent names must be unique among live agents; `agent get` succeeds when one is taken.
+	local name = "cp-nvim"
+	for i = 2, 99 do
+		if not herdr({ "agent", "get", name }) then
+			break
+		end
+		name = "cp-nvim-" .. i
+	end
+
+	vim.notify("herdr: starting copilot in " .. pane_id .. "...")
+	-- The new shell may not be at its prompt yet; `agent start` refuses a busy pane.
+	local function start(attempt)
+		herdr_async({ "agent", "start", name, "--kind", "copilot", "--pane", pane_id }, function(started, start_err)
+			if not started then
+				if attempt < 10 then
+					return vim.defer_fn(function()
+						start(attempt + 1)
+					end, 2000)
+				end
+				return vim.notify("herdr: agent start failed: " .. start_err, vim.log.levels.ERROR)
+			end
+			herdr_async({ "agent", "wait", pane_id, "--until", "idle", "--timeout", "120000" }, function(_, wait_err)
+				if wait_err then
+					return vim.notify("herdr: copilot never became idle: " .. wait_err, vim.log.levels.ERROR)
+				end
+				target = { pane_id = pane_id, cwd = vim.fn.getcwd(), agent = "copilot", fresh = true }
+				callback(target)
+			end)
+		end)
+	end
+	start(1)
+end
+
+--- One keypress: <Enter> spawns Copilot here, 1-9 picks an agent, anything else cancels.
+local function choose(list, callback)
+	local lines = { { "herdr target  <Enter> new copilot pane here, number picks, other key cancels", "Title" } }
+	for i, agent in ipairs(list) do
+		if i > 9 then
+			break
+		end
+		table.insert(lines, { string.format("\n%d: %s", i, label(agent)) })
+	end
+	vim.cmd.redraw()
+	vim.api.nvim_echo(lines, false, {})
+	local ok, key = pcall(vim.fn.getcharstr)
+	vim.cmd.redraw()
+	if not ok then
+		return
+	end
+	if key == "\r" then
+		return spawn(callback)
+	end
+	local choice = list[tonumber(key) or 0]
+	if choice then
+		target = choice
+		callback(target)
+	end
+end
+
+--- Resolve a target agent. An agent in nvim's own workspace always wins;
+--- otherwise reuse the remembered pick, or ask.
+local function resolve(callback)
 	local list, err = agents()
 	if not list then
 		return vim.notify(err, vim.log.levels.ERROR)
 	end
-	if #list == 0 then
-		return vim.notify("herdr: no other agent panes", vim.log.levels.WARN)
+
+	local function live(pool)
+		for _, agent in ipairs(pool) do
+			if target and agent.pane_id == target.pane_id then
+				agent.fresh = target.fresh
+				return agent
+			end
+		end
 	end
 
 	local own_ws = workspace_of(vim.env.HERDR_PANE_ID)
-	if own_ws then
-		local same = vim.tbl_filter(function(a)
-			return workspace_of(a.pane_id) == own_ws
-		end, list)
-		if #same > 0 then
-			list = same
+	local same = vim.tbl_filter(function(a)
+		return own_ws ~= nil and workspace_of(a.pane_id) == own_ws
+	end, list)
+
+	if #same > 0 then
+		local agent = #same == 1 and same[1] or live(same)
+		if agent then
+			target = agent
+			return callback(target)
 		end
+		return choose(same, callback)
 	end
 
-	if #list == 1 then
-		target = list[1]
+	local agent = live(list)
+	if agent then
+		target = agent
 		return callback(target)
 	end
+	choose(list, callback)
+end
 
-	vim.ui.select(list, { prompt = "herdr target pane", format_item = label }, function(choice)
-		if choice then
-			target = choice
-			callback(target)
-		end
-	end)
+--- `agent prompt`, plus re-pressing Enter for a just-started Copilot: herdr can
+--- report idle before its input box handles Enter, leaving the prompt unsent.
+local function submit(agent, text)
+	local _, err = herdr({ "agent", "prompt", agent.pane_id, text })
+	if err or not agent.fresh then
+		return err
+	end
+	local function check(attempt)
+		herdr_async({ "agent", "wait", agent.pane_id, "--until", "working", "--timeout", "10000" }, function(working)
+			if working then
+				agent.fresh = nil
+			elseif attempt <= 3 then
+				herdr({ "agent", "send-keys", agent.pane_id, "enter" })
+				check(attempt + 1)
+			else
+				vim.notify("herdr: prompt typed but not submitted in " .. agent.pane_id, vim.log.levels.WARN)
+			end
+		end)
+	end
+	check(1)
 end
 
 --- `path` relative to the target agent's cwd when it lives under it.
@@ -127,14 +233,15 @@ function M.send(first, last, question)
 			return vim.notify("herdr: buffer has no file", vim.log.levels.WARN)
 		end
 
-		local args = { "pane", "send-text", pane_id, ref .. " " }
+		local err
 		if question and question ~= "" then
 			ref = ref .. " " .. question
-			args = { "agent", "prompt", pane_id, ref }
+			pcall(vim.fn.setreg, "+", ref)
+			err = submit(agent, ref)
+		else
+			pcall(vim.fn.setreg, "+", ref)
+			err = select(2, herdr({ "pane", "send-text", pane_id, ref .. " " }))
 		end
-		pcall(vim.fn.setreg, "+", ref)
-
-		local _, err = herdr(args)
 		if err then
 			target = nil
 			return vim.notify("herdr: " .. err, vim.log.levels.ERROR)
@@ -254,7 +361,7 @@ function M.send_review()
 
 		-- `agent prompt` pastes the text as one block and then presses Enter, so the
 		-- newlines do not submit early. It refuses while the agent awaits an approval.
-		local _, err = herdr({ "agent", "prompt", agent.pane_id, msg })
+		local err = submit(agent, msg)
 		if err then
 			target = nil
 			return vim.notify("herdr: " .. err, vim.log.levels.ERROR)

@@ -11,6 +11,7 @@ function Link($target, $source) {
 Link $PROFILE "$dotfiles\Profile.ps1"
 Link "$env:USERPROFILE\.gitconfig" "$dotfiles\$gitconfig"
 Link "$env:USERPROFILE\.gitignore_global" "$dotfiles\.gitignore_global"
+Link "$env:USERPROFILE\.config\git\worktreeinclude.sh" "$dotfiles\git\worktreeinclude.sh"
 
 ## Install Vim and set HOME environment
 [System.Environment]::SetEnvironmentVariable('HOME', "C:\Users\" + $env:username, [System.EnvironmentVariableTarget]::User);

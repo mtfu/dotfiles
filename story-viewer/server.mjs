@@ -3,7 +3,7 @@
 // Usage: node server.mjs [--vault <path>] [--port 4710] [--no-open]   then open http://localhost:4710
 // The vault is --vault, else $STORY_VIEWER_VAULT, else the current directory. Initiatives live in <vault>/AI/<Folder>/.
 import { createServer } from 'node:http';
-import { readFile, readdir, access, writeFile } from 'node:fs/promises';
+import { readFile, readdir, access, writeFile, mkdir, rename } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { existsSync } from 'node:fs';
 import { promisify } from 'node:util';
@@ -73,17 +73,39 @@ function branchAndWorktree(cell) {
 	return { branch: spans.find((s) => !isPath(s)) ?? null, worktree: spans.find(isPath) ?? null };
 }
 
-async function findPr(story) {
+// A worktree's origin, cached per folder: it doesn't change, and the 10 s poll would otherwise spawn git every time.
+const remoteCache = new Map();
+async function remoteOf(story) {
 	const { branch, worktree } = branchAndWorktree(story.branch);
-	if (!branch || !worktree) return null;
+	if (!worktree) return null;
 	const dir = worktree.replace(/^~/, process.env.USERPROFILE ?? process.env.HOME ?? '~');
-	if (!existsSync(dir)) return null;
-	const { stdout } = await execFileAsync('git', ['-C', dir, 'remote', 'get-url', 'origin'], { windowsHide: true });
-	for (const provider of providers) {
-		const remote = provider.parseRemote(stdout);
-		if (remote) return provider.findPr(remote, branch);
+	if (!remoteCache.has(dir)) {
+		if (!existsSync(dir)) return null;
+		const { stdout } = await execFileAsync('git', ['-C', dir, 'remote', 'get-url', 'origin'], { windowsHide: true });
+		const url = stdout.trim();
+		const match = providers.map((provider) => ({ provider, remote: provider.parseRemote(url) })).find((m) => m.remote);
+		// Unknown hosts still get a name: the last path segment of the URL.
+		const name = match?.remote.repo ?? url.replace(/\.git$/, '').split(/[/:]/).at(-1);
+		remoteCache.set(dir, { name, provider: match?.provider ?? null, remote: match?.remote ?? null });
 	}
-	return null;
+	return { branch, ...remoteCache.get(dir) };
+}
+
+async function findPr(story) {
+	const origin = await remoteOf(story);
+	if (!origin?.branch || !origin.provider) return null;
+	return origin.provider.findPr(origin.remote, origin.branch);
+}
+
+async function repoNames(stories) {
+	const entries = await Promise.all(stories.filter((s) => s.id).map(async (s) => {
+		try {
+			return [s.id, (await remoteOf(s))?.name ?? null];
+		} catch {
+			return [s.id, null];
+		}
+	}));
+	return Object.fromEntries(entries.filter(([, name]) => name));
 }
 
 async function fetchPrs(stories, force) {
@@ -100,6 +122,10 @@ async function fetchPrs(stories, force) {
 }
 
 const lines = (text) => text.replace(/\r\n/g, '\n').split('\n');
+// Depends on may use the short name, without a trailing "(…)".
+const shortName = (name) => name.replace(/\s*\([^)]*\)\s*$/, '');
+// Stories and Opgaver sections without a tracker link are matched by name instead.
+const localId = (name) => `local:${shortName(name)}`;
 const tableCells = (row) => row.trim().replace(/^\||\|$/g, '').split('|');
 
 function sections(text) {
@@ -149,10 +175,12 @@ function parseStories(text) {
 		const rawName = c[col('story')] ?? '';
 		const state = c[col('state')] ?? '';
 		const link = refIn(c[trackerColumn(header)] ?? '');
+		const name = rawName.replace(/~~/g, '');
 		return {
 			order: c[col('#')] ?? '',
-			name: rawName.replace(/~~/g, ''),
-			id: link?.ref.id ?? null,
+			name,
+			id: link?.ref.id ?? localId(name),
+			local: !link,
 			link,
 			noteState: state,
 			removed: /removed/i.test(state) || rawName.startsWith('~~'),
@@ -160,8 +188,6 @@ function parseStories(text) {
 			branch: c[col('branch')] ?? '',
 		};
 	});
-	// Depends on may use the short name, without a trailing "(…)".
-	const shortName = (name) => name.replace(/\s*\([^)]*\)\s*$/, '');
 	for (const s of stories) {
 		s.deps = s.removed
 			? []
@@ -172,18 +198,37 @@ function parseStories(text) {
 	return { feature, stories };
 }
 
+// Tasks above the first heading form a "General" section.
 function parseOpgaver(text) {
 	return sections(text)
-		.filter((s) => s.heading)
 		.map((s) => ({
-			heading: s.heading,
-			id: refIn(s.body.join('\n'))?.ref.id ?? null,
-			intro: s.body.find((l) => l.trim() && !/^\s*- /.test(l))?.trim() ?? '',
+			heading: s.heading || 'General',
+			id: refIn(s.body.join('\n'))?.ref.id ?? localId(s.heading || 'General'),
+			intro: s.body.find((l) => l.trim() && !/^\s*- /.test(l) && !l.startsWith('# '))?.trim() ?? '',
 			items: bullets(s.body, s.start).map((b) => {
 				const task = b.text.match(/^\[( |x|X)\] (.*)$/);
 				return task ? { ...b, task: true, done: task[1] !== ' ', text: task[2] } : { ...b, task: false };
 			}),
-		}));
+		}))
+		.filter((s, i) => i > 0 || s.items.some((item) => item.task));
+}
+
+// Without a Stories.md, each Opgaver section is a story; its state follows its ticks.
+function storiesFromOpgaver(opgaver) {
+	return opgaver.map((section, i) => {
+		const tasks = section.items.filter((item) => item.task);
+		const done = tasks.filter((t) => t.done).length;
+		return {
+			order: String(i + 1),
+			name: section.heading,
+			id: section.id,
+			local: true,
+			noteState: tasks.length && done === tasks.length ? 'Done' : done ? 'Active' : 'New',
+			removed: false,
+			deps: [],
+			branch: '',
+		};
+	});
 }
 
 function parseStartHer(text) {
@@ -220,20 +265,51 @@ async function readText(file) {
 	}
 }
 
-async function listProjects() {
-	const entries = await readdir(projectsRoot, { withFileTypes: true }).catch(() => []);
+const exists = (file) => access(file).then(() => true, () => false);
+// Finished initiatives are moved here (vault AI/AGENTS.md); they are listed as "<archiveDir>/<Folder>".
+const archiveDir = '_Archive';
+
+// Initiatives with a Stories.md, or at least an Opgaver.md (then without tracker data).
+async function initiativesIn(dir, prefix = '') {
+	const entries = await readdir(dir, { withFileTypes: true }).catch(() => []);
 	const result = [];
-	for (const e of entries.filter((d) => d.isDirectory() && !d.name.startsWith('.'))) {
-		try {
-			await access(path.join(projectsRoot, e.name, 'Stories.md'));
-			result.push(e.name);
-		} catch {}
+	for (const e of entries.filter((d) => d.isDirectory() && !/^[._]/.test(d.name))) {
+		const sub = path.join(dir, e.name);
+		if ((await exists(path.join(sub, 'Stories.md'))) || (await exists(path.join(sub, 'Opgaver.md')))) result.push(prefix + e.name);
 	}
 	return result;
 }
 
+async function listProjects() {
+	return {
+		active: await initiativesIn(projectsRoot),
+		archived: await initiativesIn(path.join(projectsRoot, archiveDir), `${archiveDir}/`),
+	};
+}
+
+const isProject = async (folder) => {
+	const { active, archived } = await listProjects();
+	return active.includes(folder) || archived.includes(folder);
+};
+
+// Which tracker a project's stories link to, for the colored dot on its button: ado, github, mixed or native (no tracker).
+async function trackerKind(folder) {
+	const storiesMd = await readText(path.join(projectsRoot, folder, 'Stories.md'));
+	if (!storiesMd) return 'native';
+	const { feature, stories } = parseStories(storiesMd);
+	const names = new Set([feature, ...stories.map((s) => s.link)].filter(Boolean).map((l) => l.provider.name));
+	return names.size === 0 ? 'native' : names.size > 1 ? 'mixed' : [...names][0];
+}
+
+async function listProjectsWithKinds() {
+	const projects = await listProjects();
+	const all = [...projects.active, ...projects.archived];
+	const kinds = Object.fromEntries(await Promise.all(all.map(async (p) => [p, await trackerKind(p)])));
+	return { ...projects, kinds };
+}
+
 async function loadProject(folder, force) {
-	if (!(await listProjects()).includes(folder)) throw new Error(`No Stories.md in ${folder}`);
+	if (!(await isProject(folder))) throw new Error(`No Stories.md or Opgaver.md in ${folder}`);
 	const dir = path.join(projectsRoot, folder);
 	const [storiesMd, opgaverMd, startMd, nextMd] = await Promise.all([
 		readText(path.join(dir, 'Stories.md')),
@@ -241,22 +317,26 @@ async function loadProject(folder, force) {
 		readText(path.join(dir, 'START-HER.md')),
 		readText(path.join(vaultRoot, '01 - Next Actions.md')),
 	]);
-	const { feature, stories } = parseStories(storiesMd);
+	const hasStories = await exists(path.join(dir, 'Stories.md'));
+	const opgaver = parseOpgaver(opgaverMd);
+	const { feature, stories } = hasStories ? parseStories(storiesMd) : { feature: null, stories: storiesFromOpgaver(opgaver) };
 	const links = [feature, ...stories.map((s) => s.link)].filter(Boolean);
-	const [{ items, error }, prs] = await Promise.all([fetchItems(links, force), fetchPrs(stories, force)]);
+	const [{ items, error }, prs, repos] = await Promise.all([fetchItems(links, force), fetchPrs(stories, force), repoNames(stories)]);
 	const fetched = links.map((l) => itemCache.get(l.ref.id)?.at).filter(Boolean);
 	return {
 		folder,
 		notePath: `${projectsDir}/${folder}`,
 		vaultName,
+		hasStories,
 		featureId: feature?.ref.id ?? null,
 		trackers: [...new Set(links.map((l) => l.provider.name))],
 		stories: stories.map(({ link, ...s }) => s),
-		opgaver: parseOpgaver(opgaverMd),
+		opgaver,
 		startHer: parseStartHer(startMd),
 		nextActions: bullets(lines(nextMd)).filter((b) => b.text.includes(`${folder}/`)).map((b) => b.text),
 		items,
 		prs,
+		repos,
 		fetchError: error,
 		fetchedAt: fetched.length ? new Date(Math.min(...fetched)).toISOString() : null,
 		loadedAt: new Date().toISOString(),
@@ -266,7 +346,7 @@ async function loadProject(folder, force) {
 const httpError = (status, message) => Object.assign(new Error(message), { status });
 
 async function storyIn(folder, id) {
-	if (!(await listProjects()).includes(folder)) throw httpError(404, `No Stories.md in ${folder}`);
+	if (!(await isProject(folder)) || !(await exists(path.join(projectsRoot, folder, 'Stories.md')))) throw httpError(404, `No Stories.md in ${folder}`);
 	const file = path.join(projectsRoot, folder, 'Stories.md');
 	const story = parseStories(await readFile(file, 'utf8')).stories.find((s) => s.id === id);
 	if (typeof id !== 'string' || !story?.link) throw httpError(400, `${id} is not a story in ${folder}`);
@@ -325,19 +405,104 @@ async function writeStoryState(file, id, state) {
 	await writeFile(file, all.join(text.includes('\r\n') ? '\r\n' : '\n'));
 }
 
-// The only vault write besides the State cell: tick one open task in <folder>/Opgaver.md, and only if that line is
-// unchanged since the page loaded.
+// Vault write besides the State cell and archiving: tick or untick one task in <folder>/Opgaver.md, and only if that line
+// is unchanged since the page loaded. Unticking also drops the trailing "✅ <date>" that ticking added.
 async function tickTask(folder, lineNo, raw) {
-	if (!(await listProjects()).includes(folder)) throw httpError(404, `No Stories.md in ${folder}`);
+	if (!(await isProject(folder))) throw httpError(404, `No Stories.md or Opgaver.md in ${folder}`);
 	const file = path.join(projectsRoot, folder, 'Opgaver.md');
 	const text = await readFile(file, 'utf8');
 	const all = text.split(/\r?\n/);
-	if (!Number.isInteger(lineNo) || typeof raw !== 'string' || all[lineNo] !== raw || !/^\s*- \[ \] /.test(raw)) {
+	if (!Number.isInteger(lineNo) || typeof raw !== 'string' || all[lineNo] !== raw || !/^\s*- \[[ xX]\] /.test(raw)) {
 		throw httpError(409, 'The task changed since the page loaded; reload and try again');
 	}
-	const today = new Date().toLocaleDateString('sv-SE');
-	all[lineNo] = `${raw.replace('- [ ] ', '- [x] ').trimEnd()} ✅ ${today}`;
+	if (/^\s*- \[ \] /.test(raw)) {
+		const today = new Date().toLocaleDateString('sv-SE');
+		all[lineNo] = `${raw.replace('- [ ] ', '- [x] ').trimEnd()} ✅ ${today}`;
+	} else {
+		all[lineNo] = raw.replace(/- \[[xX]\] /, '- [ ] ').replace(/\s*✅ \d{4}-\d{2}-\d{2}\s*$/, '');
+	}
 	await writeFile(file, all.join(text.includes('\r\n') ? '\r\n' : '\n'));
+}
+
+const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const joinLike = (text, all) => all.join(text.includes('\r\n') ? '\r\n' : '\n');
+
+// Markdown notes in the vault, skipping tooling folders (.obsidian, .git, .trash).
+async function vaultNotes(dir = vaultRoot) {
+	const result = [];
+	for (const e of await readdir(dir, { withFileTypes: true })) {
+		if (e.name.startsWith('.')) continue;
+		const full = path.join(dir, e.name);
+		if (e.isDirectory()) result.push(...(await vaultNotes(full)));
+		else if (e.name.endsWith('.md')) result.push(full);
+	}
+	return result;
+}
+
+// Archiving clears the initiative from the shared GTD notes (vault AI/AGENTS.md): every "## " section of
+// 04 - Projects.md and every Next Actions bullet (with its indented continuation lines) that links into the folder.
+async function removeFromSharedNotes(ref) {
+	const removed = [];
+	const projectsFile = path.join(vaultRoot, '04 - Projects.md');
+	const projectsText = await readText(projectsFile);
+	if (projectsText) {
+		const all = projectsText.split(/\r?\n/);
+		const keep = [];
+		for (let i = 0; i < all.length; ) {
+			let end = i + 1;
+			if (all[i].startsWith('## ')) while (end < all.length && !/^#{1,2} /.test(all[end])) end++;
+			const block = all.slice(i, end);
+			if (all[i].startsWith('## ') && block.some((l) => l.includes(ref))) removed.push(`04 - Projects: ${all[i]}`);
+			else keep.push(...block);
+			i = end;
+		}
+		if (keep.length !== all.length) await writeFile(projectsFile, joinLike(projectsText, keep));
+	}
+	const nextFile = path.join(vaultRoot, '01 - Next Actions.md');
+	const nextText = await readText(nextFile);
+	if (nextText) {
+		const all = nextText.split(/\r?\n/);
+		const keep = [];
+		for (let i = 0; i < all.length; ) {
+			const bullet = all[i].match(/^(\s*)- /);
+			let end = i + 1;
+			if (bullet) while (end < all.length && all[end].trim() && all[end].match(/^\s*/)[0].length > bullet[1].length) end++;
+			const block = all.slice(i, end);
+			if (bullet && block.some((l) => l.includes(ref))) removed.push(`01 - Next Actions: ${all[i].trim()}`);
+			else keep.push(...block);
+			i = end;
+		}
+		if (keep.length !== all.length) await writeFile(nextFile, joinLike(nextText, keep));
+	}
+	return removed;
+}
+
+// Moves an initiative to AI/_Archive/ or back, then rewrites [[AI/<Folder>/…]] and ](AI/<Folder>/…) links in every note.
+// Archiving also clears it from 04 - Projects and Next Actions; unarchiving doesn't restore those.
+async function moveProject(folder, archive) {
+	const { active, archived } = await listProjects();
+	if (!(archive ? active : archived).includes(folder)) throw httpError(404, `${folder} is not ${archive ? 'an active' : 'an archived'} initiative`);
+	const target = archive ? `${archiveDir}/${folder}` : folder.slice(archiveDir.length + 1);
+	const from = `${projectsDir}/${folder}`;
+	const to = `${projectsDir}/${target}`;
+	if (await exists(path.join(vaultRoot, to))) throw httpError(409, `${to} already exists`);
+	await mkdir(path.join(projectsRoot, archiveDir), { recursive: true });
+	try {
+		await rename(path.join(vaultRoot, from), path.join(vaultRoot, to));
+	} catch (err) {
+		throw httpError(409, `Could not move ${from} (${err.code ?? err.message}); is a file in it open?`);
+	}
+	const removed = archive ? await removeFromSharedNotes(`${from}/`) : [];
+	const link = new RegExp(`(\\[\\[|\\]\\()${escapeRe(from)}/`, 'g');
+	const relinked = [];
+	for (const file of await vaultNotes()) {
+		const text = await readFile(file, 'utf8');
+		const updated = text.replace(link, `$1${to}/`);
+		if (updated === text) continue;
+		await writeFile(file, updated);
+		relinked.push(path.relative(vaultRoot, file));
+	}
+	return { folder: target, removed, relinked };
 }
 
 async function readJson(req) {
@@ -391,10 +556,16 @@ const server = createServer(async (req, res) => {
 		if (!trustedHost(req)) throw httpError(403, 'Unknown host');
 		if (url.pathname.startsWith('/api/') && !fromOwnPage(req)) throw httpError(403, 'Cross-site request refused');
 		if (url.pathname === '/') return send(200, 'text/html; charset=utf-8', await readFile(path.join(here, 'index.html')));
-		if (url.pathname === '/api/projects') return send(200, 'application/json', JSON.stringify(await listProjects()));
+		if (url.pathname === '/api/projects') return send(200, 'application/json', JSON.stringify(await listProjectsWithKinds()));
 		if (url.pathname === '/api/project') {
 			const data = await loadProject(url.searchParams.get('name') ?? '', url.searchParams.has('refresh'));
 			return send(200, 'application/json', JSON.stringify(data));
+		}
+		if (url.pathname === '/api/archive' && req.method === 'POST') {
+			if (!sameOrigin(req)) throw httpError(403, 'Cross-origin request refused');
+			const { name, archive } = await readJson(req);
+			if (typeof name !== 'string' || typeof archive !== 'boolean') throw httpError(400, 'Expected { name, archive }');
+			return send(200, 'application/json', JSON.stringify(await moveProject(name, archive)));
 		}
 		if (url.pathname === '/api/tick' && req.method === 'POST') {
 			if (!sameOrigin(req)) throw httpError(403, 'Cross-origin request refused');

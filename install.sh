@@ -12,6 +12,10 @@ apt_packages="curl git python3-pip tmux git zsh fzf fd-find bat direnv keychain"
 # Install packages
 sudo apt-get update && sudo apt-get upgrade -y && sudo apt-get install -y ${apt_packages}
 
+# Debian 12 and Ubuntu 22.04 have no gitleaks package
+sudo apt-get install -y gitleaks \
+    || echo "gitleaks not in apt; install it from https://github.com/gitleaks/gitleaks/releases or commits skip the secret scan"
+
 # Create initial directories
 mkdir -p "${HOME}/.config/zsh"  \
     "${HOME}/.local/bin" "${HOME}/.local/share" \
@@ -36,6 +40,8 @@ ln -fs "${clone_path}/.zshenv" "${HOME}/.zshenv" \
     && ln -fs "${clone_path}/.config/zsh/.zprofile" "${HOME}/.config/zsh/.zprofile" \
     && ln -fs "${clone_path}/.config/zsh/.aliases" "${HOME}/.config/zsh/.aliases" \
     && ln -fs "${clone_path}/.gitconfig" "${HOME}/.gitconfig" \
+    && mkdir -p "${HOME}/.config/git" \
+    && ln -fs "${clone_path}/git/worktreeinclude.sh" "${HOME}/.config/git/worktreeinclude.sh" \
     && ln -fs "${clone_path}/.vimrc.minimal" "${HOME}/.vimrc.minimal" \
     && ln -fs "${clone_path}/.config/nvim" "${HOME}/.config/nvim" \
     && ln -fs "${clone_path}/.local/bin/update-zsh-plugins.sh" "${HOME}/.local/bin/update-zsh-plugins.sh" \

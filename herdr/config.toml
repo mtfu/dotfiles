@@ -26,8 +26,7 @@ next_workspace = "ctrl+alt+j"
 previous_workspace = "ctrl+alt+k"
 switch_workspace = "prefix+shift+1..9"
 goto = ["prefix+g", "ctrl+alt+g"]
-# Delete the focused workspace's worktree checkout (asks for confirmation).
-remove_worktree = "prefix+shift+d"
+# prefix+shift+d removes the worktree and its branch via remove-worktree.ps1 (see [[keys.command]] below).
 # Close a space without deleting anything (non-worktree spaces, or keep the checkout).
 close_workspace = "prefix+alt+x"
 
@@ -38,6 +37,15 @@ close_workspace = "prefix+alt+x"
 key = "ctrl+alt+slash"
 type = "shell"
 command = '(for /f %i in (%LOCALAPPDATA%\herdr-desk-id) do @herdr workspace focus %i) || pwsh -NoProfile -File "%USERPROFILE%\dotfiles\herdr\desk.ps1"'
+
+# Remove the focused space's worktree, then its branch. Replaces the native remove_worktree, which
+# keeps the branch and on Windows leaves an empty folder while Copilot still holds it.
+[[keys.command]]
+key = "prefix+shift+d"
+type = "popup"
+command = 'pwsh -NoProfile -File "%USERPROFILE%\dotfiles\herdr\remove-worktree.ps1"'
+width = "70%"
+height = "50%"
 
 [theme]
 name = "gruvbox"

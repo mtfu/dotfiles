@@ -116,8 +116,9 @@ function mb
     $file = Get-Item -LiteralPath $Path -ErrorAction Stop
     $nvim = Start-Process nvim -WorkingDirectory $file.DirectoryName -WindowStyle Hidden -PassThru `
         -ArgumentList '--headless', "`"$($file.Name)`"", '-c', 'MarkdownPreview'
-    Read-Host "Previewing $($file.Name) - press Enter to stop" | Out-Null
-    Stop-Process -Id $nvim.Id -ErrorAction SilentlyContinue
+    try { Read-Host "Previewing $($file.Name) - press Enter to stop" | Out-Null }
+    # finally also runs on Ctrl+C, so the headless nvim never outlives mb.
+    finally { Stop-Process -Id $nvim.Id -ErrorAction SilentlyContinue }
 }
 
 function sr
@@ -182,6 +183,44 @@ function fur
 function fuc
 {
     Invoke-FuzzyGitStatus | % { git checkout $_ }
+}
+
+# Kill whatever listens on a port: `killport 4710`, `4710, 3000 | killport`.
+# Without a port, pick listening ports in fzf (Tab for several).
+function killport
+{
+    param([Parameter(ValueFromPipeline)][int[]]$Port)
+
+    begin { $ports = @() }
+    process { $ports += $Port }
+    end
+    {
+        if ($ports)
+        {
+            foreach ($n in $ports)
+            {
+                $procIds = Get-NetTCPConnection -LocalPort $n -State Listen -ErrorAction SilentlyContinue |
+                    Select-Object -ExpandProperty OwningProcess -Unique
+                if (-not $procIds) { Write-Warning "Nothing listens on port $n"; continue }
+                foreach ($procId in $procIds)
+                {
+                    $p = Get-Process -Id $procId -ErrorAction SilentlyContinue
+                    Stop-Process -Id $procId
+                    "Killed $($p.ProcessName) ($procId) on port $n"
+                }
+            }
+            return
+        }
+
+        Get-NetTCPConnection -State Listen -ErrorAction SilentlyContinue |
+            Sort-Object LocalPort -Unique |
+            ForEach-Object {
+                $p = Get-Process -Id $_.OwningProcess -ErrorAction SilentlyContinue
+                '{0,-6} {1,-7} {2}' -f $_.LocalPort, $_.OwningProcess, $p.ProcessName
+            } |
+            fzf --multi --header 'PORT   PID     PROCESS' |
+            ForEach-Object { Stop-Process -Id ([int]($_ -split '\s+')[1]) -Confirm }
+    }
 }
 
 

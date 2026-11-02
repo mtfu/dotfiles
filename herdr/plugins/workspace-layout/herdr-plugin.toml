@@ -1,0 +1,10 @@
+id = "mtfu.workspace-layout"
+name = "Workspace Layout"
+version = "0.1.0"
+min_herdr_version = "0.9.3"
+description = "Split every new workspace into two panes side by side and zoom the first one"
+platforms = ["windows"]
+
+[[events]]
+on = "workspace.created"
+command = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "split-and-zoom.ps1"]

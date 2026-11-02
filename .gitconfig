@@ -2,6 +2,7 @@
     ui = auto
 [branch]
     sort = -committerdate
+	autoSetupMerge = simple
 [tag]
 	sort = version:refname
 [init]
@@ -81,3 +82,13 @@
 	enabled = true
 [help]
     autocorrect = prompt
+[hook "worktreeinclude"]
+    # Copies .worktreeinclude-listed ignored files (.idea/, .env*) into new worktrees. Runs alongside repo hooks.
+    event = post-checkout
+    command = [ ! -f ~/.config/git/worktreeinclude.sh ] || bash ~/.config/git/worktreeinclude.sh
+[hook "gitleaks"]
+    # Refuses commits whose staged changes contain secrets (--redact masks them in the output). Skips with a warning if gitleaks is missing.
+    event = pre-commit
+    command = "if command -v gitleaks >/dev/null 2>&1; then gitleaks git --pre-commit --staged --redact --verbose; else echo 'gitleaks not installed: secret scan skipped' >&2; fi"
+[mergetool "nvimdiff"]
+	layout = BASE,LOCAL,REMOTE / MERGED

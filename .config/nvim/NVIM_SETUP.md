@@ -246,21 +246,26 @@ says why it was there, which tells you whether to reject the hunk or
 ### Merge conflicts
 
 `git mergetool` opens git's built-in `nvimdiff`, one conflicted file at a time:
-LOCAL (ours), BASE and REMOTE on top, MERGED (the file you edit) below.
+BASE (A), LOCAL (B, ours) and REMOTE (C) on top, left to right, MERGED (the file
+you edit) below. Every conflict line in MERGED gets an A/B/C sign for its source,
+and each window's winbar names the commit it shows.
 
 | Key / command | Does |
 |---|---|
 | `]x` / `[x` | Next / previous conflict |
-| `<leader>1` / `2` / `3` | Take A (BASE) / B (LOCAL) / C (REMOTE) for this conflict, like kdiff3 Ctrl+1/2/3 |
+| `<leader>2` / `3` | Take B (LOCAL) / C (REMOTE) for this conflict, like kdiff3 Ctrl+2/3 |
 | `<leader>4` / `5` | Take both: B then C / C then B (e.g. `using` lists) |
-| `<leader>x1` / `x2` / `x3` | Take A / B / C for every remaining conflict |
+| `<leader>xa` | Auto-solve every whitespace-only conflict, like kdiff3's auto-solve |
 | `]c` / `[c` | Next / previous change (any difference, not only conflicts) |
 | `:wqa` | Done with this file, go to the next |
 | `:cqa` | Abort this file (stays conflicted) |
 
 The keys work on the conflict markers in MERGED (`lua/config/conflicts.lua`), so
-they also work on any conflicted file opened normally. Taking BASE needs the
-`|||||||` section, which `merge.conflictStyle = zdiff3` provides.
+they also work on any conflicted file opened normally. `<leader>xa` solves a
+conflict when both sides are equal apart from whitespace (takes B), or when one
+side only changed whitespace compared with BASE (takes the other). It needs the
+`|||||||` BASE section for the second case, which `merge.conflictStyle = zdiff3`
+provides.
 
 `git difftool` uses `nvimdiff` too. kdiff3 is still installed as a fallback:
 `git mergetool -t kdiff3`, `git difftool -g`.

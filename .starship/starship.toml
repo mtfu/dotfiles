@@ -2,3 +2,15 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 add_newline = false
+
+# In a linked git worktree, show the main repo it belongs to (hidden in normal checkouts).
+# Uses cmd + git only: pwsh startup is too slow for a prompt module. No double quotes: starship escapes them for cmd.
+[custom.worktree_repo]
+description = "Main repository of a linked git worktree"
+require_repo = true
+shell = ["cmd", "/C"]
+when = 'git rev-parse --git-dir | findstr /C:/worktrees/ >nul'
+command = '''for /f %a in ('git rev-parse --path-format^=absolute --git-common-dir') do @for %b in (%a\..) do @echo %~nxb'''
+symbol = " "
+style = "bold purple"
+format = "[$symbol$output]($style) "

@@ -42,7 +42,8 @@ bindings straight from the running server, which always beats this file.
 | ● `ctrl+alt+j` / `ctrl+alt+k` | Next / previous space |
 | ● `ctrl+alt+/` | Go to the "Desk" space: Copilot (`~\desk`) for non-code questions + nvim on Obsidian `01 - Next Actions.md`; creates it if missing (`desk.ps1`) |
 | `prefix+w` | Space picker |
-| `prefix+shift+n` / `prefix+shift+d` | New / close space |
+| ● `prefix+shift+d` | Remove the space's worktree, then its branch (popup, `remove-worktree.ps1`; asks before discarding changes or force-deleting an unmerged branch) |
+| `prefix+shift+n` | New space |
 
 ## Agents
 

@@ -20,9 +20,28 @@
 	header h1 { font-size: 16px; margin: 0; }
 	header .spacer { flex: 1; }
 	header .muted, .muted { color: var(--muted); font-size: 12px; }
+	#projects { display: flex; gap: 4px; flex-wrap: wrap; }
+	#projects :is(button, select).current { background: var(--accent); border-color: var(--accent); color: #fff; }
+	#projects button.current { cursor: default; }
+	.kind { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; box-shadow: 0 0 0 1px var(--panel); }
+	.kind-ado { background: #0078d4; }
+	.kind-github { background: #8250df; }
+	.kind-mixed { background: linear-gradient(90deg, #0078d4 50%, #8250df 50%); }
+	.kind-native { background: var(--new); }
+	.copy { padding: 0 5px; font-size: 11px; line-height: 16px; }
+	.copy.ok { border-color: var(--closed); color: var(--closed); }
 	select, button { font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; cursor: pointer; }
 	button:disabled { opacity: .5; cursor: default; }
 	#error { display: none; margin: 10px 16px 0; padding: 8px 12px; border-radius: 6px; background: #f8d7d7; color: #6b1515; }
+	#notice { margin: 10px 16px 0; padding: 8px 12px; border-radius: 6px; background: var(--panel); border: 1px solid var(--closed); }
+	#notice ul { margin: 4px 0 0; padding-left: 18px; }
+	#palette { position: fixed; inset: 0; z-index: 10; background: rgb(0 0 0 / .35); }
+	#palette > div { width: 440px; margin: 12vh auto 0; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 8px 30px rgb(0 0 0 / .3); overflow: hidden; }
+	#palette input { width: 100%; font: inherit; color: inherit; background: var(--bg); border: 0; border-bottom: 1px solid var(--line); padding: 10px 12px; outline: none; }
+	#palette ul { list-style: none; margin: 0; padding: 4px 0; max-height: 50vh; overflow: auto; }
+	#palette li { padding: 6px 12px; cursor: pointer; display: flex; gap: 8px; align-items: center; }
+	#palette li.active { background: color-mix(in srgb, var(--accent) 25%, transparent); }
+	#palette li .muted { margin-left: auto; }
 	#summary { margin: 12px 16px; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
 	#summary p { margin: 0 0 8px; }
 	#summary ul { margin: 4px 0 0; padding-left: 18px; }
@@ -47,7 +66,9 @@
 	.card .meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--muted); }
 	.progress { height: 6px; border-radius: 3px; background: var(--line); margin-top: 8px; overflow: hidden; }
 	.progress > div { height: 100%; background: var(--closed); }
-	.branch { margin-top: 6px; font-size: 12px; word-break: break-all; }
+	.branch { margin-top: 6px; font-size: 12px; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+	.branch code { overflow-wrap: anywhere; }
+	.branch .path { color: var(--muted); background: none; padding: 0; }
 	#detail { position: fixed; right: 0; top: 49px; bottom: 0; width: 500px; overflow: auto; background: var(--panel); border-left: 1px solid var(--line); padding: 14px 18px 40px; z-index: 2; }
 	#detail h2 { font-size: 17px; margin: 0 26px 6px 0; }
 	#detail .close { position: absolute; right: 12px; top: 10px; }
@@ -68,6 +89,7 @@
 	#detail .html pre { white-space: pre-wrap; font: inherit; margin: 0; }
 	.spinner { width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
 	.spinner[hidden] { display: none; }
+	body.tracker-busy, body.tracker-busy * { cursor: progress; }
 	@keyframes spin { to { transform: rotate(360deg); } }
 	.skel { display: inline-block; height: 1em; min-width: 60px; vertical-align: middle; border-radius: 4px;
 		background: linear-gradient(90deg, var(--line) 25%, color-mix(in srgb, var(--line) 40%, transparent) 50%, var(--line) 75%);
@@ -79,14 +101,16 @@
 <body>
 <header>
 	<h1>Story viewer</h1>
-	<select id="project" title="Project"></select>
+	<nav id="projects" title="Project (Alt+1…9, Ctrl+K to search)"></nav>
 	<span id="feature"></span>
 	<span class="spacer"></span>
-	<span id="spinner" class="spinner" title="Fetching from the tracker…" hidden></span>
+	<span id="spinner" class="spinner" title="Waiting for the tracker…" hidden></span>
 	<span id="updated" class="muted"></span>
 	<button id="refresh" title="Fetch from ADO / GitHub now (also done on page load)">Fetch</button>
 </header>
 <div id="error"></div>
+<div id="notice" hidden></div>
+<div id="palette" hidden><div><input id="palette-input" placeholder="Switch project…" autocomplete="off" spellcheck="false"><ul id="palette-list"></ul></div></div>
 <section id="summary"></section>
 <div id="wrap"><div id="board"><svg id="arrows"></svg></div></div>
 <aside id="detail" hidden></aside>
@@ -99,13 +123,32 @@ const POLL_MS = 10_000;
 let data = null;
 let lastJson = '';
 let selectedId = null;
-let busy = false;
+let project = '';
+let projectList = { active: [], archived: [], kinds: {} };
+let busy = null;
 // True while a tracker fetch runs; tracker-only fields then show skeletons instead of being blank.
 let trackerPending = true;
 const statesByType = new Map();
 
 const $ = (sel) => document.querySelector(sel);
 const skel = (width = 70) => `<span class="skel" style="width:${width}px"></span>`;
+
+// Tracker calls (ADO / GitHub) take seconds; the header spinner shows while any of them is in flight.
+let trackerCalls = 0;
+function setTrackerBusy() {
+	$('#spinner').hidden = trackerCalls === 0;
+	document.body.classList.toggle('tracker-busy', trackerCalls > 0);
+}
+async function tracked(request) {
+	trackerCalls++;
+	setTrackerBusy();
+	try {
+		return await request;
+	} finally {
+		trackerCalls--;
+		setTrackerBusy();
+	}
+}
 // PR badge: found by the story's branch when its worktree is on this machine (`C:\…` in the Branch cell).
 function prHtml(s) {
 	const pr = data.prs?.[s.id];
@@ -171,31 +214,101 @@ function showError(message) {
 }
 
 async function loadProjects() {
-	const projects = await (await fetch('/api/projects')).json();
-	$('#project').innerHTML = projects.map((p) => `<option>${esc(p)}</option>`).join('');
+	const { active, archived, kinds = {} } = await (await fetch('/api/projects')).json();
+	projectList = { active, archived, kinds };
+	const projects = [...active, ...archived];
+	const kindTitle = { ado: 'Azure DevOps', github: 'GitHub', mixed: 'Azure DevOps and GitHub', native: 'No tracker (vault only)' };
+	const dot = (p) => (kinds[p] ? `<span class="kind kind-${esc(kinds[p])}"></span>` : '');
+	const title = (p, i) => [kindTitle[kinds[p]], i < 9 ? `Alt+${i + 1}` : ''].filter(Boolean).join(' · ');
+	$('#projects').innerHTML = active.map((p, i) => `<button data-project="${esc(p)}" title="${esc(title(p, i))}">${dot(p)}${esc(p)}</button>`).join('')
+		+ (archived.length ? `<select id="archived" title="Archived initiatives (AI/_Archive)"><option value="">Archived (${archived.length})</option>${archived.map((p) => `<option value="${esc(p)}">${esc(p.replace(/^_Archive\//, ''))}</option>`).join('')}</select>` : '');
+	$('#projects').querySelectorAll('button').forEach((b) => b.addEventListener('click', () => switchProject(b.dataset.project)));
+	$('#archived')?.addEventListener('change', (e) => switchProject(e.target.value));
 	const raw = location.hash.slice(1);
 	const cut = raw.indexOf('/');
 	const wanted = decodeURIComponent(cut < 0 ? raw : raw.slice(0, cut));
 	const story = cut < 0 ? '' : decodeURIComponent(raw.slice(cut + 1));
-	if (projects.includes(wanted)) {
-		$('#project').value = wanted;
-		selectedId = story || null;
-	}
-	if (!projects.length) showError('No initiative under AI/ has a Stories.md yet.');
+	project = projects.includes(wanted) ? wanted : projects[0] ?? '';
+	if (project === wanted) selectedId = story || null;
+	markProject();
+	if (!projects.length) showError('No initiative under AI/ has a Stories.md or Opgaver.md yet.');
 	return projects.length > 0;
 }
 
+function markProject() {
+	$('#projects').querySelectorAll('button').forEach((b) => b.classList.toggle('current', b.dataset.project === project));
+	const archived = $('#archived');
+	if (archived) {
+		archived.value = [...archived.options].some((o) => o.value === project) ? project : '';
+		archived.classList.toggle('current', !!archived.value);
+	}
+}
+
+function switchProject(name) {
+	if (!name || name === project) return;
+	project = name;
+	markProject();
+	history.replaceState(null, '', `#${encodeURIComponent(project)}`);
+	selectedId = null;
+	lastJson = '';
+	busy = null;
+	loadFast();
+}
+
+async function copyText(button, text) {
+	if (button.classList.contains('ok')) return;
+	const label = button.textContent;
+	try {
+		await navigator.clipboard.writeText(text);
+		button.classList.add('ok');
+		button.textContent = '✓';
+	} catch (err) {
+		showError(`Could not copy: ${err.message}`);
+		return;
+	}
+	setTimeout(() => { button.classList.remove('ok'); button.textContent = label; }, 1200);
+}
+// Copies "ADO#123 Title" (tracker title, else the story name); just the name for stories without a tracker link.
+function copyStory(button) {
+	const s = storyById(button.dataset.copy);
+	const item = data.items[s.id];
+	copyText(button, s.local ? s.name : `${item?.label ?? s.id} ${item?.title ?? s.name}`);
+}
+
+// Context to paste into an AI session: the initiative's notes and, if any, the feature with its link.
+function projectContext() {
+	const feature = data.items[data.featureId];
+	const lines = [`Initiative: ${data.folder} (vault "${data.vaultName}", notes in ${data.notePath}/: START-HER.md, Opgaver.md${data.hasStories ? ', Stories.md' : ''})`];
+	if (data.featureId) lines.push(`Feature: ${feature?.label ?? data.featureId}${feature?.title ? ` ${feature.title}` : ''}${feature?.url ? ` (${feature.url})` : ''}`);
+	return lines.join('\n');
+}
+function copyContext(button) {
+	copyText(button, projectContext());
+}
+// Asks for a title and copies a prompt that has the AI create the story; the viewer itself never writes to the tracker.
+function copyNewStory(button) {
+	const title = prompt('New user story title:');
+	if (!title?.trim()) return;
+	const parent = data.featureId ? `, as a child of the feature above` : '';
+	copyText(button, `${projectContext()}\n\nCreate a new user story "${title.trim()}"${parent}. Follow the obsidian-vault rules: `
+		+ `add it to ${data.hasStories ? 'Stories.md and ' : ''}Opgaver.md (its own ## section), draft the description and acceptance criteria, `
+		+ `and propose the tracker create for my approval before writing it via the azure-devops MCP.`);
+}
+const copyHtml = (s) => `<button class="copy" data-copy="${esc(s.id)}" title="${s.local ? 'Copy name' : 'Copy ID and title'}">⧉</button>`;
+
 async function load(refresh = false) {
 	if (busy) return;
-	busy = true;
+	const token = {};
+	busy = token;
 	if (refresh) trackerPending = true;
-	// Only tracker fetches take seconds; the 10 s note poll is instant, so it shows no spinner.
-	$('#spinner').hidden = !refresh;
 	$('#refresh').disabled = refresh;
 	try {
-		const name = $('#project').value;
-		const res = await fetch(`/api/project?name=${encodeURIComponent(name)}${refresh ? '&refresh' : ''}`);
+		const request = fetch(`/api/project?name=${encodeURIComponent(project)}${refresh ? '&refresh' : ''}`);
+		// Only tracker fetches take seconds; the 10 s note poll is instant, so it shows no spinner.
+		const res = await (refresh ? tracked(request) : request);
 		const body = await res.json();
+		// Switched project while this was in flight: drop the stale answer.
+		if (busy !== token) return;
 		if (!res.ok) throw new Error(body.error);
 		const { loadedAt, fetchedAt, ...rest } = body;
 		const json = JSON.stringify(rest);
@@ -208,16 +321,18 @@ async function load(refresh = false) {
 		data = body;
 		render();
 	} catch (err) {
+		if (busy !== token) return;
 		showError(`Could not load: ${err.message}`);
 		if (refresh && data) {
 			trackerPending = false;
 			render();
 		}
 	} finally {
-		if (refresh) trackerPending = false;
-		busy = false;
-		$('#spinner').hidden = true;
-		$('#refresh').disabled = false;
+		if (busy === token) {
+			if (refresh) trackerPending = false;
+			busy = null;
+			$('#refresh').disabled = false;
+		}
 	}
 }
 
@@ -230,10 +345,12 @@ async function loadFast() {
 
 function render() {
 	const feature = data.items[data.featureId];
-	$('#feature').innerHTML = data.featureId
-		? `<a href="${esc(feature?.url ?? '#')}" target="_blank" rel="noopener noreferrer">Feature ${esc(feature?.label ?? data.featureId)}</a> ${feature ? esc(feature.title) : trackerPending ? skel(180) : ''}`
-		: '';
-	document.title = `Story viewer: ${data.folder}`;
+	$('#feature').innerHTML = (data.featureId
+		? `<a href="${esc(feature?.url ?? '#')}" target="_blank" rel="noopener noreferrer">Feature ${esc(feature?.label ?? data.featureId)}</a> ${feature ? esc(feature.title) : trackerPending ? skel(180) : ''} `
+		: '')
+		+ `<button class="copy" id="copy-context" title="Copy project${data.featureId ? ' and feature link' : ''} for an AI prompt (Alt+C)">⧉</button>`
+		+ ` <button class="copy" id="new-story" title="Copy a prompt for the AI to create a new user story (Alt+N)">+ Story</button>`;
+	document.title = `Story viewer: ${data.folder.replace(/^_Archive\//, '')}${data.folder.startsWith('_Archive/') ? ' (archived)' : ''}`;
 	renderSummary();
 	renderBoard();
 	renderDetail();
@@ -243,11 +360,13 @@ function renderSummary() {
 	const sh = data.startHer;
 	const list = (items) => items.length ? `<ul>${items.map((t) => `<li>${md(t)}</li>`).join('')}</ul>` : '<span class="muted">None</span>';
 	const general = sh.decisions.filter((d) => !d.tags.length);
-	const notes = ['START-HER', 'Opgaver', 'Stories']
+	const notes = ['START-HER', 'Opgaver', ...(data.hasStories ? ['Stories'] : [])]
 		.map((n) => `<a href="${esc(obsidianUrl(`${data.notePath}/${n}`))}">${n}</a>`).join(' · ');
+	const archived = data.folder.startsWith('_Archive/');
+	const archiveButton = `<button class="copy" id="archive" title="${archived ? 'Move back to AI/' : 'Move to AI/_Archive/ and clear it from 04 - Projects and Next Actions'}">${archived ? 'Unarchive' : 'Archive project'}</button>`;
 	$('#summary').innerHTML = `
 		<p>${md(sh.intro)}</p>
-		<div class="muted">Open in Obsidian: ${notes}</div>
+		<div class="muted">Open in Obsidian: ${notes} · ${archiveButton}</div>
 		<div class="row">
 			<div><h3>Next action</h3>${list(data.nextActions.map((t) => t.replace(/^\[[ xX]\]\s*/, '')))}</div>
 			<div><h3>Status</h3>${list(sh.status.slice(-3))}</div>
@@ -274,7 +393,7 @@ function renderBoard() {
 	}
 	board.querySelectorAll('.card').forEach((card) => {
 		card.addEventListener('click', (e) => {
-			if (e.target.closest('a')) return;
+			if (e.target.closest('a, button')) return;
 			select(card.dataset.id === selectedId ? null : card.dataset.id);
 		});
 		card.addEventListener('mouseenter', () => highlight(card.dataset.id));
@@ -288,11 +407,24 @@ function cardHtml(s) {
 	const tasks = sectionOf(s)?.items.filter((i) => i.task) ?? [];
 	const done = tasks.filter((t) => t.done).length;
 	return `<div class="card${s.removed ? ' removed' : ''}${s.id === selectedId ? ' selected' : ''}" data-id="${esc(s.id)}" style="--state:${STATE_COLOR[stateOf(s)] ?? 'var(--muted)'}">
-		<div class="meta"><span>#${esc(s.order)}</span>${s.id ? `<a href="${esc(ado?.url ?? '#')}" target="_blank" rel="noopener noreferrer">${esc(ado?.label ?? s.id)}</a>` : ''}${ado?.assignedTo ? `<span>${esc(ado.assignedTo)}</span>` : !ado && s.id && trackerPending ? skel() : ''}${prHtml(s)}</div>
-		<div class="name">${esc(s.name)}${inReview(s) ? ` <span class="pill">${esc(stateOf(s))}</span>` : ''}</div>
+		<div class="meta"><span>#${esc(s.order)}</span>${!s.local ? `<a href="${esc(ado?.url ?? '#')}" target="_blank" rel="noopener noreferrer">${esc(ado?.label ?? s.id)}</a>` : ''}${copyHtml(s)}${ado?.assignedTo ? `<span>${esc(ado.assignedTo)}</span>` : !ado && !s.local && trackerPending ? skel() : ''}${prHtml(s)}</div>
+		<div class="name">${md(s.name)}${inReview(s) ? ` <span class="pill">${esc(stateOf(s))}</span>` : ''}</div>
 		${tasks.length ? `<div class="meta"><span>${done}/${tasks.length} tasks</span></div><div class="progress"><div style="width:${(100 * done) / tasks.length}%"></div></div>` : ''}
-		${s.branch && s.branch !== '—' ? `<div class="branch">${md(s.branch)}</div>` : ''}
+		${branchHtml(s)}
 	</div>`;
+}
+
+// Branch block: repo (from the worktree's origin, when it's on this machine), then branch and worktree path on their own lines.
+function branchHtml(s) {
+	const repo = data.repos?.[s.id];
+	const cell = /^\s*[-—]?\s*$/.test(s.branch ?? '') ? '' : s.branch;
+	const spans = [...cell.matchAll(/`([^`]+)`/g)].map((m) => m[1].trim());
+	if (!repo && !cell) return '';
+	const isPath = (t) => /^([A-Za-z]:[\\/]|~|\/)/.test(t);
+	const rest = spans.length
+		? spans.map((t) => `<code${isPath(t) ? ' class="path"' : ''}>${esc(t)}</code>`).join('')
+		: cell ? `<span>${md(cell)}</span>` : '';
+	return `<div class="branch">${repo ? `<span class="pill" title="Repository (origin of the worktree)">${esc(repo)}</span>` : ''}${rest}</div>`;
 }
 
 function drawArrows() {
@@ -383,7 +515,7 @@ function renderDetail() {
 	panel.hidden = !s;
 	if (!s) return;
 	const ado = data.items[s.id] ?? {};
-	const loadingItem = !data.items[s.id] && !!s.id && trackerPending;
+	const loadingItem = !data.items[s.id] && !s.local && trackerPending;
 	const section = sectionOf(s);
 	const neededBy = data.stories.filter((o) => o.deps.includes(s.id)).map((o) => o.id);
 	const tag = shortName(s.name).toLowerCase();
@@ -391,27 +523,30 @@ function renderDetail() {
 	const items = section?.items ?? [];
 	panel.innerHTML = `
 		<button class="close" title="Close">✕</button>
-		<h2>${esc(s.name)}</h2>
+		<h2>${md(s.name)}</h2>
 		<div class="links">
 			${ado.type ? `<select id="state" title="Change state"><option>${esc(ado.state)}</option></select>` : loadingItem ? skel(60) : `<span class="pill">${esc(stateOf(s))}</span>`}
 			${ado.url ? `<a href="${esc(ado.url)}" target="_blank" rel="noopener noreferrer">${esc(ado.label)}</a>` : ''}
+			${copyHtml(s)}
 			${prHtml(s)}
 			<a href="${esc(obsidianUrl(`${data.notePath}/Opgaver`))}">Opgaver in Obsidian</a>
 			${ado.assignedTo ? `<span class="muted">${esc(ado.assignedTo)}</span>` : loadingItem ? skel(90) : ''}
 		</div>
 		${ado.title && ado.title !== s.name ? `<div class="muted">Tracker title: ${esc(ado.title)}</div>` : ''}
-		${s.branch && s.branch !== '—' ? `<div class="branch">${md(s.branch)}</div>` : ''}
+		${branchHtml(s)}
 		<h3>Depends on</h3><div>${storyLinks(s.deps)}</div>
 		<h3>Needed by</h3><div>${storyLinks(neededBy)}</div>
-		<h3>Acceptance criteria</h3><div class="html" id="ac"></div>
+		${s.local ? '' : '<h3>Acceptance criteria</h3><div class="html" id="ac"></div>'}
 		<h3>Tasks${section ? ` <span class="muted">${items.filter((i) => i.task && i.done).length}/${items.filter((i) => i.task).length}</span>` : ''}</h3>
 		${section?.intro ? `<div class="muted">${md(section.intro)}</div>` : ''}
 		<ul class="tasks">${items.map(taskHtml).join('') || '<li class="note">No section for this story in Opgaver.md</li>'}</ul>
 		<h3>Decisions</h3>${decisions.map(decisionHtml).join('') || '<span class="muted">None tagged with this story</span>'}
-		<details><summary><h3 style="display:inline">Description</h3></summary><div class="html" id="desc"></div></details>`;
+		${s.local ? '' : '<details><summary><h3 style="display:inline">Description</h3></summary><div class="html" id="desc"></div></details>'}`;
 	const skelBlock = () => Object.assign(document.createElement('span'), { className: 'skel block' });
-	$('#ac').append(loadingItem ? skelBlock() : ado.acceptanceCriteria ? sanitize(ado.acceptanceCriteria) : Object.assign(document.createElement('span'), { className: 'muted', textContent: 'None in the tracker' }));
-	$('#desc').append(loadingItem ? skelBlock() : sanitize(ado.description));
+	if (!s.local) {
+		$('#ac').append(loadingItem ? skelBlock() : ado.acceptanceCriteria ? sanitize(ado.acceptanceCriteria) : Object.assign(document.createElement('span'), { className: 'muted', textContent: 'None in the tracker' }));
+		$('#desc').append(loadingItem ? skelBlock() : sanitize(ado.description));
+	}
 	if (ado.type) fillStates($('#state'), s, ado);
 	panel.querySelector('.close').addEventListener('click', () => select(null));
 	panel.querySelectorAll('[data-goto]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); select(a.dataset.goto); }));
@@ -422,7 +557,7 @@ function taskHtml(item, index) {
 	const pad = `style="margin-left:${item.indent * 18}px"`;
 	if (!item.task) return `<li class="note" ${pad}>${md(item.text)}</li>`;
 	return `<li class="${item.done ? 'done' : ''}" ${pad}>
-		<input type="checkbox" ${item.done ? 'checked disabled' : `data-line="${item.line}" data-index="${index}"`} title="${item.done ? 'Done' : 'Tick in Opgaver.md'}">
+		<input type="checkbox" ${item.done ? 'checked ' : ''}data-line="${item.line}" data-index="${index}" title="${item.done ? 'Untick in Opgaver.md' : 'Tick in Opgaver.md'}">
 		<span>${md(item.text)}</span></li>`;
 }
 
@@ -432,7 +567,7 @@ async function fillStates(select, story, ado) {
 	select.title = 'Loading states…';
 	const key = `${data.folder}|${ado.type}`;
 	if (!statesByType.has(key)) {
-		const pending = fetch(`/api/states?name=${encodeURIComponent(data.folder)}&id=${encodeURIComponent(story.id)}`).then(async (res) => {
+		const pending = tracked(fetch(`/api/states?name=${encodeURIComponent(data.folder)}&id=${encodeURIComponent(story.id)}`)).then(async (res) => {
 			const body = await res.json();
 			if (!res.ok) throw new Error(body.error);
 			return body;
@@ -463,11 +598,11 @@ async function changeState(select, story, ado) {
 	}
 	select.disabled = true;
 	try {
-		const res = await fetch('/api/state', {
+		const res = await tracked(fetch('/api/state', {
 			method: 'POST',
 			headers: { 'Content-Type': 'application/json' },
 			body: JSON.stringify({ name: data.folder, id: story.id, state: to }),
-		});
+		}));
 		if (!res.ok) throw new Error((await res.json()).error);
 		showError(null);
 	} catch (err) {
@@ -492,19 +627,153 @@ async function tick(box) {
 		if (!res.ok) throw new Error((await res.json()).error);
 		showError(null);
 	} catch (err) {
-		showError(`Not ticked: ${err.message}`);
+		showError(`Not ${box.checked ? 'ticked' : 'unticked'}: ${err.message}`);
 	}
+	// load() is skipped while another load runs, so wait for it; its answer may predate the change.
+	while (busy) await new Promise((resolve) => setTimeout(resolve, 50));
 	lastJson = '';
 	await load();
 }
 
-$('#project').addEventListener('change', () => {
-	history.replaceState(null, '', `#${encodeURIComponent($('#project').value)}`);
+function showNotice(html) {
+	$('#notice').hidden = !html;
+	$('#notice').innerHTML = html ?? '';
+}
+
+async function archiveProject() {
+	const archive = !data.folder.startsWith('_Archive/');
+	const name = data.folder.replace(/^_Archive\//, '');
+	const open = data.opgaver.flatMap((o) => o.items).filter((i) => i.task && !i.done).length;
+	const message = archive
+		? `Archive ${name}?\n\nMoves AI/${name} to AI/_Archive/${name}, rewrites links to it in every note, and removes its section in 04 - Projects and its Next Actions line.${open ? `\n\n${open} task(s) in Opgaver.md are still open.` : ''}`
+		: `Unarchive ${name}?\n\nMoves it back to AI/${name} and rewrites links. Its 04 - Projects section and Next Actions line are not restored.`;
+	if (!confirm(message)) return;
+	let result;
+	try {
+		const res = await fetch('/api/archive', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ name: data.folder, archive }),
+		});
+		result = await res.json();
+		if (!res.ok) throw new Error(result.error);
+	} catch (err) {
+		showError(`${archive ? 'Not archived' : 'Not unarchived'}: ${err.message}`);
+		return;
+	}
+	showError(null);
+	const list = (items) => items.length ? `<ul>${items.map((t) => `<li>${md(t)}</li>`).join('')}</ul>` : '';
+	showNotice(`<strong>${esc(name)} ${archive ? 'archived' : 'unarchived'}.</strong> Links updated in ${result.relinked.length} note(s).`
+		+ (result.removed.length ? ` Removed:${list(result.removed)}` : '')
+		+ (archive ? '' : ' Add it back to 04 - Projects and Next Actions if it needs them.')
+		+ ' <button class="copy" id="notice-close">OK</button>');
+	// Archiving lands on the first active project; unarchiving stays on the project.
+	history.replaceState(null, '', archive ? '#' : `#${encodeURIComponent(result.folder)}`);
+	project = '';
 	selectedId = null;
 	lastJson = '';
-	loadFast();
+	busy = null;
+	if (await loadProjects()) loadFast();
+}
+
+// Ctrl+K: fuzzy project switcher over active and archived projects.
+let paletteIndex = 0;
+const fuzzyScore = (query, text) => {
+	const q = query.toLowerCase();
+	const t = text.toLowerCase();
+	let score = 0;
+	let from = 0;
+	for (const c of q) {
+		const at = t.indexOf(c, from);
+		if (at < 0) return -1;
+		score += at - from;
+		from = at + 1;
+	}
+	return score;
+};
+function paletteMatches() {
+	const query = $('#palette-input').value.trim();
+	const all = [...projectList.active, ...projectList.archived];
+	return all
+		.map((p) => ({ p, score: query ? fuzzyScore(query, p.replace(/^_Archive\//, '')) : 0 }))
+		.filter((m) => m.score >= 0)
+		.sort((a, b) => a.score - b.score || all.indexOf(a.p) - all.indexOf(b.p))
+		.map((m) => m.p);
+}
+function renderPalette() {
+	const matches = paletteMatches();
+	paletteIndex = Math.max(0, Math.min(paletteIndex, matches.length - 1));
+	$('#palette-list').innerHTML = matches.map((p, i) => `<li data-project="${esc(p)}" class="${i === paletteIndex ? 'active' : ''}">`
+		+ `${esc(p.replace(/^_Archive\//, ''))}${p.startsWith('_Archive/') ? '<span class="muted">archived</span>' : p === project ? '<span class="muted">current</span>' : ''}</li>`).join('')
+		|| '<li class="muted">No match</li>';
+}
+function openPalette() {
+	$('#palette').hidden = false;
+	$('#palette-input').value = '';
+	paletteIndex = 0;
+	renderPalette();
+	$('#palette-input').focus();
+}
+function closePalette() {
+	$('#palette').hidden = true;
+}
+$('#palette-input').addEventListener('input', () => { paletteIndex = 0; renderPalette(); });
+$('#palette-input').addEventListener('keydown', (e) => {
+	const matches = paletteMatches();
+	if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+		e.preventDefault();
+		paletteIndex = (paletteIndex + (e.key === 'ArrowDown' ? 1 : -1) + matches.length) % Math.max(matches.length, 1);
+		renderPalette();
+	} else if (e.key === 'Enter') {
+		e.preventDefault();
+		closePalette();
+		switchProject(matches[paletteIndex]);
+	} else if (e.key === 'Escape') {
+		e.stopPropagation();
+		closePalette();
+	}
 });
+$('#palette').addEventListener('click', (e) => {
+	const item = e.target.closest('li[data-project]');
+	if (item) {
+		closePalette();
+		switchProject(item.dataset.project);
+	} else if (e.target === $('#palette')) closePalette();
+});
+document.addEventListener('keydown', (e) => {
+	if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'k') {
+		e.preventDefault();
+		$('#palette').hidden ? openPalette() : closePalette();
+	}
+});
+
 $('#refresh').addEventListener('click', () => load(true));
+// Copy buttons are re-rendered on every poll, so listen once on the document.
+document.addEventListener('click', (e) => {
+	const button = e.target.closest('button[data-copy]');
+	if (button) copyStory(button);
+	if (e.target.closest('#copy-context')) copyContext($('#copy-context'));
+	if (e.target.closest('#new-story')) copyNewStory($('#new-story'));
+	if (e.target.closest('#archive')) archiveProject();
+	if (e.target.closest('#notice-close')) showNotice(null);
+});
+document.addEventListener('keydown', (e) => {
+	if (e.altKey && !e.ctrlKey && !e.metaKey && e.key.toLowerCase() === 'n' && data) {
+		e.preventDefault();
+		copyNewStory($('#new-story'));
+		return;
+	}
+	if (e.altKey && !e.ctrlKey && !e.metaKey && e.key.toLowerCase() === 'c' && data) {
+		e.preventDefault();
+		copyContext($('#copy-context'));
+		return;
+	}
+	if (!e.altKey || e.ctrlKey || e.metaKey || !/^[1-9]$/.test(e.key)) return;
+	const button = $('#projects').querySelectorAll('button')[Number(e.key) - 1];
+	if (!button) return;
+	e.preventDefault();
+	switchProject(button.dataset.project);
+});
 window.addEventListener('resize', () => data && drawArrows());
 document.addEventListener('keydown', (e) => e.key === 'Escape' && select(null));
 // Polls the notes only; the tracker is fetched on page load, project switch and Refresh.
