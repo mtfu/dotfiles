@@ -1,0 +1,14 @@
+id = "mtfu.worktree-copilot"
+name = "Worktree Copilot"
+version = "0.1.0"
+min_herdr_version = "0.9.3"
+description = "Start Copilot CLI in the root pane of every new or newly opened worktree workspace, and hand it a waiting task file"
+platforms = ["windows"]
+
+[[events]]
+on = "worktree.created"
+command = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "start-copilot.ps1"]
+
+[[events]]
+on = "worktree.opened"
+command = ["powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "start-copilot.ps1"]

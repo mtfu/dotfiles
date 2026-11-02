@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Story viewer</title>
+<style>
+	:root {
+		color-scheme: light dark; #f6f7f9; --panel: #fff; --text: #1d2330; --muted: #6b7385; --line: #dde1e8; --accent: #3b6fd8;
+		--new: #8a94a6; --active: #3b6fd8; --resolved: #c08a1e; --closed: #2e9d5b; --removed: #b0b5bf;
+	}
+	@media (prefers-color-scheme: dark) {
+		:root { --bg: #16181d; --panel: #1f2229; --text: #e3e6ec; --muted: #8d95a5; --line: #343843; --accent: #6d9bff; }
+	}
+	* { box-sizing: border-box; }
+	body { margin: 0; font: 14px/1.45 system-ui, sans-serif; background: var(--bg); color: var(--text); }
+	a { color: var(--accent); text-decoration: none; }
+	a:hover { text-decoration: underline; }
+	code { font: 12px ui-monospace, Consolas, monospace; background: color-mix(in srgb, var(--line) 60%, transparent); padding: 0 3px; border-radius: 3px; }
+	header { display: flex; gap: 12px; align-items: center; padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 3; }
+	header h1 { font-size: 16px; margin: 0; }
+	header .spacer { flex: 1; }
+	header .muted, .muted { color: var(--muted); font-size: 12px; }
+	select, button { font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; cursor: pointer; }
+	button:disabled { opacity: .5; cursor: default; }
+	#error { display: none; margin: 10px 16px 0; padding: 8px 12px; border-radius: 6px; background: #f8d7d7; color: #6b1515; }
+	#summary { margin: 12px 16px; padding: 12px 16px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+	#summary p { margin: 0 0 8px; }
+	#summary ul { margin: 4px 0 0; padding-left: 18px; }
+	#summary .row { display: flex; gap: 24px; flex-wrap: wrap; }
+	#summary .row > div { flex: 1; min-width: 260px; }
+	h3 { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 12px 0 4px; }
+	#wrap { overflow: auto; padding: 0 16px 24px; }
+	body.detail-open :is(#wrap, #summary, #error) { margin-right: 500px; }
+	#board { position: relative; display: flex; gap: 80px; min-width: max-content; align-items: flex-start; }
+	#arrows { position: absolute; left: 0; top: 0; pointer-events: none; overflow: visible; }
+	#arrows path { fill: none; stroke: var(--muted); stroke-width: 1.5; opacity: .55; }
+	#arrows path.hot { stroke: var(--accent); stroke-width: 2.5; opacity: 1; }
+	.column { width: 280px; }
+	.column > h2 { font-size: 13px; margin: 0 0 8px; display: flex; gap: 6px; align-items: center; }
+	.column > h2 .dot { width: 10px; height: 10px; border-radius: 50%; }
+	.cards { display: flex; flex-direction: column; gap: 14px; }
+	.card { position: relative; z-index: 1; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--state); border-radius: 8px; padding: 10px 12px; cursor: pointer; }
+	.card:hover, .card.selected { border-color: var(--accent); box-shadow: 0 2px 10px rgb(0 0 0 / .12); }
+	.card.removed { opacity: .55; }
+	.card.removed .name { text-decoration: line-through; }
+	.card .name { font-weight: 600; margin: 2px 0 6px; }
+	.card .meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: var(--muted); }
+	.progress { height: 6px; border-radius: 3px; background: var(--line); margin-top: 8px; overflow: hidden; }
+	.progress > div { height: 100%; background: var(--closed); }
+	.branch { margin-top: 6px; font-size: 12px; word-break: break-all; }
+	#detail { position: fixed; right: 0; top: 49px; bottom: 0; width: 500px; overflow: auto; background: var(--panel); border-left: 1px solid var(--line); padding: 14px 18px 40px; z-index: 2; }
+	#detail h2 { font-size: 17px; margin: 0 26px 6px 0; }
+	#detail .close { position: absolute; right: 12px; top: 10px; }
+	#detail .links { display: flex; gap: 12px; flex-wrap: wrap; font-size: 13px; margin-bottom: 8px; }
+	#detail .html { overflow-wrap: anywhere; }
+	#detail .html :is(p, ul, ol) { margin: 4px 0; }
+	ul.tasks { list-style: none; padding-left: 0; margin: 4px 0; }
+	ul.tasks li { display: flex; gap: 6px; align-items: flex-start; padding: 2px 0; }
+	ul.tasks li.done span { color: var(--muted); text-decoration: line-through; }
+	ul.tasks input { margin-top: 3px; }
+	ul.tasks li.note { display: block; color: var(--muted); padding-left: 22px; }
+	.decision { padding: 6px 0; border-bottom: 1px solid var(--line); }
+	.decision .muted { margin-right: 6px; }
+	.pill { font-size: 11px; padding: 0 6px; border-radius: 9px; border: 1px solid var(--line); }
+	.pr { font-size: 11px; padding: 0 6px; border-radius: 9px; color: #fff; background: var(--active); }
+	.pr.merged { background: var(--closed); }
+	.pr.closed, .pr.draft { background: var(--removed); }
+	#detail .html pre { white-space: pre-wrap; font: inherit; margin: 0; }
+	.spinner { width: 14px; height: 14px; border: 2px solid var(--line); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
+	.spinner[hidden] { display: none; }
+	@keyframes spin { to { transform: rotate(360deg); } }
+	.skel { display: inline-block; height: 1em; min-width: 60px; vertical-align: middle; border-radius: 4px;
+		background: linear-gradient(90deg, var(--line) 25%, color-mix(in srgb, var(--line) 40%, transparent) 50%, var(--line) 75%);
+		background-size: 200% 100%; animation: shimmer 1.2s linear infinite; }
+	.skel.block { display: block; height: 3.5em; width: 100%; }
+	@keyframes shimmer { to { background-position: -200% 0; } }
+</style>
+</head>
+<body>
+<header>
+	<h1>Story viewer</h1>
+	<select id="project" title="Project"></select>
+	<span id="feature"></span>
+	<span class="spacer"></span>
+	<span id="spinner" class="spinner" title="Fetching from the tracker…" hidden></span>
+	<span id="updated" class="muted"></span>
+	<button id="refresh" title="Fetch from ADO / GitHub now (also done on page load)">Fetch</button>
+</header>
+<div id="error"></div>
+<section id="summary"></section>
+<div id="wrap"><div id="board"><svg id="arrows"></svg></div></div>
+<aside id="detail" hidden></aside>
+
+<script>
+const STATE_ORDER = ['New', 'Active', 'In review', 'Resolved', 'Closed', 'Done', 'Removed'];
+const STATE_COLOR = { New: 'var(--new)', Active: 'var(--active)', 'In review': 'var(--resolved)', Resolved: 'var(--resolved)', Closed: 'var(--closed)', Done: 'var(--closed)', Removed: 'var(--removed)' };
+const POLL_MS = 10_000;
+
+let data = null;
+let lastJson = '';
+let selectedId = null;
+let busy = false;
+// True while a tracker fetch runs; tracker-only fields then show skeletons instead of being blank.
+let trackerPending = true;
+const statesByType = new Map();
+
+const $ = (sel) => document.querySelector(sel);
+const skel = (width = 70) => `<span class="skel" style="width:${width}px"></span>`;
+// PR badge: found by the story's branch when its worktree is on this machine (`C:\…` in the Branch cell).
+function prHtml(s) {
+	const pr = data.prs?.[s.id];
+	if (pr) {
+		const status = pr.draft ? 'draft' : pr.status;
+		return `<a class="pr ${esc(status)}" href="${esc(pr.url)}" target="_blank" rel="noopener noreferrer" title="${esc(pr.title)}">${esc(pr.label)} ${esc(status)}</a>`;
+	}
+	return trackerPending && !s.removed && /`([A-Za-z]:[\\/]|~|\/)/.test(s.branch ?? '') ? skel(80) : '';
+}
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const shortName = (name) => name.replace(/\s*\([^)]*\)\s*$/, '');
+const obsidianUrl = (file) => `obsidian://open?vault=${encodeURIComponent(data.vaultName)}&file=${encodeURIComponent(file)}`;
+const stateOf = (s) => data.items[s.id]?.state || s.noteState || 'New';
+// In review: an open, non-draft PR on a story that isn't finished. Derived here; the tracker state is unchanged.
+const DONE_STATES = ['closed', 'done', 'removed'];
+const inReview = (s) => {
+	const pr = data.prs?.[s.id];
+	return !!pr && pr.status === 'open' && !pr.draft && !DONE_STATES.includes(stateOf(s).toLowerCase());
+};
+const columnOf = (s) => (inReview(s) ? 'In review' : stateOf(s));
+const sectionOf = (s) => data.opgaver.find((o) => o.id && o.id === s.id);
+const storyById = (id) => data.stories.find((s) => s.id === id);
+
+// Inline markdown from the notes: `code`, [text](https://…), [[wikilink|label]], **bold**, ~~strike~~. Escaped first.
+function md(text) {
+	return String(text ?? '').split(/(`[^`]+`)/).map((part, i) => {
+		if (i % 2) return `<code>${esc(part.slice(1, -1))}</code>`;
+		return esc(part)
+			.replace(/\[\[([^\]|#]+)(?:#[^\]|]*)?(?:\|([^\]]+))?\]\]/g, (_, target, label) =>
+				`<a href="${esc(obsidianUrl(target.trim()))}">${label ?? target}</a>`)
+			.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>')
+			.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+			.replace(/~~([^~]+)~~/g, '<del>$1</del>');
+	}).join('');
+}
+
+// Tracker fields are HTML. Rebuild them from an allowlist: no scripts, styles, images or attributes except safe links.
+const ALLOWED = new Set(['P', 'BR', 'UL', 'OL', 'LI', 'B', 'STRONG', 'I', 'EM', 'U', 'S', 'CODE', 'PRE', 'DIV', 'SPAN', 'A',
+	'H1', 'H2', 'H3', 'H4', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TD', 'TH', 'BLOCKQUOTE', 'HR']);
+const DROP = new Set(['SCRIPT', 'STYLE', 'IFRAME', 'OBJECT', 'EMBED', 'TEMPLATE', 'IMG', 'SVG', 'MATH', 'NOSCRIPT']);
+function sanitize(html) {
+	const out = document.createElement('div');
+	const walk = (src, dst) => {
+		for (const n of src.childNodes) {
+			if (n.nodeType === Node.TEXT_NODE) dst.append(n.textContent);
+			else if (n.nodeType === Node.ELEMENT_NODE && !DROP.has(n.tagName)) {
+				if (!ALLOWED.has(n.tagName)) { walk(n, dst); continue; }
+				const el = document.createElement(n.tagName);
+				const href = n.tagName === 'A' ? n.getAttribute('href') ?? '' : '';
+				if (/^https?:\/\//i.test(href)) Object.assign(el, { href, target: '_blank', rel: 'noopener noreferrer' });
+				walk(n, el);
+				dst.append(el);
+			}
+		}
+	};
+	walk(new DOMParser().parseFromString(html || '', 'text/html').body, out);
+	return out;
+}
+
+function showError(message) {
+	$('#error').style.display = message ? 'block' : 'none';
+	$('#error').textContent = message ?? '';
+}
+
+async function loadProjects() {
+	const projects = await (await fetch('/api/projects')).json();
+	$('#project').innerHTML = projects.map((p) => `<option>${esc(p)}</option>`).join('');
+	const raw = location.hash.slice(1);
+	const cut = raw.indexOf('/');
+	const wanted = decodeURIComponent(cut < 0 ? raw : raw.slice(0, cut));
+	const story = cut < 0 ? '' : decodeURIComponent(raw.slice(cut + 1));
+	if (projects.includes(wanted)) {
+		$('#project').value = wanted;
+		selectedId = story || null;
+	}
+	if (!projects.length) showError('No initiative under AI/ has a Stories.md yet.');
+	return projects.length > 0;
+}
+
+async function load(refresh = false) {
+	if (busy) return;
+	busy = true;
+	if (refresh) trackerPending = true;
+	// Only tracker fetches take seconds; the 10 s note poll is instant, so it shows no spinner.
+	$('#spinner').hidden = !refresh;
+	$('#refresh').disabled = refresh;
+	try {
+		const name = $('#project').value;
+		const res = await fetch(`/api/project?name=${encodeURIComponent(name)}${refresh ? '&refresh' : ''}`);
+		const body = await res.json();
+		if (!res.ok) throw new Error(body.error);
+		const { loadedAt, fetchedAt, ...rest } = body;
+		const json = JSON.stringify(rest);
+		$('#updated').textContent = `Notes ${new Date(loadedAt).toLocaleTimeString()} · Tracker ${fetchedAt ? new Date(fetchedAt).toLocaleTimeString() : 'not fetched'}`;
+		showError(body.fetchError ? `Tracker unavailable (${body.fetchError}); showing states from Stories.md.` : null);
+		if (refresh) trackerPending = false;
+		// After a fetch, re-render even if nothing changed, to replace the skeletons.
+		if (json === lastJson && !refresh) return;
+		lastJson = json;
+		data = body;
+		render();
+	} catch (err) {
+		showError(`Could not load: ${err.message}`);
+		if (refresh && data) {
+			trackerPending = false;
+			render();
+		}
+	} finally {
+		if (refresh) trackerPending = false;
+		busy = false;
+		$('#spinner').hidden = true;
+		$('#refresh').disabled = false;
+	}
+}
+
+// Notes render at once from the vault (and any cached tracker data); the slow tracker fetch fills in afterwards.
+async function loadFast() {
+	trackerPending = true;
+	await load();
+	await load(true);
+}
+
+function render() {
+	const feature = data.items[data.featureId];
+	$('#feature').innerHTML = data.featureId
+		? `<a href="${esc(feature?.url ?? '#')}" target="_blank" rel="noopener noreferrer">Feature ${esc(feature?.label ?? data.featureId)}</a> ${feature ? esc(feature.title) : trackerPending ? skel(180) : ''}`
+		: '';
+	document.title = `Story viewer: ${data.folder}`;
+	renderSummary();
+	renderBoard();
+	renderDetail();
+}
+
+function renderSummary() {
+	const sh = data.startHer;
+	const list = (items) => items.length ? `<ul>${items.map((t) => `<li>${md(t)}</li>`).join('')}</ul>` : '<span class="muted">None</span>';
+	const general = sh.decisions.filter((d) => !d.tags.length);
+	const notes = ['START-HER', 'Opgaver', 'Stories']
+		.map((n) => `<a href="${esc(obsidianUrl(`${data.notePath}/${n}`))}">${n}</a>`).join(' · ');
+	$('#summary').innerHTML = `
+		<p>${md(sh.intro)}</p>
+		<div class="muted">Open in Obsidian: ${notes}</div>
+		<div class="row">
+			<div><h3>Next action</h3>${list(data.nextActions.map((t) => t.replace(/^\[[ xX]\]\s*/, '')))}</div>
+			<div><h3>Status</h3>${list(sh.status.slice(-3))}</div>
+			<div><h3>Open questions</h3>${list(sh.openQuestions)}</div>
+		</div>
+		${general.length ? `<details><summary class="muted">${general.length} project-wide decisions</summary>${general.map(decisionHtml).join('')}</details>` : ''}`;
+}
+
+function renderBoard() {
+	const states = [...new Set(data.stories.map(columnOf))];
+	// ADO boards always show New / Active / Closed, even when empty.
+	const always = data.trackers.includes('ado') ? ['New', 'Active', 'Closed'] : [];
+	const columns = [...STATE_ORDER.filter((s) => s !== 'Removed' && (states.includes(s) || always.includes(s))),
+		...states.filter((s) => !STATE_ORDER.includes(s)),
+		...(states.includes('Removed') ? ['Removed'] : [])];
+	const board = $('#board');
+	board.querySelectorAll('.column').forEach((c) => c.remove());
+	for (const state of columns) {
+		const stories = data.stories.filter((s) => columnOf(s) === state).sort((a, b) => Number(a.order) - Number(b.order));
+		const col = document.createElement('div');
+		col.className = 'column';
+		col.innerHTML = `<h2><span class="dot" style="background:${STATE_COLOR[state] ?? 'var(--muted)'}"></span>${esc(state)} <span class="muted">${stories.length}</span></h2><div class="cards">${stories.map(cardHtml).join('')}</div>`;
+		board.append(col);
+	}
+	board.querySelectorAll('.card').forEach((card) => {
+		card.addEventListener('click', (e) => {
+			if (e.target.closest('a')) return;
+			select(card.dataset.id === selectedId ? null : card.dataset.id);
+		});
+		card.addEventListener('mouseenter', () => highlight(card.dataset.id));
+		card.addEventListener('mouseleave', () => highlight(selectedId));
+	});
+	requestAnimationFrame(drawArrows);
+}
+
+function cardHtml(s) {
+	const ado = data.items[s.id];
+	const tasks = sectionOf(s)?.items.filter((i) => i.task) ?? [];
+	const done = tasks.filter((t) => t.done).length;
+	return `<div class="card${s.removed ? ' removed' : ''}${s.id === selectedId ? ' selected' : ''}" data-id="${esc(s.id)}" style="--state:${STATE_COLOR[stateOf(s)] ?? 'var(--muted)'}">
+		<div class="meta"><span>#${esc(s.order)}</span>${s.id ? `<a href="${esc(ado?.url ?? '#')}" target="_blank" rel="noopener noreferrer">${esc(ado?.label ?? s.id)}</a>` : ''}${ado?.assignedTo ? `<span>${esc(ado.assignedTo)}</span>` : !ado && s.id && trackerPending ? skel() : ''}${prHtml(s)}</div>
+		<div class="name">${esc(s.name)}${inReview(s) ? ` <span class="pill">${esc(stateOf(s))}</span>` : ''}</div>
+		${tasks.length ? `<div class="meta"><span>${done}/${tasks.length} tasks</span></div><div class="progress"><div style="width:${(100 * done) / tasks.length}%"></div></div>` : ''}
+		${s.branch && s.branch !== '—' ? `<div class="branch">${md(s.branch)}</div>` : ''}
+	</div>`;
+}
+
+function drawArrows() {
+	const board = $('#board');
+	const svg = $('#arrows');
+	const origin = board.getBoundingClientRect();
+	svg.setAttribute('width', board.scrollWidth);
+	svg.setAttribute('height', board.scrollHeight);
+	const rect = (id) => {
+		const el = board.querySelector(`.card[data-id="${CSS.escape(id)}"]`);
+		if (!el) return null;
+		const r = el.getBoundingClientRect();
+		return { l: r.left - origin.left, r: r.right - origin.left, t: r.top - origin.top, b: r.bottom - origin.top, cy: r.top - origin.top + r.height / 2, cx: r.left - origin.left + r.width / 2 };
+	};
+	let paths = '<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" style="fill:var(--muted);stroke:none"/></marker></defs>';
+	// Each arrow leaves from and lands on a card side; arrows sharing a side get their own point along it,
+	// ordered by where the other end is, so they don't bunch up in the middle.
+	const edges = [];
+	for (const s of data.stories) {
+		for (const depId of s.deps) {
+			const from = rect(depId);
+			const to = rect(s.id);
+			if (!from || !to) continue;
+			const same = Math.abs(from.cx - to.cx) < 20;
+			const fromSide = same || from.cx < to.cx ? 'r' : 'l';
+			const toSide = same || from.cx > to.cx ? 'r' : 'l';
+			edges.push({ depId, id: s.id, from, to, same, fromSide, toSide });
+		}
+	}
+	const ports = new Map();
+	const addPort = (key, rect, edge, end, otherY) => {
+		if (!ports.has(key)) ports.set(key, { rect, list: [] });
+		ports.get(key).list.push({ edge, end, otherY });
+	};
+	for (const e of edges) {
+		addPort(`${e.depId}:${e.fromSide}`, e.from, e, 'fromY', e.to.cy);
+		addPort(`${e.id}:${e.toSide}`, e.to, e, 'toY', e.from.cy);
+	}
+	for (const { rect: r, list } of ports.values()) {
+		list.sort((a, b) => a.otherY - b.otherY);
+		list.forEach((p, i) => { p.edge[p.end] = r.t + ((r.b - r.t) * (i + 1)) / (list.length + 1); });
+	}
+	for (const { depId, id, from, to, same, fromY, toY } of edges) {
+		let d;
+		if (same) {
+			// Same column: curve out to the right of the cards.
+			const bulge = 40 + Math.abs(toY - fromY) / 8;
+			d = `M${from.r},${fromY} C${from.r + bulge},${fromY} ${to.r + bulge},${toY} ${to.r},${toY}`;
+		} else if (from.cx < to.cx) {
+			const mid = (from.r + to.l) / 2;
+			d = `M${from.r},${fromY} C${mid},${fromY} ${mid},${toY} ${to.l},${toY}`;
+		} else {
+			const mid = (from.l + to.r) / 2;
+			d = `M${from.l},${fromY} C${mid},${fromY} ${mid},${toY} ${to.r},${toY}`;
+		}
+		paths += `<path d="${d}" marker-end="url(#head)" data-from="${esc(depId)}" data-to="${esc(id)}"/>`;
+	}
+	svg.innerHTML = paths;
+	highlight(selectedId);
+}
+
+function highlight(id) {
+	document.querySelectorAll('#arrows path[data-from]').forEach((p) =>
+		p.classList.toggle('hot', !!id && (p.dataset.from === id || p.dataset.to === id)));
+}
+
+function select(id) {
+	selectedId = id;
+	history.replaceState(null, '', `#${encodeURIComponent(data.folder)}${id ? `/${encodeURIComponent(id)}` : ''}`);
+	document.querySelectorAll('.card').forEach((c) => c.classList.toggle('selected', c.dataset.id === id));
+	renderDetail();
+	requestAnimationFrame(drawArrows);
+}
+
+function decisionHtml(d) {
+	return `<div class="decision">${d.date ? `<span class="muted">${esc(d.date)}</span>` : ''}${md(d.text)}</div>`;
+}
+
+function storyLinks(ids) {
+	return ids.map(storyById).filter(Boolean)
+		.map((s) => `<a href="#" data-goto="${esc(s.id)}">${esc(s.name)}</a>`).join(', ') || '<span class="muted">None</span>';
+}
+
+function renderDetail() {
+	const panel = $('#detail');
+	const s = selectedId && storyById(selectedId);
+	document.body.classList.toggle('detail-open', !!s);
+	panel.hidden = !s;
+	if (!s) return;
+	const ado = data.items[s.id] ?? {};
+	const loadingItem = !data.items[s.id] && !!s.id && trackerPending;
+	const section = sectionOf(s);
+	const neededBy = data.stories.filter((o) => o.deps.includes(s.id)).map((o) => o.id);
+	const tag = shortName(s.name).toLowerCase();
+	const decisions = data.startHer.decisions.filter((d) => d.tags.some((t) => t && tag.startsWith(t.toLowerCase())));
+	const items = section?.items ?? [];
+	panel.innerHTML = `
+		<button class="close" title="Close">✕</button>
+		<h2>${esc(s.name)}</h2>
+		<div class="links">
+			${ado.type ? `<select id="state" title="Change state"><option>${esc(ado.state)}</option></select>` : loadingItem ? skel(60) : `<span class="pill">${esc(stateOf(s))}</span>`}
+			${ado.url ? `<a href="${esc(ado.url)}" target="_blank" rel="noopener noreferrer">${esc(ado.label)}</a>` : ''}
+			${prHtml(s)}
+			<a href="${esc(obsidianUrl(`${data.notePath}/Opgaver`))}">Opgaver in Obsidian</a>
+			${ado.assignedTo ? `<span class="muted">${esc(ado.assignedTo)}</span>` : loadingItem ? skel(90) : ''}
+		</div>
+		${ado.title && ado.title !== s.name ? `<div class="muted">Tracker title: ${esc(ado.title)}</div>` : ''}
+		${s.branch && s.branch !== '—' ? `<div class="branch">${md(s.branch)}</div>` : ''}
+		<h3>Depends on</h3><div>${storyLinks(s.deps)}</div>
+		<h3>Needed by</h3><div>${storyLinks(neededBy)}</div>
+		<h3>Acceptance criteria</h3><div class="html" id="ac"></div>
+		<h3>Tasks${section ? ` <span class="muted">${items.filter((i) => i.task && i.done).length}/${items.filter((i) => i.task).length}</span>` : ''}</h3>
+		${section?.intro ? `<div class="muted">${md(section.intro)}</div>` : ''}
+		<ul class="tasks">${items.map(taskHtml).join('') || '<li class="note">No section for this story in Opgaver.md</li>'}</ul>
+		<h3>Decisions</h3>${decisions.map(decisionHtml).join('') || '<span class="muted">None tagged with this story</span>'}
+		<details><summary><h3 style="display:inline">Description</h3></summary><div class="html" id="desc"></div></details>`;
+	const skelBlock = () => Object.assign(document.createElement('span'), { className: 'skel block' });
+	$('#ac').append(loadingItem ? skelBlock() : ado.acceptanceCriteria ? sanitize(ado.acceptanceCriteria) : Object.assign(document.createElement('span'), { className: 'muted', textContent: 'None in the tracker' }));
+	$('#desc').append(loadingItem ? skelBlock() : sanitize(ado.description));
+	if (ado.type) fillStates($('#state'), s, ado);
+	panel.querySelector('.close').addEventListener('click', () => select(null));
+	panel.querySelectorAll('[data-goto]').forEach((a) => a.addEventListener('click', (e) => { e.preventDefault(); select(a.dataset.goto); }));
+	panel.querySelectorAll('input[data-line]').forEach((box) => box.addEventListener('change', () => tick(box)));
+}
+
+function taskHtml(item, index) {
+	const pad = `style="margin-left:${item.indent * 18}px"`;
+	if (!item.task) return `<li class="note" ${pad}>${md(item.text)}</li>`;
+	return `<li class="${item.done ? 'done' : ''}" ${pad}>
+		<input type="checkbox" ${item.done ? 'checked disabled' : `data-line="${item.line}" data-index="${index}"`} title="${item.done ? 'Done' : 'Tick in Opgaver.md'}">
+		<span>${md(item.text)}</span></li>`;
+}
+
+// The State dropdown lists the story's states from its tracker (fetched once; the first time can take a few seconds).
+async function fillStates(select, story, ado) {
+	select.disabled = true;
+	select.title = 'Loading states…';
+	const key = `${data.folder}|${ado.type}`;
+	if (!statesByType.has(key)) {
+		const pending = fetch(`/api/states?name=${encodeURIComponent(data.folder)}&id=${encodeURIComponent(story.id)}`).then(async (res) => {
+			const body = await res.json();
+			if (!res.ok) throw new Error(body.error);
+			return body;
+		});
+		statesByType.set(key, pending);
+		pending.catch(() => statesByType.delete(key));
+	}
+	let states;
+	try {
+		states = await statesByType.get(key);
+	} catch (err) {
+		if (select.isConnected) select.title = `Could not load states: ${err.message}`;
+		return;
+	}
+	if (!select.isConnected) return;
+	select.innerHTML = states.map((st) => `<option${st === ado.state ? ' selected' : ''}>${esc(st)}</option>`).join('');
+	select.disabled = false;
+	select.title = 'Change state';
+	select.addEventListener('change', () => changeState(select, story, ado));
+}
+
+async function changeState(select, story, ado) {
+	const from = ado.state;
+	const to = select.value;
+	if (!confirm(`Move ${ado.label} "${story.name}" from ${from} to ${to}?\n\nThis updates the tracker and Stories.md.`)) {
+		select.value = from;
+		return;
+	}
+	select.disabled = true;
+	try {
+		const res = await fetch('/api/state', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ name: data.folder, id: story.id, state: to }),
+		});
+		if (!res.ok) throw new Error((await res.json()).error);
+		showError(null);
+	} catch (err) {
+		showError(`State not changed: ${err.message}`);
+		select.value = from;
+		select.disabled = false;
+		return;
+	}
+	lastJson = '';
+	await load();
+}
+
+async function tick(box) {
+	const item = sectionOf(storyById(selectedId)).items[Number(box.dataset.index)];
+	box.disabled = true;
+	try {
+		const res = await fetch('/api/tick', {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ name: data.folder, line: item.line, raw: item.raw }),
+		});
+		if (!res.ok) throw new Error((await res.json()).error);
+		showError(null);
+	} catch (err) {
+		showError(`Not ticked: ${err.message}`);
+	}
+	lastJson = '';
+	await load();
+}
+
+$('#project').addEventListener('change', () => {
+	history.replaceState(null, '', `#${encodeURIComponent($('#project').value)}`);
+	selectedId = null;
+	lastJson = '';
+	loadFast();
+});
+$('#refresh').addEventListener('click', () => load(true));
+window.addEventListener('resize', () => data && drawArrows());
+document.addEventListener('keydown', (e) => e.key === 'Escape' && select(null));
+// Polls the notes only; the tracker is fetched on page load, project switch and Refresh.
+setInterval(() => !document.hidden && load(), POLL_MS);
+loadProjects().then((ok) => ok && loadFast());
+</script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+onboarding = false
+
+[keys]
+split_horizontal = "prefix+s"
+settings = "prefix+comma"
+# ctrl+alt+h and ctrl+alt+l never reach herdr here (unclear why; y/u/j/k do).
+# Back-jump to the previously focused pane, across tabs and workspaces.
+last_pane = ["prefix+semicolon", "ctrl+alt+p"]
+# Toggle between the panes in the current tab (cycles when there are more than two).
+cycle_pane_next = ["prefix+tab", "ctrl+alt+o"]
+cycle_pane_previous = ["prefix+shift+tab", "ctrl+alt+shift+o"]
+
+# Positional cycling through the agent list.
+next_agent = ["prefix+a", "ctrl+alt+i"]
+previous_agent = ["prefix+shift+a", "ctrl+alt+u"]
+focus_agent = "prefix+alt+1..9"
+# Jump straight to whatever raised the last notification.
+open_notification_target = "prefix+o"
+
+# Tabs
+next_tab = ["prefix+n", "ctrl+alt+m"]
+previous_tab = ["prefix+p", "ctrl+alt+n"]
+
+# Spaces
+next_workspace = "ctrl+alt+j"
+previous_workspace = "ctrl+alt+k"
+switch_workspace = "prefix+shift+1..9"
+goto = ["prefix+g", "ctrl+alt+g"]
+# Delete the focused workspace's worktree checkout (asks for confirmation).
+remove_worktree = "prefix+shift+d"
+# Close a space without deleting anything (non-worktree spaces, or keep the checkout).
+close_workspace = "prefix+alt+x"
+
+# Jump to the "Desk" space: Copilot for non-code questions + nvim on the Obsidian task list.
+# Fast path: focus the cached id from cmd; desk.ps1 (slower, pwsh) only runs when the cache is
+# missing or stale, and recreates the space if gone.
+[[keys.command]]
+key = "ctrl+alt+slash"
+type = "shell"
+command = '(for /f %i in (%LOCALAPPDATA%\herdr-desk-id) do @herdr workspace focus %i) || pwsh -NoProfile -File "%USERPROFILE%\dotfiles\herdr\desk.ps1"'
+
+[theme]
+name = "gruvbox"
+auto_switch = false
+
+[ui]
+# Use the outer terminal's real cursor instead of Herdr's drawn block, so nvim's
+# guicursor shape changes (block in normal, bar in insert) come through.
+host_cursor = "native"
+# Group the agent panel by space so each agent keeps a stable position. Navigation here is
+# positional (focus_agent 1..9, next_agent), and "priority" would reshuffle the list on every
+# state change, moving agents out from under the number keys.
+agent_panel_sort = "spaces"
+
+# In-app popups when an agent finishes or needs input. open_notification_target (prefix+o)
+# only jumps to a visible notification, so it does nothing while delivery is "off" (default).
+[ui.toast]
+delivery = "herdr"

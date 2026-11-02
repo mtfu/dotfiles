@@ -1,0 +1,34 @@
+param ([parameter()]$gitconfig = '.gitconfig', $path = "dotfiles")
+
+$env:home = "$userprofile"
+$localgitconfig = "$env:userprofile/.gitconfig.local"
+
+if (-not (test-path -path $localgitconfig -pathtype leaf))
+{
+    cp .gitconfig.local $localgitconfig
+}
+
+& '.\updateSymbolicLinks.ps1'; 
+
+
+## Setup GIT_SSH
+[System.Environment]::SetEnvironmentVariable('GIT_SSH', "C:\Windows\System32\OpenSSH\ssh.exe", [System.EnvironmentVariableTarget]::User);
+#
+# We want to expose Linux helpful commands like tig, less and xargs
+[Environment]::SetEnvironmentVariable("Path", $env:Path + ";C:\Program Files\Git\usr\bin" , [System.EnvironmentVariableTarget]::User)
+
+function Install($moduleName)
+{
+    Install-Module $moduleName  -Confirm:$False -Force -AllowClobber;
+}
+
+Install("posh-git")
+Install("lazy-posh-git")
+Install("PSfzf");
+Install("posh-sshell");
+
+#SSH Agent
+Get-WindowsCapability -Online | ? Name -like 'OpenSSH*';
+Add-WindowsCapability -Online -Name OpenSSH.Client~~~~0.0.1.0;
+Get-Service -Name ssh-agent | Set-Service -StartupType Automatic;
+
