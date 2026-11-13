@@ -1,0 +1,9 @@
+# This repo is public: keep secrets and machine-specific files out.
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+*.lnk
+machine.local.ps1

@@ -1,0 +1,10 @@
+# Force LF line endings for shell scripts and dotfiles
+* text=auto
+
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.zsh text eol=lf
+.zshrc text eol=lf
+.zshrc.* text eol=lf
+.aliases text eol=lf
+.aliases.* text eol=lf

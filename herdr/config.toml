@@ -1,0 +1,110 @@
+onboarding = false
+
+[keys]
+split_horizontal = "prefix+s"
+settings = "prefix+comma"
+# ctrl+alt+h and ctrl+alt+l never reach herdr here (unclear why; y/u/j/k do).
+# Back-jump to the previously focused pane, across tabs and workspaces.
+last_pane = ["prefix+semicolon", "ctrl+alt+p"]
+# Toggle between the panes in the current tab (cycles when there are more than two).
+cycle_pane_next = ["prefix+tab", "ctrl+alt+o"]
+cycle_pane_previous = ["prefix+shift+tab", "ctrl+alt+shift+o"]
+
+# Positional cycling through the agent list.
+next_agent = ["prefix+a", "ctrl+alt+i"]
+previous_agent = ["prefix+shift+a", "ctrl+alt+u"]
+focus_agent = "prefix+alt+1..9"
+# Jump straight to whatever raised the last notification.
+open_notification_target = "prefix+o"
+
+# Tabs
+next_tab = ["prefix+n", "ctrl+alt+m"]
+previous_tab = ["prefix+p", "ctrl+alt+n"]
+
+# Spaces
+next_workspace = "ctrl+alt+j"
+previous_workspace = "ctrl+alt+k"
+switch_workspace = "prefix+shift+1..9"
+goto = ["prefix+g", "ctrl+alt+g"]
+# Worktree layer is prefix+alt+<verb>: n new, o open, l list, d delete, x close (popups below).
+# Close a space without deleting anything (non-worktree spaces, or keep the checkout).
+close_workspace = ["prefix+alt+x", "prefix+shift+d"]
+# Freed for the custom new-worktree popup below.
+new_worktree = ""
+# Reopen an existing (closed, not deleted) worktree of the focused space's repo.
+open_worktree = "prefix+alt+o"
+
+# Jump to the "Main" space, always on its tasks tab: Copilot + nvim on the Obsidian task list.
+# Tab 1 is "shell" (alt+backtick below); other tabs are made by hand.
+# Fast path: focus the cached space and tab from cmd; main.ps1 (slower, pwsh) only runs when the
+# cache is missing or stale, and recreates whatever is gone.
+[[keys.command]]
+key = "ctrl+alt+slash"
+type = "shell"
+command = '(for /f "tokens=1,2" %a in (%LOCALAPPDATA%\herdr-main-id) do @herdr workspace focus %a && herdr tab focus %b) || pwsh -NoProfile -File "%USERPROFILE%\dotfiles\herdr\main.ps1"'
+
+# Jump to Main's "shell" tab: a shell in ~ (z around, one-off commands), laid out with Copilot and nvim by workspace-layout.
+[[keys.command]]
+key = "alt+backtick"
+type = "shell"
+command = '(for /f "tokens=1,3" %a in (%LOCALAPPDATA%\herdr-main-id) do @herdr workspace focus %a && herdr tab focus %b) || pwsh -NoProfile -File "%USERPROFILE%\dotfiles\herdr\main.ps1" -Tab shell'
+
+# Remove the focused space's worktree, then its branch. Replaces the native remove_worktree, which
+# keeps the branch and on Windows leaves an empty folder while Copilot still holds it.
+[[keys.command]]
+key = "prefix+alt+d"
+type = "popup"
+command = 'pwsh -NoProfile -File "%USERPROFILE%\dotfiles\herdr\remove-worktree.ps1"'
+width = "70%"
+height = "50%"
+
+# New worktree space from the repo of the folder you are in (also after `z <repo>` in Main's shell).
+# Replaces the native new_worktree, which uses the focused space's repo.
+[[keys.command]]
+key = "prefix+alt+n"
+type = "popup"
+command = 'pwsh -NoProfile -File "%USERPROFILE%\dotfiles\herdr\new-worktree.ps1"'
+width = "70%"
+height = "40%"
+
+# Review a PR (ADO or GitHub URL) in its own worktree space; Copilot there runs the reviews.
+[[keys.command]]
+key = "prefix+alt+p"
+type = "popup"
+command = 'pwsh -NoProfile -File "%USERPROFILE%\dotfiles\herdr\review-pr.ps1"'
+width = "70%"
+height = "40%"
+
+# Reopen a closed space: fzf over zoxide folders; worktrees reopen as worktree spaces.
+[[keys.command]]
+key = "prefix+shift+o"
+type = "popup"
+command = 'pwsh -NoProfile -File "%USERPROFILE%\dotfiles\herdr\open-space.ps1"'
+width = "80%"
+height = "70%"
+
+# List the worktree spaces open across all repos.
+[[keys.command]]
+key = "prefix+alt+l"
+type = "popup"
+command = 'pwsh -NoProfile -File "%USERPROFILE%\dotfiles\herdr\list-worktrees.ps1"'
+width = "80%"
+height = "50%"
+
+[theme]
+name = "gruvbox"
+auto_switch = false
+
+[ui]
+# Use the outer terminal's real cursor instead of Herdr's drawn block, so nvim's
+# guicursor shape changes (block in normal, bar in insert) come through.
+host_cursor = "native"
+# Group the agent panel by space so each agent keeps a stable position. Navigation here is
+# positional (focus_agent 1..9, next_agent), and "priority" would reshuffle the list on every
+# state change, moving agents out from under the number keys.
+agent_panel_sort = "spaces"
+
+# In-app popups when an agent finishes or needs input. open_notification_target (prefix+o)
+# only jumps to a visible notification, so it does nothing while delivery is "off" (default).
+[ui.toast]
+delivery = "herdr"

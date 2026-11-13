@@ -1,0 +1,101 @@
+[column]
+    ui = auto
+[branch]
+    sort = -committerdate
+	autoSetupMerge = simple
+[tag]
+	sort = version:refname
+[init]
+    defaultBranch = main
+[diff]
+    algorithm = histogram
+    colorMoved = plain
+    mnemonicPrefix = true
+    renames = true
+[push]
+    default = simple
+    autoSetupRemote = true
+    followTags = true
+[fetch]
+    prune = true
+    pruneTags = true
+    all = true
+[core]
+	editor = nvim -u ~/.vimrc.minimal
+	excludesFile = ~/.gitignore_global
+	autocrlf = false
+[commit]
+	verbose = true
+[include]
+    # A local gitconfig, outside of version control.
+    # If the file doesn't exist it is silently ignored
+    path = ~/.gitconfig.local
+[alias]
+    mb = !git symbolic-ref refs/remotes/origin/HEAD | cut -d'/' -f4
+	tree = log --graph --all --pretty=format:'%C(yellow)%h -%C(auto)%d %C(bold white)%s %C(bold cyan)(%cr)%Creset %C(dim white)<%an>'
+	treeStat = log --graph --all --pretty=format:'%C(yellow)%h -%C(auto)%d %C(bold cyan)%s %C(bold white)(%cr)%Creset %C(dim white)<%an>' --stat
+    lg = log --pretty='%C(red)%h%Creset%C(yellow)%d%Creset%s %C(cyan)(%ar)%Creset'
+	logChangesPerFile = log --pretty=format:'%C(yellow)%h%Cred%d %Creset%C(bold white)%s %C(dim white)<%an>' --decorate --numstat
+	chaseFile = log --follow -p --
+	publish = "!git push -u origin \"$(git rev-parse --abbrev-ref HEAD)\""
+	prunebranches = remote prune origin
+    pruneLocal = "!git branch --merged | grep  -v '\\*\\|master\\|develop\\|main' | xargs -n 1 git branch -d"
+	removeLocalBranches = "!git fetch -p && for branch in `git branch -vv | grep ': gone]' | awk '{print $1}'`; do git branch -D $branch; done"
+    bn = rev-parse --abbrev-ref HEAD
+	a = add .
+	s = status
+	c = commit
+    ch = checkout
+	f = fetch
+	d = branch -d
+	# Review: unstage the branch's own changes against where it left the default branch. Undo: git reset --soft ORIG_HEAD
+	rs = "!git fetch -q && git reset --soft $(git merge-base HEAD origin/$(git mb))"
+	ca = commit --amend 
+    new = "!git lg $(git mb)..HEAD"
+    missing = "!git lg HEAD..$(git mb)"
+	mdev = "!git fetch && git merge origin $(git mb)"
+	tagHistory = for-each-ref --format="%(refname:short) %(taggerdate) %(subject) %(body)" refs/tags
+    lastcommit = log -1 --pretty=%B
+	localonly = "!git fetch --prune -q && git for-each-ref \"--format=%(refname:short)\" refs/heads | while read b; do git show-ref -q --verify \"refs/remotes/origin/$b\" || echo \"$b\"; done"
+	removelocalonly = !git localonly | xargs -r -n 1 git branch -d
+	isMerged = "!f() { b=${1:-HEAD}; base=${2:-origin/HEAD}; git fetch -q --prune; if git merge-base --is-ancestor \"$b\" \"$base\"; then echo \"MERGED (regular merge into $base)\"; return; fi; mb=$(git merge-base \"$base\" \"$b\"); s=$(git commit-tree \"$(git rev-parse \"$b^{tree}\")\" -p \"$mb\" -m _); pid=$(git show \"$s\" | git patch-id --stable | cut -d\" \" -f1); hit=$(git log -p \"$mb..$base\" | git patch-id --stable | grep \"^$pid\" | cut -d\" \" -f2 | head -1); if [ -n \"$hit\" ]; then echo \"MERGED (squashed into $base as: $(git log -1 --format=\"%h %s\" \"$hit\"))\"; else echo \"NOT merged into $base\"; return 1; fi; }; f"
+[diff]
+	tool = nvim_difftool
+	guitool = kdiff3
+[difftool "nvim_difftool"]
+	cmd = nvim -c \"packadd nvim.difftool\" -d \"$LOCAL\" \"$REMOTE\"
+[difftool "kdiff3"]
+	path = kdiff3
+	trustExitCode = false
+[merge]
+	tool = nvimdiff
+	conflictStyle = zdiff3
+[mergetool]
+	keepBackup = false
+[mergetool "kdiff3"]
+	path = kdiff3
+    trustExitCode = false
+[filter "lfs"]
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[rebase]
+	autosquash = true
+[rerere]
+	enabled = true
+[help]
+    autocorrect = prompt
+[hook "worktreeinclude"]
+    # Copies .worktreeinclude-listed ignored files (.idea/, .env*) into new worktrees. Runs alongside repo hooks.
+    event = post-checkout
+    command = [ ! -f ~/.config/git/worktreeinclude.sh ] || bash ~/.config/git/worktreeinclude.sh
+[hook "gitleaks"]
+    # Refuses commits whose staged changes contain secrets (--redact masks them in the output). Skips with a warning if gitleaks is missing.
+    event = pre-commit
+    command = "if command -v gitleaks >/dev/null 2>&1; then gitleaks git --pre-commit --staged --redact --verbose; else echo 'gitleaks not installed: secret scan skipped' >&2; fi"
+[hook "blockedwords"]
+    # Refuses commits in this dotfiles repo (public) that add a word from ~/.config/git/blocked-words.txt, a local-only list.
+    event = pre-commit
+    command = [ ! -f ~/.config/git/blocked-words.sh ] || bash ~/.config/git/blocked-words.sh
+[mergetool "nvimdiff"]
+	layout = BASE,LOCAL,REMOTE / MERGED
